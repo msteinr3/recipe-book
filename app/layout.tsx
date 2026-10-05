@@ -32,8 +32,8 @@ export default function RootLayout({
               About
             </Link>
 
-            <Link href="/admin" style={styles.link}>
-              Admin
+            <Link href="/profile" style={styles.link}>
+              Profile
             </Link>
           </div>
         </nav>

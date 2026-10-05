@@ -4,13 +4,25 @@ import { FormEvent, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { commonStyles } from "@/styles/common";
 
+const RECIPE_CATEGORIES = [
+  "Appetizers",
+  "Soups",
+  "Salads",
+  "Main Dishes",
+  "Side Dishes",
+  "Breads & Doughs",
+  "Desserts",
+  "Drinks",
+  "Other",
+];
+
 type Ingredient = {
   quantity: string;
   unit: string;
   item: string;
 };
 
-type RecipeSubmissionData = {
+type RecipeData = {
   title?: string;
   description?: string;
   ingredients?: Ingredient[];
@@ -28,17 +40,42 @@ type RecipeSubmissionData = {
 type RecipeSubmission = {
   id: string;
   status: "pending" | "approved" | "rejected";
-  data: RecipeSubmissionData;
+  data: RecipeData;
   created_at: string;
-  reviewed_at: string | null;
+};
+
+type PublishedRecipe = {
+  id: string;
+  title: string;
+  description: string | null;
+  ingredients: Ingredient[];
+  instructions: string[];
+  prep_minutes: number | null;
+  cook_minutes: number | null;
+  servings: number | null;
+  category: string | null;
+  tags: string[];
+  source: string | null;
+  notes: string | null;
+  image_url: string | null;
 };
 
 export default function AdminPage() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
+
   const [submissions, setSubmissions] = useState<RecipeSubmission[]>([]);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editData, setEditData] = useState<RecipeSubmissionData>({});
+  const [publishedRecipes, setPublishedRecipes] = useState<PublishedRecipe[]>(
+    [],
+  );
+
+  const [editingSubmissionId, setEditingSubmissionId] = useState<string | null>(
+    null,
+  );
+  const [editingRecipeId, setEditingRecipeId] = useState<string | null>(null);
+
+  const [editData, setEditData] = useState<RecipeData>({});
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -68,16 +105,29 @@ export default function AdminPage() {
 
       setLoggedIn(true);
 
-      const { data: submissionData, error: submissionError } = await supabase
-        .from("recipe_submissions")
-        .select("id, status, data, created_at, reviewed_at")
-        .eq("status", "pending")
-        .order("created_at", { ascending: false });
+      const [
+        { data: pendingData, error: pendingError },
+        { data: recipeData, error: recipeError },
+      ] = await Promise.all([
+        supabase
+          .from("recipe_submissions")
+          .select("id, status, data, created_at")
+          .eq("status", "pending")
+          .order("created_at", { ascending: false }),
 
-      if (submissionError) {
-        setErrorMessage(submissionError.message);
+        supabase.from("recipes").select("*").order("title"),
+      ]);
+
+      if (pendingError) {
+        setErrorMessage(pendingError.message);
       } else {
-        setSubmissions((submissionData ?? []) as RecipeSubmission[]);
+        setSubmissions((pendingData ?? []) as RecipeSubmission[]);
+      }
+
+      if (recipeError) {
+        setErrorMessage(recipeError.message);
+      } else {
+        setPublishedRecipes((recipeData ?? []) as PublishedRecipe[]);
       }
 
       setLoading(false);
@@ -108,27 +158,56 @@ export default function AdminPage() {
     window.location.reload();
   };
 
-  const startEditing = (submission: RecipeSubmission) => {
-    setEditingId(submission.id);
+  const startEditingSubmission = (submission: RecipeSubmission) => {
+    setEditingRecipeId(null);
+    setEditingSubmissionId(submission.id);
+
     setEditData({
       ...submission.data,
-      ingredients: submission.data.ingredients
-        ? submission.data.ingredients.map((ingredient) => ({
-            ...ingredient,
-          }))
-        : [],
+      ingredients: submission.data.ingredients?.map((ingredient) => ({
+        ...ingredient,
+      })),
       instructions: submission.data.instructions
         ? [...submission.data.instructions]
         : [],
       tags: submission.data.tags ? [...submission.data.tags] : [],
     });
+
     setErrorMessage("");
   };
 
-  const updateField = (
-    field: keyof RecipeSubmissionData,
-    value: string | string[],
-  ) => {
+  const startEditingPublishedRecipe = (recipe: PublishedRecipe) => {
+    setEditingSubmissionId(null);
+    setEditingRecipeId(recipe.id);
+
+    setEditData({
+      title: recipe.title,
+      description: recipe.description ?? "",
+      ingredients: recipe.ingredients ?? [],
+      instructions: recipe.instructions ?? [],
+      prepMinutes:
+        recipe.prep_minutes !== null ? String(recipe.prep_minutes) : "",
+      cookMinutes:
+        recipe.cook_minutes !== null ? String(recipe.cook_minutes) : "",
+      servings: recipe.servings !== null ? String(recipe.servings) : "",
+      category: recipe.category ?? "",
+      tags: recipe.tags ?? [],
+      source: recipe.source ?? "",
+      notes: recipe.notes ?? "",
+      imageUrl: recipe.image_url ?? "",
+    });
+
+    setErrorMessage("");
+  };
+
+  const cancelEditing = () => {
+    setEditingSubmissionId(null);
+    setEditingRecipeId(null);
+    setEditData({});
+    setErrorMessage("");
+  };
+
+  const updateField = (field: keyof RecipeData, value: string | string[]) => {
     setEditData((current) => ({
       ...current,
       [field]: value,
@@ -197,7 +276,7 @@ export default function AdminPage() {
     }));
   };
 
-  const handleSaveEdit = async (submissionId: string) => {
+  const handleSavePendingEdit = async (submissionId: string) => {
     setErrorMessage("");
 
     const { error } = await supabase.rpc("update_recipe_submission", {
@@ -218,7 +297,49 @@ export default function AdminPage() {
       ),
     );
 
-    setEditingId(null);
+    cancelEditing();
+  };
+
+  const handleSavePublishedEdit = async (recipeId: string) => {
+    setErrorMessage("");
+
+    const { error } = await supabase.rpc("update_published_recipe", {
+      recipe_id: recipeId,
+      recipe_data: editData,
+    });
+
+    if (error) {
+      setErrorMessage(error.message);
+      return;
+    }
+
+    setPublishedRecipes((current) =>
+      current.map((recipe) =>
+        recipe.id === recipeId
+          ? {
+              ...recipe,
+              title: editData.title ?? "",
+              description: editData.description || null,
+              ingredients: editData.ingredients ?? [],
+              instructions: editData.instructions ?? [],
+              prep_minutes: editData.prepMinutes
+                ? Number(editData.prepMinutes)
+                : null,
+              cook_minutes: editData.cookMinutes
+                ? Number(editData.cookMinutes)
+                : null,
+              servings: editData.servings ? Number(editData.servings) : null,
+              category: editData.category || null,
+              tags: editData.tags ?? [],
+              source: editData.source || null,
+              notes: editData.notes || null,
+              image_url: editData.imageUrl || null,
+            }
+          : recipe,
+      ),
+    );
+
+    cancelEditing();
   };
 
   const handleApprove = async (submissionId: string) => {
@@ -233,9 +354,15 @@ export default function AdminPage() {
       return;
     }
 
+    const submission = submissions.find((item) => item.id === submissionId);
+
     setSubmissions((current) =>
-      current.filter((submission) => submission.id !== submissionId),
+      current.filter((item) => item.id !== submissionId),
     );
+
+    if (submission) {
+      window.location.reload();
+    }
   };
 
   const handleReject = async (submissionId: string) => {
@@ -254,6 +381,225 @@ export default function AdminPage() {
       current.filter((submission) => submission.id !== submissionId),
     );
   };
+
+  const renderEditForm = (saveLabel: string, onSave: () => void) => (
+    <div style={styles.editForm}>
+      <label style={commonStyles.label}>
+        Recipe Name
+        <input
+          value={editData.title ?? ""}
+          onChange={(event) => updateField("title", event.target.value)}
+          style={commonStyles.input}
+        />
+      </label>
+
+      <label style={commonStyles.label}>
+        Description
+        <textarea
+          value={editData.description ?? ""}
+          onChange={(event) => updateField("description", event.target.value)}
+          rows={3}
+          style={commonStyles.textarea}
+        />
+      </label>
+
+      <div style={styles.section}>
+        <h3 style={styles.sectionTitle}>Ingredients</h3>
+
+        {(editData.ingredients ?? []).map((ingredient, index) => (
+          <div key={index} style={styles.ingredientRow}>
+            <input
+              placeholder="Quantity"
+              value={ingredient.quantity}
+              onChange={(event) =>
+                updateIngredient(index, "quantity", event.target.value)
+              }
+              style={commonStyles.input}
+            />
+
+            <input
+              placeholder="Unit"
+              value={ingredient.unit}
+              onChange={(event) =>
+                updateIngredient(index, "unit", event.target.value)
+              }
+              style={commonStyles.input}
+            />
+
+            <input
+              placeholder="Ingredient"
+              value={ingredient.item}
+              onChange={(event) =>
+                updateIngredient(index, "item", event.target.value)
+              }
+              style={commonStyles.input}
+            />
+
+            <button
+              type="button"
+              onClick={() => removeIngredient(index)}
+              style={commonStyles.secondaryButton}
+            >
+              Remove
+            </button>
+          </div>
+        ))}
+
+        <button
+          type="button"
+          onClick={addIngredient}
+          style={commonStyles.secondaryButton}
+        >
+          + Add Ingredient
+        </button>
+      </div>
+
+      <div style={styles.section}>
+        <h3 style={styles.sectionTitle}>Instructions</h3>
+
+        {(editData.instructions ?? []).map((instruction, index) => (
+          <div key={index} style={styles.instructionRow}>
+            <span style={styles.stepNumber}>{index + 1}.</span>
+
+            <textarea
+              value={instruction}
+              onChange={(event) => updateInstruction(index, event.target.value)}
+              rows={3}
+              style={commonStyles.textarea}
+            />
+
+            <button
+              type="button"
+              onClick={() => removeInstruction(index)}
+              style={commonStyles.secondaryButton}
+            >
+              Remove
+            </button>
+          </div>
+        ))}
+
+        <button
+          type="button"
+          onClick={addInstruction}
+          style={commonStyles.secondaryButton}
+        >
+          + Add Step
+        </button>
+      </div>
+
+      <div style={styles.twoColumns}>
+        <label style={commonStyles.label}>
+          Prep Time (minutes)
+          <input
+            type="number"
+            value={editData.prepMinutes ?? ""}
+            onChange={(event) => updateField("prepMinutes", event.target.value)}
+            style={commonStyles.input}
+          />
+        </label>
+
+        <label style={commonStyles.label}>
+          Cook Time (minutes)
+          <input
+            type="number"
+            value={editData.cookMinutes ?? ""}
+            onChange={(event) => updateField("cookMinutes", event.target.value)}
+            style={commonStyles.input}
+          />
+        </label>
+      </div>
+
+      <label style={commonStyles.label}>
+        Servings
+        <input
+          type="number"
+          value={editData.servings ?? ""}
+          onChange={(event) => updateField("servings", event.target.value)}
+          style={commonStyles.input}
+        />
+      </label>
+
+      <label style={commonStyles.label}>
+        Category
+        <select
+          value={editData.category ?? ""}
+          onChange={(event) => updateField("category", event.target.value)}
+          required
+          style={commonStyles.input}
+        >
+          <option value="" disabled>
+            Select a category
+          </option>
+
+          {RECIPE_CATEGORIES.map((category) => (
+            <option key={category} value={category}>
+              {category}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      <label style={commonStyles.label}>
+        Tags
+        <input
+          value={(editData.tags ?? []).join(", ")}
+          onChange={(event) =>
+            updateField(
+              "tags",
+              event.target.value
+                .split(",")
+                .map((tag) => tag.trim())
+                .filter(Boolean),
+            )
+          }
+          style={commonStyles.input}
+        />
+      </label>
+
+      <label style={commonStyles.label}>
+        Source
+        <input
+          value={editData.source ?? ""}
+          onChange={(event) => updateField("source", event.target.value)}
+          style={commonStyles.input}
+        />
+      </label>
+
+      <label style={commonStyles.label}>
+        Image URL
+        <input
+          type="url"
+          value={editData.imageUrl ?? ""}
+          onChange={(event) => updateField("imageUrl", event.target.value)}
+          style={commonStyles.input}
+        />
+      </label>
+
+      <label style={commonStyles.label}>
+        Notes
+        <textarea
+          value={editData.notes ?? ""}
+          onChange={(event) => updateField("notes", event.target.value)}
+          rows={5}
+          style={commonStyles.textarea}
+        />
+      </label>
+
+      <div style={styles.actions}>
+        <button
+          type="button"
+          onClick={cancelEditing}
+          style={commonStyles.secondaryButton}
+        >
+          Cancel
+        </button>
+
+        <button type="button" onClick={onSave} style={commonStyles.button}>
+          {saveLabel}
+        </button>
+      </div>
+    </div>
+  );
 
   if (loading) {
     return (
@@ -309,7 +655,7 @@ export default function AdminPage() {
     <main style={commonStyles.page}>
       <div style={commonStyles.container}>
         <div style={styles.header}>
-          <h1 style={commonStyles.title}>Pending Recipes</h1>
+          <h1 style={commonStyles.title}>Admin</h1>
 
           <button
             type="button"
@@ -322,80 +668,41 @@ export default function AdminPage() {
 
         {errorMessage && <p style={commonStyles.error}>{errorMessage}</p>}
 
-        {submissions.length === 0 ? (
-          <p>No pending recipe submissions.</p>
-        ) : (
-          <div style={styles.list}>
-            {submissions.map((submission) => {
-              const isEditing = editingId === submission.id;
-              const data = isEditing ? editData : submission.data;
+        <section>
+          <h2 style={styles.sectionHeading}>Pending Recipes</h2>
 
-              return (
+          {submissions.length === 0 ? (
+            <p>No pending recipe submissions.</p>
+          ) : (
+            <div style={styles.list}>
+              {submissions.map((submission) => (
                 <details key={submission.id} style={styles.item}>
                   <summary style={styles.summary}>
-                    {data.title || "Untitled Recipe"}
+                    {submission.data.title || "Untitled Recipe"}
                   </summary>
 
                   <div style={styles.details}>
-                    <p>
-                      <strong>Submitted:</strong>{" "}
-                      {new Date(submission.created_at).toLocaleString()}
-                    </p>
-
-                    {!isEditing ? (
+                    {editingSubmissionId === submission.id ? (
+                      renderEditForm("Save Changes", () =>
+                        handleSavePendingEdit(submission.id),
+                      )
+                    ) : (
                       <>
-                        <div style={styles.preview}>
-                          <h2 style={styles.sectionTitle}>
-                            {submission.data.title}
-                          </h2>
+                        {submission.data.description && (
+                          <p>{submission.data.description}</p>
+                        )}
 
-                          {submission.data.description && (
-                            <p>{submission.data.description}</p>
-                          )}
-
-                          {submission.data.category && (
-                            <p>
-                              <strong>Category:</strong>{" "}
-                              {submission.data.category}
-                            </p>
-                          )}
-
-                          {submission.data.ingredients &&
-                            submission.data.ingredients.length > 0 && (
-                              <>
-                                <h3>Ingredients</h3>
-                                <ul>
-                                  {submission.data.ingredients.map(
-                                    (ingredient, index) => (
-                                      <li key={index}>
-                                        {ingredient.quantity} {ingredient.unit}{" "}
-                                        {ingredient.item}
-                                      </li>
-                                    ),
-                                  )}
-                                </ul>
-                              </>
-                            )}
-
-                          {submission.data.instructions &&
-                            submission.data.instructions.length > 0 && (
-                              <>
-                                <h3>Instructions</h3>
-                                <ol>
-                                  {submission.data.instructions.map(
-                                    (instruction, index) => (
-                                      <li key={index}>{instruction}</li>
-                                    ),
-                                  )}
-                                </ol>
-                              </>
-                            )}
-                        </div>
+                        {submission.data.category && (
+                          <p>
+                            <strong>Category:</strong>{" "}
+                            {submission.data.category}
+                          </p>
+                        )}
 
                         <div style={styles.actions}>
                           <button
                             type="button"
-                            onClick={() => startEditing(submission)}
+                            onClick={() => startEditingSubmission(submission)}
                             style={commonStyles.secondaryButton}
                           >
                             Edit
@@ -418,261 +725,55 @@ export default function AdminPage() {
                           </button>
                         </div>
                       </>
-                    ) : (
-                      <div style={styles.editForm}>
-                        <label style={commonStyles.label}>
-                          Recipe Name
-                          <input
-                            value={editData.title ?? ""}
-                            onChange={(event) =>
-                              updateField("title", event.target.value)
-                            }
-                            style={commonStyles.input}
-                          />
-                        </label>
-
-                        <label style={commonStyles.label}>
-                          Description
-                          <textarea
-                            value={editData.description ?? ""}
-                            onChange={(event) =>
-                              updateField("description", event.target.value)
-                            }
-                            rows={3}
-                            style={commonStyles.textarea}
-                          />
-                        </label>
-
-                        <div style={styles.section}>
-                          <h3 style={styles.sectionTitle}>Ingredients</h3>
-
-                          {(editData.ingredients ?? []).map(
-                            (ingredient, index) => (
-                              <div key={index} style={styles.ingredientRow}>
-                                <input
-                                  placeholder="Quantity"
-                                  value={ingredient.quantity}
-                                  onChange={(event) =>
-                                    updateIngredient(
-                                      index,
-                                      "quantity",
-                                      event.target.value,
-                                    )
-                                  }
-                                  style={commonStyles.input}
-                                />
-
-                                <input
-                                  placeholder="Unit"
-                                  value={ingredient.unit}
-                                  onChange={(event) =>
-                                    updateIngredient(
-                                      index,
-                                      "unit",
-                                      event.target.value,
-                                    )
-                                  }
-                                  style={commonStyles.input}
-                                />
-
-                                <input
-                                  placeholder="Ingredient"
-                                  value={ingredient.item}
-                                  onChange={(event) =>
-                                    updateIngredient(
-                                      index,
-                                      "item",
-                                      event.target.value,
-                                    )
-                                  }
-                                  style={commonStyles.input}
-                                />
-
-                                <button
-                                  type="button"
-                                  onClick={() => removeIngredient(index)}
-                                  style={commonStyles.secondaryButton}
-                                >
-                                  Remove
-                                </button>
-                              </div>
-                            ),
-                          )}
-
-                          <button
-                            type="button"
-                            onClick={addIngredient}
-                            style={commonStyles.secondaryButton}
-                          >
-                            + Add Ingredient
-                          </button>
-                        </div>
-
-                        <div style={styles.section}>
-                          <h3 style={styles.sectionTitle}>Instructions</h3>
-
-                          {(editData.instructions ?? []).map(
-                            (instruction, index) => (
-                              <div key={index} style={styles.instructionRow}>
-                                <span style={styles.stepNumber}>
-                                  {index + 1}.
-                                </span>
-
-                                <textarea
-                                  value={instruction}
-                                  onChange={(event) =>
-                                    updateInstruction(index, event.target.value)
-                                  }
-                                  rows={3}
-                                  style={commonStyles.textarea}
-                                />
-
-                                <button
-                                  type="button"
-                                  onClick={() => removeInstruction(index)}
-                                  style={commonStyles.secondaryButton}
-                                >
-                                  Remove
-                                </button>
-                              </div>
-                            ),
-                          )}
-
-                          <button
-                            type="button"
-                            onClick={addInstruction}
-                            style={commonStyles.secondaryButton}
-                          >
-                            + Add Step
-                          </button>
-                        </div>
-
-                        <div style={styles.twoColumns}>
-                          <label style={commonStyles.label}>
-                            Prep Time (minutes)
-                            <input
-                              type="number"
-                              value={editData.prepMinutes ?? ""}
-                              onChange={(event) =>
-                                updateField("prepMinutes", event.target.value)
-                              }
-                              style={commonStyles.input}
-                            />
-                          </label>
-
-                          <label style={commonStyles.label}>
-                            Cook Time (minutes)
-                            <input
-                              type="number"
-                              value={editData.cookMinutes ?? ""}
-                              onChange={(event) =>
-                                updateField("cookMinutes", event.target.value)
-                              }
-                              style={commonStyles.input}
-                            />
-                          </label>
-                        </div>
-
-                        <label style={commonStyles.label}>
-                          Servings
-                          <input
-                            type="number"
-                            value={editData.servings ?? ""}
-                            onChange={(event) =>
-                              updateField("servings", event.target.value)
-                            }
-                            style={commonStyles.input}
-                          />
-                        </label>
-
-                        <label style={commonStyles.label}>
-                          Category
-                          <input
-                            value={editData.category ?? ""}
-                            onChange={(event) =>
-                              updateField("category", event.target.value)
-                            }
-                            style={commonStyles.input}
-                          />
-                        </label>
-
-                        <label style={commonStyles.label}>
-                          Tags
-                          <input
-                            value={(editData.tags ?? []).join(", ")}
-                            onChange={(event) =>
-                              updateField(
-                                "tags",
-                                event.target.value
-                                  .split(",")
-                                  .map((tag) => tag.trim())
-                                  .filter(Boolean),
-                              )
-                            }
-                            style={commonStyles.input}
-                          />
-                        </label>
-
-                        <label style={commonStyles.label}>
-                          Source
-                          <input
-                            value={editData.source ?? ""}
-                            onChange={(event) =>
-                              updateField("source", event.target.value)
-                            }
-                            style={commonStyles.input}
-                          />
-                        </label>
-
-                        <label style={commonStyles.label}>
-                          Image URL
-                          <input
-                            type="url"
-                            value={editData.imageUrl ?? ""}
-                            onChange={(event) =>
-                              updateField("imageUrl", event.target.value)
-                            }
-                            style={commonStyles.input}
-                          />
-                        </label>
-
-                        <label style={commonStyles.label}>
-                          Notes
-                          <textarea
-                            value={editData.notes ?? ""}
-                            onChange={(event) =>
-                              updateField("notes", event.target.value)
-                            }
-                            rows={5}
-                            style={commonStyles.textarea}
-                          />
-                        </label>
-
-                        <div style={styles.actions}>
-                          <button
-                            type="button"
-                            onClick={() => setEditingId(null)}
-                            style={commonStyles.secondaryButton}
-                          >
-                            Cancel
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() => handleSaveEdit(submission.id)}
-                            style={commonStyles.button}
-                          >
-                            Save Changes
-                          </button>
-                        </div>
-                      </div>
                     )}
                   </div>
                 </details>
-              );
-            })}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+        </section>
+
+        <section style={styles.publishedSection}>
+          <h2 style={styles.sectionHeading}>Published Recipes</h2>
+
+          {publishedRecipes.length === 0 ? (
+            <p>No published recipes yet.</p>
+          ) : (
+            <div style={styles.list}>
+              {publishedRecipes.map((recipe) => (
+                <details key={recipe.id} style={styles.item}>
+                  <summary style={styles.summary}>{recipe.title}</summary>
+
+                  <div style={styles.details}>
+                    {editingRecipeId === recipe.id ? (
+                      renderEditForm("Save Recipe", () =>
+                        handleSavePublishedEdit(recipe.id),
+                      )
+                    ) : (
+                      <>
+                        {recipe.category && (
+                          <p>
+                            <strong>Category:</strong> {recipe.category}
+                          </p>
+                        )}
+
+                        {recipe.description && <p>{recipe.description}</p>}
+
+                        <button
+                          type="button"
+                          onClick={() => startEditingPublishedRecipe(recipe)}
+                          style={commonStyles.secondaryButton}
+                        >
+                          Edit Recipe
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </details>
+              ))}
+            </div>
+          )}
+        </section>
       </div>
     </main>
   );
@@ -690,13 +791,22 @@ const styles = {
     justifyContent: "space-between",
     alignItems: "center",
     gap: "24px",
-    marginBottom: "30px",
+    marginBottom: "40px",
+  },
+
+  sectionHeading: {
+    fontSize: "28px",
+    marginBottom: "20px",
+  },
+
+  publishedSection: {
+    marginTop: "60px",
   },
 
   list: {
     display: "flex",
     flexDirection: "column" as const,
-    gap: "16px",
+    gap: "12px",
   },
 
   item: {
@@ -714,10 +824,6 @@ const styles = {
     marginTop: "16px",
   },
 
-  preview: {
-    lineHeight: 1.6,
-  },
-
   editForm: {
     display: "flex",
     flexDirection: "column" as const,
@@ -731,7 +837,7 @@ const styles = {
   },
 
   sectionTitle: {
-    fontSize: "24px",
+    fontSize: "22px",
     margin: 0,
   },
 

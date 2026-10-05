@@ -4,6 +4,18 @@ import { FormEvent, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { commonStyles } from "@/styles/common";
 
+const RECIPE_CATEGORIES = [
+  "Appetizers",
+  "Soups",
+  "Salads",
+  "Main Dishes",
+  "Side Dishes",
+  "Breads & Doughs",
+  "Desserts",
+  "Drinks",
+  "Other",
+];
+
 type Ingredient = {
   quantity: string;
   unit: string;
@@ -246,11 +258,22 @@ export default function SubmitRecipePage() {
 
           <label style={commonStyles.label}>
             Category
-            <input
+            <select
               name="category"
-              placeholder="Dessert, Main Dish, Soup..."
+              required
+              defaultValue=""
               style={commonStyles.input}
-            />
+            >
+              <option value="" disabled>
+                Select a category
+              </option>
+
+              {RECIPE_CATEGORIES.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
           </label>
 
           <label style={commonStyles.label}>
