@@ -47,6 +47,18 @@
 - [ ] Add decorative elements
 - [ ] Improve overall visual styling
 
+## Design Foundation
+
+- [ ] Clean up and consolidate styles/common.ts
+- [ ] Establish shared color system
+- [ ] Establish shared typography
+- [ ] Establish shared spacing
+- [ ] Establish shared border-radius and shadows
+- [ ] Establish shared button styles
+- [ ] Establish shared card/container styles
+- [ ] Establish shared link styles
+- [ ] Establish shared input/form styles
+
 ## Current Completed Features
 
 - [x] User signup/login/logout
