@@ -17,24 +17,20 @@ const RECIPE_CATEGORIES = [
 ];
 
 type Ingredient = {
-  quantity: string;
-  unit: string;
   item: string;
+  quantity: string;
 };
 
 export default function SubmitRecipePage() {
   const [ingredients, setIngredients] = useState<Ingredient[]>([
-    { quantity: "", unit: "", item: "" },
+    { item: "", quantity: "" },
   ]);
   const [instructions, setInstructions] = useState<string[]>([""]);
   const [submitted, setSubmitted] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   const addIngredient = () => {
-    setIngredients((current) => [
-      ...current,
-      { quantity: "", unit: "", item: "" },
-    ]);
+    setIngredients((current) => [...current, { item: "", quantity: "" }]);
   };
 
   const updateIngredient = (
@@ -108,7 +104,7 @@ export default function SubmitRecipePage() {
     }
 
     form.reset();
-    setIngredients([{ quantity: "", unit: "", item: "" }]);
+    setIngredients([{ item: "", quantity: "" }]);
     setInstructions([""]);
     setSubmitted(true);
   };
@@ -144,28 +140,19 @@ export default function SubmitRecipePage() {
             {ingredients.map((ingredient, index) => (
               <div key={index} style={styles.ingredientRow}>
                 <input
-                  placeholder="Quantity"
-                  value={ingredient.quantity}
-                  onChange={(event) =>
-                    updateIngredient(index, "quantity", event.target.value)
-                  }
-                  style={commonStyles.input}
-                />
-
-                <input
-                  placeholder="Unit"
-                  value={ingredient.unit}
-                  onChange={(event) =>
-                    updateIngredient(index, "unit", event.target.value)
-                  }
-                  style={commonStyles.input}
-                />
-
-                <input
                   placeholder="Ingredient"
                   value={ingredient.item}
                   onChange={(event) =>
                     updateIngredient(index, "item", event.target.value)
+                  }
+                  style={commonStyles.input}
+                />
+
+                <input
+                  placeholder="Quantity"
+                  value={ingredient.quantity}
+                  onChange={(event) =>
+                    updateIngredient(index, "quantity", event.target.value)
                   }
                   style={commonStyles.input}
                 />
@@ -345,7 +332,7 @@ const styles = {
 
   ingredientRow: {
     display: "grid",
-    gridTemplateColumns: "120px 120px 1fr auto",
+    gridTemplateColumns: "1fr 180px auto",
     gap: "8px",
   },
 
