@@ -68,6 +68,9 @@ export default function BookPage({
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteMessage, setInviteMessage] = useState("");
 
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [titleDraft, setTitleDraft] = useState("");
+
   useEffect(() => {
     let cancelled = false;
 
@@ -82,15 +85,12 @@ export default function BookPage({
 
       setBookId(id);
 
-      // Get the current logged-in user.
-      // getSession() handles the browser's existing Supabase session.
       const {
         data: { session },
       } = await supabase.auth.getSession();
 
       let user = session?.user ?? null;
 
-      // Fallback to getUser() if the session was not immediately available.
       if (!user) {
         const {
           data: { user: fetchedUser },
@@ -127,7 +127,10 @@ export default function BookPage({
 
       if (cancelled) return;
 
-      setBook(bookData as Book);
+      const typedBook = bookData as Book;
+
+      setBook(typedBook);
+      setTitleDraft(typedBook.title);
 
       const { data: bookRecipesData, error: bookRecipesError } = await supabase
         .from("book_recipes")
@@ -189,6 +192,52 @@ export default function BookPage({
       cancelled = true;
     };
   }, [params]);
+
+  async function saveTitle() {
+    if (!book || !bookId) return;
+
+    const newTitle = titleDraft.trim();
+
+    if (!newTitle) {
+      setTitleDraft(book.title);
+      setIsEditingTitle(false);
+      return;
+    }
+
+    if (newTitle === book.title) {
+      setIsEditingTitle(false);
+      return;
+    }
+
+    const { error } = await supabase
+      .from("books")
+      .update({ title: newTitle })
+      .eq("id", bookId);
+
+    if (error) {
+      setErrorMessage(error.message);
+      setTitleDraft(book.title);
+      setIsEditingTitle(false);
+      return;
+    }
+
+    setBook((current) => (current ? { ...current, title: newTitle } : current));
+
+    setTitleDraft(newTitle);
+    setIsEditingTitle(false);
+  }
+
+  function handleTitleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      saveTitle();
+    }
+
+    if (event.key === "Escape") {
+      setTitleDraft(book?.title ?? "");
+      setIsEditingTitle(false);
+    }
+  }
 
   async function openPicker() {
     setPickerError("");
@@ -357,7 +406,33 @@ export default function BookPage({
 
           <div style={styles.header}>
             <div>
-              <h1 style={commonStyles.title}>{book.title}</h1>
+              {isEditingTitle ? (
+                <input
+                  autoFocus
+                  type="text"
+                  value={titleDraft}
+                  onChange={(event) => setTitleDraft(event.target.value)}
+                  onBlur={saveTitle}
+                  onKeyDown={handleTitleKeyDown}
+                  style={styles.titleInput}
+                />
+              ) : (
+                <h1
+                  style={{
+                    ...commonStyles.title,
+                    cursor: isOwner ? "text" : "default",
+                  }}
+                  onClick={() => {
+                    if (isOwner) {
+                      setTitleDraft(book.title);
+                      setIsEditingTitle(true);
+                    }
+                  }}
+                  title={isOwner ? "Click to edit" : undefined}
+                >
+                  {book.title}
+                </h1>
+              )}
 
               {book.description && (
                 <p style={styles.description}>{book.description}</p>
@@ -540,6 +615,7 @@ export default function BookPage({
 
                         <div>
                           <strong>{recipe.title}</strong>
+
                           <div style={styles.pickerCategory}>
                             {recipe.category ?? "Other"}
                           </div>
@@ -571,6 +647,18 @@ export default function BookPage({
 const styles = {
   header: {
     marginTop: "28px",
+  },
+
+  titleInput: {
+    width: "100%",
+    maxWidth: "700px",
+    boxSizing: "border-box" as const,
+    fontSize: "36px",
+    fontWeight: "700",
+    padding: "4px 8px",
+    border: "1px solid #ccc",
+    borderRadius: "8px",
+    outline: "none",
   },
 
   description: {

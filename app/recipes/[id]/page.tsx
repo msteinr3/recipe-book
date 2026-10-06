@@ -2,6 +2,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { commonStyles } from "@/styles/common";
+import RecipeMetaEditor from "@/components/RecipeMetaEditor";
+
+export const dynamic = "force-dynamic";
 
 type Ingredient = {
   quantity: string;
@@ -24,6 +27,21 @@ type Recipe = {
   notes: string | null;
   image_url: string | null;
 };
+
+function formatTime(minutes: number) {
+  if (minutes < 60) {
+    return `${minutes} min`;
+  }
+
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+
+  if (remainingMinutes === 0) {
+    return `${hours} hr`;
+  }
+
+  return `${hours} hr ${remainingMinutes} min`;
+}
 
 export default async function RecipePage({
   params,
@@ -67,17 +85,12 @@ export default async function RecipePage({
           <p style={styles.description}>{recipe.description}</p>
         )}
 
-        <div style={styles.meta}>
-          {recipe.prep_minutes !== null && (
-            <span>Prep: {recipe.prep_minutes} min</span>
-          )}
-
-          {recipe.cook_minutes !== null && (
-            <span>Cook: {recipe.cook_minutes} min</span>
-          )}
-
-          {recipe.servings !== null && <span>Serves: {recipe.servings}</span>}
-        </div>
+        <RecipeMetaEditor
+          recipeId={recipe.id}
+          prepMinutes={recipe.prep_minutes}
+          cookMinutes={recipe.cook_minutes}
+          servings={recipe.servings}
+        />
 
         <section style={styles.section}>
           <h2>Ingredients</h2>
@@ -161,10 +174,14 @@ const styles = {
 
   meta: {
     display: "flex",
-    flexWrap: "wrap" as const,
-    gap: "16px",
+    flexWrap: "nowrap" as const,
+    gap: "20px",
     marginTop: "24px",
     color: "#555",
+  },
+
+  metaItem: {
+    whiteSpace: "nowrap" as const,
   },
 
   section: {
