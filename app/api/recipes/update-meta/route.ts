@@ -7,10 +7,21 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { recipeId, field, value } = body;
 
-    if (
-      !recipeId ||
-      !["prep_minutes", "cook_minutes", "servings"].includes(field)
-    ) {
+    const allowedFields = [
+      "title",
+      "category",
+      "description",
+      "ingredients",
+      "instructions",
+      "prep_minutes",
+      "cook_minutes",
+      "servings",
+      "tags",
+      "source",
+      "notes",
+    ];
+
+    if (!recipeId || !allowedFields.includes(field)) {
       return NextResponse.json({ error: "Invalid request" }, { status: 400 });
     }
 
@@ -49,10 +60,11 @@ export async function POST(request: Request) {
     }
 
     const recipeData = {
-      title: recipe.title,
-      description: recipe.description ?? "",
-      ingredients: recipe.ingredients ?? [],
-      instructions: recipe.instructions ?? [],
+      title: field === "title" ? value : recipe.title,
+      description: field === "description" ? value : (recipe.description ?? ""),
+      ingredients: field === "ingredients" ? value : (recipe.ingredients ?? []),
+      instructions:
+        field === "instructions" ? value : (recipe.instructions ?? []),
       prepMinutes:
         field === "prep_minutes"
           ? String(value)
@@ -71,10 +83,10 @@ export async function POST(request: Request) {
           : recipe.servings !== null
             ? String(recipe.servings)
             : "",
-      category: recipe.category ?? "",
-      tags: recipe.tags ?? [],
-      source: recipe.source ?? "",
-      notes: recipe.notes ?? "",
+      category: field === "category" ? value : (recipe.category ?? ""),
+      tags: field === "tags" ? value : (recipe.tags ?? []),
+      source: field === "source" ? value : (recipe.source ?? ""),
+      notes: field === "notes" ? value : (recipe.notes ?? ""),
       imageUrl: recipe.image_url ?? "",
     };
 
