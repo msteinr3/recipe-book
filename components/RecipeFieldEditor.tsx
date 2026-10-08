@@ -9,6 +9,7 @@ type RecipeFieldEditorProps = {
   multiline?: boolean;
   placeholder?: string;
   children?: ReactNode;
+  onChange?: (value: string) => void;
 };
 
 const categories = [
@@ -30,6 +31,7 @@ export default function RecipeFieldEditor({
   multiline = false,
   placeholder = "Add...",
   children,
+  onChange,
 }: RecipeFieldEditorProps) {
   const [editing, setEditing] = useState(false);
   const [savedValue, setSavedValue] = useState(value);
@@ -42,6 +44,17 @@ export default function RecipeFieldEditor({
       if (closeAfterSave) {
         setEditing(false);
       }
+      return;
+    }
+
+    if (onChange) {
+      onChange(valueToSave);
+      setSavedValue(valueToSave);
+
+      if (closeAfterSave) {
+        setEditing(false);
+      }
+
       return;
     }
 

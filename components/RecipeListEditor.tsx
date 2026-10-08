@@ -12,16 +12,22 @@ type RecipeListEditorProps =
       recipeId: string;
       field: "ingredients";
       value: Ingredient[];
+      isAdmin: boolean;
+      onChange: (value: Ingredient[]) => void;
     }
   | {
       recipeId: string;
       field: "instructions";
       value: string[];
+      isAdmin: boolean;
+      onChange: (value: string[]) => void;
     }
   | {
       recipeId: string;
       field: "tags";
       value: string[];
+      isAdmin: boolean;
+      onChange: (value: string[]) => void;
     };
 
 export default function RecipeListEditor(props: RecipeListEditorProps) {
@@ -33,6 +39,13 @@ export default function RecipeListEditor(props: RecipeListEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null);
 
   async function save(valueToSave = editValue) {
+    if (!props.isAdmin) {
+      props.onChange(valueToSave);
+      setSavedValue(valueToSave);
+      setEditing(false);
+      return;
+    }
+
     const response = await fetch("/api/recipes/update-meta", {
       method: "POST",
       headers: {
@@ -86,7 +99,7 @@ export default function RecipeListEditor(props: RecipeListEditorProps) {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [editing, editValue, savedValue, tagsText, props.field]);
+  }, [editing, editValue, savedValue, tagsText]);
 
   function startEditing() {
     setEditValue(savedValue);
@@ -121,10 +134,12 @@ export default function RecipeListEditor(props: RecipeListEditorProps) {
               value={ingredient.item}
               onChange={(e) => {
                 const updated = [...editValue];
+
                 updated[index] = {
                   ...updated[index],
                   item: e.target.value,
                 };
+
                 setEditValue(updated);
               }}
               placeholder="Ingredient"
@@ -135,10 +150,12 @@ export default function RecipeListEditor(props: RecipeListEditorProps) {
               value={ingredient.quantity}
               onChange={(e) => {
                 const updated = [...editValue];
+
                 updated[index] = {
                   ...updated[index],
                   quantity: e.target.value,
                 };
+
                 setEditValue(updated);
               }}
               placeholder="Quantity"

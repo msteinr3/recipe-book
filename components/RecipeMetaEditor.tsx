@@ -7,6 +7,11 @@ type RecipeMetaEditorProps = {
   prepMinutes: number | null;
   cookMinutes: number | null;
   servings: number | null;
+  isAdmin: boolean;
+  onChange: (
+    field: "prep_minutes" | "cook_minutes" | "servings",
+    value: number,
+  ) => void;
 };
 
 function formatTime(minutes: number | null) {
@@ -42,6 +47,8 @@ export default function RecipeMetaEditor({
   prepMinutes,
   cookMinutes,
   servings,
+  isAdmin,
+  onChange,
 }: RecipeMetaEditorProps) {
   const [editing, setEditing] = useState<"prep" | "cook" | "servings" | null>(
     null,
@@ -63,6 +70,18 @@ export default function RecipeMetaEditor({
     minutes: number,
   ) {
     const totalMinutes = hours * 60 + minutes;
+
+    if (!isAdmin) {
+      onChange(type === "prep" ? "prep_minutes" : "cook_minutes", totalMinutes);
+
+      if (type === "prep") {
+        setSavedPrep(totalMinutes);
+      } else {
+        setSavedCook(totalMinutes);
+      }
+
+      return;
+    }
 
     const response = await fetch("/api/recipes/update-meta", {
       method: "POST",
@@ -90,6 +109,12 @@ export default function RecipeMetaEditor({
   }
 
   async function saveServings(value: number) {
+    if (!isAdmin) {
+      onChange("servings", value);
+      setSavedServings(value);
+      return;
+    }
+
     const response = await fetch("/api/recipes/update-meta", {
       method: "POST",
       headers: {

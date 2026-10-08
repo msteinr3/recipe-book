@@ -18,7 +18,6 @@ const RECIPE_CATEGORIES = [
 
 type Ingredient = {
   quantity: string;
-  unit: string;
   item: string;
 };
 
@@ -35,6 +34,7 @@ type RecipeData = {
   source?: string;
   notes?: string;
   imageUrl?: string;
+  recipeId?: string;
 };
 
 type RecipeSubmission = {
@@ -44,35 +44,15 @@ type RecipeSubmission = {
   created_at: string;
 };
 
-type PublishedRecipe = {
-  id: string;
-  title: string;
-  description: string | null;
-  ingredients: Ingredient[];
-  instructions: string[];
-  prep_minutes: number | null;
-  cook_minutes: number | null;
-  servings: number | null;
-  category: string | null;
-  tags: string[];
-  source: string | null;
-  notes: string | null;
-  image_url: string | null;
-};
-
 export default function AdminPage() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const [submissions, setSubmissions] = useState<RecipeSubmission[]>([]);
-  const [publishedRecipes, setPublishedRecipes] = useState<PublishedRecipe[]>(
-    [],
-  );
 
   const [editingSubmissionId, setEditingSubmissionId] = useState<string | null>(
     null,
   );
-  const [editingRecipeId, setEditingRecipeId] = useState<string | null>(null);
 
   const [editData, setEditData] = useState<RecipeData>({});
 
@@ -105,29 +85,16 @@ export default function AdminPage() {
 
       setLoggedIn(true);
 
-      const [
-        { data: pendingData, error: pendingError },
-        { data: recipeData, error: recipeError },
-      ] = await Promise.all([
-        supabase
-          .from("recipe_submissions")
-          .select("id, status, data, created_at")
-          .eq("status", "pending")
-          .order("created_at", { ascending: false }),
-
-        supabase.from("recipes").select("*").order("title"),
-      ]);
+      const { data: pendingData, error: pendingError } = await supabase
+        .from("recipe_submissions")
+        .select("id, status, data, created_at")
+        .eq("status", "pending")
+        .order("created_at", { ascending: false });
 
       if (pendingError) {
         setErrorMessage(pendingError.message);
       } else {
         setSubmissions((pendingData ?? []) as RecipeSubmission[]);
-      }
-
-      if (recipeError) {
-        setErrorMessage(recipeError.message);
-      } else {
-        setPublishedRecipes((recipeData ?? []) as PublishedRecipe[]);
       }
 
       setLoading(false);
@@ -159,7 +126,6 @@ export default function AdminPage() {
   };
 
   const startEditingSubmission = (submission: RecipeSubmission) => {
-    setEditingRecipeId(null);
     setEditingSubmissionId(submission.id);
 
     setEditData({
@@ -176,33 +142,8 @@ export default function AdminPage() {
     setErrorMessage("");
   };
 
-  const startEditingPublishedRecipe = (recipe: PublishedRecipe) => {
-    setEditingSubmissionId(null);
-    setEditingRecipeId(recipe.id);
-
-    setEditData({
-      title: recipe.title,
-      description: recipe.description ?? "",
-      ingredients: recipe.ingredients ?? [],
-      instructions: recipe.instructions ?? [],
-      prepMinutes:
-        recipe.prep_minutes !== null ? String(recipe.prep_minutes) : "",
-      cookMinutes:
-        recipe.cook_minutes !== null ? String(recipe.cook_minutes) : "",
-      servings: recipe.servings !== null ? String(recipe.servings) : "",
-      category: recipe.category ?? "",
-      tags: recipe.tags ?? [],
-      source: recipe.source ?? "",
-      notes: recipe.notes ?? "",
-      imageUrl: recipe.image_url ?? "",
-    });
-
-    setErrorMessage("");
-  };
-
   const cancelEditing = () => {
     setEditingSubmissionId(null);
-    setEditingRecipeId(null);
     setEditData({});
     setErrorMessage("");
   };
@@ -221,7 +162,6 @@ export default function AdminPage() {
         ...(current.ingredients ?? []),
         {
           quantity: "",
-          unit: "",
           item: "",
         },
       ],
@@ -300,48 +240,6 @@ export default function AdminPage() {
     cancelEditing();
   };
 
-  const handleSavePublishedEdit = async (recipeId: string) => {
-    setErrorMessage("");
-
-    const { error } = await supabase.rpc("update_published_recipe", {
-      recipe_id: recipeId,
-      recipe_data: editData,
-    });
-
-    if (error) {
-      setErrorMessage(error.message);
-      return;
-    }
-
-    setPublishedRecipes((current) =>
-      current.map((recipe) =>
-        recipe.id === recipeId
-          ? {
-              ...recipe,
-              title: editData.title ?? "",
-              description: editData.description || null,
-              ingredients: editData.ingredients ?? [],
-              instructions: editData.instructions ?? [],
-              prep_minutes: editData.prepMinutes
-                ? Number(editData.prepMinutes)
-                : null,
-              cook_minutes: editData.cookMinutes
-                ? Number(editData.cookMinutes)
-                : null,
-              servings: editData.servings ? Number(editData.servings) : null,
-              category: editData.category || null,
-              tags: editData.tags ?? [],
-              source: editData.source || null,
-              notes: editData.notes || null,
-              image_url: editData.imageUrl || null,
-            }
-          : recipe,
-      ),
-    );
-
-    cancelEditing();
-  };
-
   const handleApprove = async (submissionId: string) => {
     setErrorMessage("");
 
@@ -354,15 +252,11 @@ export default function AdminPage() {
       return;
     }
 
-    const submission = submissions.find((item) => item.id === submissionId);
-
     setSubmissions((current) =>
       current.filter((item) => item.id !== submissionId),
     );
 
-    if (submission) {
-      window.location.reload();
-    }
+    window.location.reload();
   };
 
   const handleReject = async (submissionId: string) => {
@@ -413,15 +307,6 @@ export default function AdminPage() {
               value={ingredient.quantity}
               onChange={(event) =>
                 updateIngredient(index, "quantity", event.target.value)
-              }
-              style={commonStyles.input}
-            />
-
-            <input
-              placeholder="Unit"
-              value={ingredient.unit}
-              onChange={(event) =>
-                updateIngredient(index, "unit", event.target.value)
               }
               style={commonStyles.input}
             />
@@ -678,6 +563,7 @@ export default function AdminPage() {
               {submissions.map((submission) => (
                 <details key={submission.id} style={styles.item}>
                   <summary style={styles.summary}>
+                    {submission.data.recipeId ? "Suggested Edit — " : ""}
                     {submission.data.title || "Untitled Recipe"}
                   </summary>
 
@@ -732,48 +618,6 @@ export default function AdminPage() {
             </div>
           )}
         </section>
-
-        <section style={styles.publishedSection}>
-          <h2 style={styles.sectionHeading}>Published Recipes</h2>
-
-          {publishedRecipes.length === 0 ? (
-            <p>No published recipes yet.</p>
-          ) : (
-            <div style={styles.list}>
-              {publishedRecipes.map((recipe) => (
-                <details key={recipe.id} style={styles.item}>
-                  <summary style={styles.summary}>{recipe.title}</summary>
-
-                  <div style={styles.details}>
-                    {editingRecipeId === recipe.id ? (
-                      renderEditForm("Save Recipe", () =>
-                        handleSavePublishedEdit(recipe.id),
-                      )
-                    ) : (
-                      <>
-                        {recipe.category && (
-                          <p>
-                            <strong>Category:</strong> {recipe.category}
-                          </p>
-                        )}
-
-                        {recipe.description && <p>{recipe.description}</p>}
-
-                        <button
-                          type="button"
-                          onClick={() => startEditingPublishedRecipe(recipe)}
-                          style={commonStyles.secondaryButton}
-                        >
-                          Edit Recipe
-                        </button>
-                      </>
-                    )}
-                  </div>
-                </details>
-              ))}
-            </div>
-          )}
-        </section>
       </div>
     </main>
   );
@@ -797,10 +641,6 @@ const styles = {
   sectionHeading: {
     fontSize: "28px",
     marginBottom: "20px",
-  },
-
-  publishedSection: {
-    marginTop: "60px",
   },
 
   list: {
@@ -843,7 +683,7 @@ const styles = {
 
   ingredientRow: {
     display: "grid",
-    gridTemplateColumns: "120px 120px 1fr auto",
+    gridTemplateColumns: "120px 1fr auto",
     gap: "8px",
   },
 
