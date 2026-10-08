@@ -66,6 +66,10 @@
 - [x] Recipe submission
 - [x] Recipe approval/rejection
 - [x] Recipe editing
+- [x] Non-admin suggested recipe edits
+- [x] Admin approval/rejection of suggested recipe edits
+- [x] Unsaved changes warning for recipe edits
+- [x] Recipe edit submission history
 - [x] Recipe categories
 - [x] Create recipe books
 - [x] Add/remove recipes from books
