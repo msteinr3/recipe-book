@@ -44,6 +44,9 @@ export default function ProfilePage() {
   const [mode, setMode] = useState<AuthMode>("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isResettingPassword, setIsResettingPassword] = useState(false);
+  const [resetNewPassword, setResetNewPassword] = useState("");
+  const [resetConfirmPassword, setResetConfirmPassword] = useState("");
 
   const [message, setMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -52,6 +55,12 @@ export default function ProfilePage() {
   >(null);
 
   useEffect(() => {
+    if (
+      new URLSearchParams(window.location.search).get("resetPassword") ===
+      "true"
+    ) {
+      setIsResettingPassword(true);
+    }
     const loadProfile = async () => {
       setLoading(true);
       setErrorMessage("");
@@ -135,7 +144,11 @@ export default function ProfilePage() {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(() => {
+    } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "PASSWORD_RECOVERY") {
+        setIsResettingPassword(true);
+      }
+
       loadProfile();
     });
 
@@ -183,6 +196,63 @@ export default function ProfilePage() {
     setMessage(
       "Your account was created. Check your email to confirm your account, then log in.",
     );
+  };
+
+  const handleForgotPassword = async () => {
+    setMessage("");
+    setErrorMessage("");
+
+    if (!email.trim()) {
+      setErrorMessage("Enter your email address first.");
+      return;
+    }
+
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: `${window.location.origin}/profile?resetPassword=true`,
+    });
+
+    if (error) {
+      setErrorMessage(error.message);
+      return;
+    }
+
+    setMessage(
+      "If an account exists for this email, a password reset link has been sent.",
+    );
+  };
+
+  const handleResetPassword = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setMessage("");
+    setErrorMessage("");
+
+    if (resetNewPassword !== resetConfirmPassword) {
+      setErrorMessage("The new passwords do not match.");
+      return;
+    }
+
+    if (resetNewPassword.length < 6) {
+      setErrorMessage("The new password must be at least 6 characters.");
+      return;
+    }
+
+    const { error } = await supabase.auth.updateUser({
+      password: resetNewPassword,
+    });
+
+    if (error) {
+      setErrorMessage(error.message);
+      return;
+    }
+
+    setResetNewPassword("");
+    setResetConfirmPassword("");
+    setIsResettingPassword(false);
+    setMessage(
+      "Your password has been reset successfully. You can now log in.",
+    );
+    await supabase.auth.signOut();
+    window.history.replaceState({}, "", "/profile");
   };
 
   const handleLogout = async () => {
@@ -375,6 +445,56 @@ export default function ProfilePage() {
     );
   }
 
+  if (isResettingPassword) {
+    return (
+      <main style={commonStyles.page}>
+        <div style={commonStyles.narrowContainer}>
+          <h1 style={commonStyles.title}>Reset Password</h1>
+          <p style={commonStyles.subtitle}>
+            Choose a new password for your account.
+          </p>
+
+          <form onSubmit={handleResetPassword} style={styles.form}>
+            <label style={commonStyles.label}>
+              New Password
+              <input
+                type="password"
+                value={resetNewPassword}
+                onChange={(event) => setResetNewPassword(event.target.value)}
+                required
+                minLength={6}
+                autoComplete="new-password"
+                style={commonStyles.input}
+              />
+            </label>
+
+            <label style={commonStyles.label}>
+              Confirm New Password
+              <input
+                type="password"
+                value={resetConfirmPassword}
+                onChange={(event) =>
+                  setResetConfirmPassword(event.target.value)
+                }
+                required
+                minLength={6}
+                autoComplete="new-password"
+                style={commonStyles.input}
+              />
+            </label>
+
+            {message && <p style={commonStyles.success}>{message}</p>}
+            {errorMessage && <p style={commonStyles.error}>{errorMessage}</p>}
+
+            <button type="submit" style={commonStyles.button}>
+              Reset Password
+            </button>
+          </form>
+        </div>
+      </main>
+    );
+  }
+
   if (!userEmail) {
     return (
       <main style={commonStyles.page}>
@@ -414,6 +534,16 @@ export default function ProfilePage() {
             </label>
 
             {message && <p style={commonStyles.success}>{message}</p>}
+
+            {mode === "login" && (
+              <button
+                type="button"
+                onClick={handleForgotPassword}
+                style={styles.forgotPasswordButton}
+              >
+                Forgot password?
+              </button>
+            )}
 
             {errorMessage && <p style={commonStyles.error}>{errorMessage}</p>}
 
@@ -838,5 +968,16 @@ const styles = {
     padding: "24px",
     borderRadius: "8px",
     background: "#f7f3ed",
+  },
+
+  forgotPasswordButton: {
+    alignSelf: "flex-start",
+    padding: 0,
+    border: "none",
+    background: "none",
+    color: "#5b5147",
+    textDecoration: "underline",
+    cursor: "pointer",
+    fontSize: "14px",
   },
 };
