@@ -380,6 +380,35 @@ export default function BookPage({
     setInviteMessage("Invitation created.");
   }
 
+  async function handleRemoveEditor(member: Member) {
+    if (!bookId || !isOwner) return;
+
+    const confirmed = window.confirm(
+      `Remove ${member.email} from this book? They will lose access to it.`,
+    );
+
+    if (!confirmed) return;
+
+    setErrorMessage("");
+    setInviteMessage("");
+
+    const { error } = await supabase
+      .from("book_members")
+      .delete()
+      .eq("book_id", bookId)
+      .eq("user_id", member.user_id)
+      .eq("role", "editor");
+
+    if (error) {
+      setErrorMessage(error.message);
+      return;
+    }
+
+    setMembers((current) =>
+      current.filter((item) => item.user_id !== member.user_id),
+    );
+  }
+
   const recipesByCategory = RECIPE_CATEGORIES.map((category) => ({
     category,
     recipes: bookRecipes
@@ -601,7 +630,19 @@ export default function BookPage({
                     </div>
 
                     {member.role === "editor" && (
-                      <span style={styles.editorLabel}>Editor</span>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveEditor(member)}
+                        style={{
+                          padding: "6px 12px",
+                          border: "1px solid #ccc",
+                          borderRadius: "6px",
+                          background: "white",
+                          cursor: "pointer",
+                        }}
+                      >
+                        Remove
+                      </button>
                     )}
                   </div>
                 ))}
