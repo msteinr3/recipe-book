@@ -70,6 +70,8 @@ export default function BookPage({
 
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [titleDraft, setTitleDraft] = useState("");
+  const [isEditingDescription, setIsEditingDescription] = useState(false);
+  const [descriptionDraft, setDescriptionDraft] = useState("");
 
   useEffect(() => {
     let cancelled = false;
@@ -225,6 +227,36 @@ export default function BookPage({
 
     setTitleDraft(newTitle);
     setIsEditingTitle(false);
+  }
+
+  async function saveDescription() {
+    if (!book || !bookId) return;
+
+    const newDescription = descriptionDraft.trim();
+    const currentDescription = book.description ?? "";
+
+    if (newDescription === currentDescription) {
+      setIsEditingDescription(false);
+      return;
+    }
+
+    const { error } = await supabase
+      .from("books")
+      .update({ description: newDescription || null })
+      .eq("id", bookId);
+
+    if (error) {
+      setErrorMessage(error.message);
+      setDescriptionDraft(currentDescription);
+      setIsEditingDescription(false);
+      return;
+    }
+
+    setBook((current) =>
+      current ? { ...current, description: newDescription || null } : current,
+    );
+
+    setIsEditingDescription(false);
   }
 
   function handleTitleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
@@ -434,8 +466,43 @@ export default function BookPage({
                 </h1>
               )}
 
-              {book.description && (
-                <p style={styles.description}>{book.description}</p>
+              {isEditingDescription ? (
+                <textarea
+                  autoFocus
+                  value={descriptionDraft}
+                  onChange={(event) => setDescriptionDraft(event.target.value)}
+                  onBlur={saveDescription}
+                  onKeyDown={(event) => {
+                    if (event.key === "Escape") {
+                      setDescriptionDraft(book.description ?? "");
+                      setIsEditingDescription(false);
+                    }
+
+                    if (event.key === "Enter" && !event.shiftKey) {
+                      event.preventDefault();
+                      saveDescription();
+                    }
+                  }}
+                  style={styles.descriptionInput}
+                  placeholder="Add a book description..."
+                />
+              ) : (
+                <p
+                  style={{
+                    ...styles.description,
+                    cursor: isOwner ? "text" : "default",
+                  }}
+                  onClick={() => {
+                    if (isOwner) {
+                      setDescriptionDraft(book.description ?? "");
+                      setIsEditingDescription(true);
+                    }
+                  }}
+                  title={isOwner ? "Click to edit description" : undefined}
+                >
+                  {book.description ||
+                    (isOwner ? "Add a book description..." : "")}
+                </p>
               )}
 
               <div style={styles.role}>{isOwner ? "Owner" : "Editor"}</div>
@@ -666,6 +733,20 @@ const styles = {
     lineHeight: 1.6,
     color: "#666",
     marginTop: "10px",
+  },
+
+  descriptionInput: {
+    display: "block",
+    width: "100%",
+    maxWidth: "700px",
+    minHeight: "90px",
+    boxSizing: "border-box" as const,
+    fontSize: "17px",
+    lineHeight: 1.6,
+    padding: "8px",
+    border: "1px solid #ccc",
+    borderRadius: "8px",
+    resize: "vertical" as const,
   },
 
   role: {
