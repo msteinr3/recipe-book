@@ -290,6 +290,31 @@ export default function ProfilePage() {
     setProcessingInvitationId(null);
   };
 
+  const handleDeleteBook = async (book: Book) => {
+    const confirmed = window.confirm(
+      `Delete "${book.title}"?\n\nThis will permanently delete the book, its contents, and collaborator access. The recipes themselves will remain in your collection.`,
+    );
+
+    if (!confirmed) return;
+
+    setErrorMessage("");
+    setMessage("");
+
+    const { error } = await supabase
+      .from("books")
+      .delete()
+      .eq("id", book.id)
+      .eq("owner_id", userId);
+
+    if (error) {
+      setErrorMessage(error.message);
+      return;
+    }
+
+    setBooks((current) => current.filter((item) => item.id !== book.id));
+    setMessage(`"${book.title}" was deleted.`);
+  };
+
   if (loading) {
     return (
       <main style={commonStyles.page}>
@@ -494,23 +519,31 @@ export default function ProfilePage() {
           ) : (
             <div style={styles.bookList}>
               {books.map((book) => (
-                <Link
-                  key={book.id}
-                  href={`/books/${book.id}`}
-                  style={styles.bookRow}
-                >
-                  <div>
-                    <h3 style={styles.bookTitle}>{book.title}</h3>
+                <div key={book.id} style={styles.bookRow}>
+                  <Link href={`/books/${book.id}`} style={styles.bookLink}>
+                    <div>
+                      <h3 style={styles.bookTitle}>{book.title}</h3>
 
-                    {book.description && (
-                      <p style={styles.bookDescription}>{book.description}</p>
-                    )}
-                  </div>
+                      {book.description && (
+                        <p style={styles.bookDescription}>{book.description}</p>
+                      )}
+                    </div>
 
-                  <span style={styles.role}>
-                    {book.role === "owner" ? "Owner" : "Editor"}
-                  </span>
-                </Link>
+                    <span style={styles.role}>
+                      {book.role === "owner" ? "Owner" : "Editor"}
+                    </span>
+                  </Link>
+
+                  {book.role === "owner" && (
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteBook(book)}
+                      style={styles.deleteButton}
+                    >
+                      Delete
+                    </button>
+                  )}
+                </div>
               ))}
             </div>
           )}
@@ -623,12 +656,31 @@ const styles = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    gap: "20px",
+    gap: "12px",
     padding: "16px",
     borderRadius: "8px",
     background: "#f7f3ed",
+  },
+
+  bookLink: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: "20px",
+    flex: 1,
+    minWidth: 0,
     textDecoration: "none",
     color: "inherit",
+  },
+
+  deleteButton: {
+    padding: "8px 12px",
+    border: "1px solid #b42318",
+    borderRadius: "6px",
+    background: "white",
+    color: "#b42318",
+    cursor: "pointer",
+    flexShrink: 0,
   },
 
   bookTitle: {
