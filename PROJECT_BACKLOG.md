@@ -1,15 +1,8 @@
 # Recipe Book Project Backlog
 
-## Book Management
+## Priority 1 — Collaborators & Invitations
 
-- [ ] Edit book title
-- [ ] Edit book description
-- [ ] Save book changes
-- [ ] Delete a book with confirmation
-
-## Collaborators & Invitations
-
-- [ ] Remove an editor from a book
+- [x] Remove an editor from a book — implemented and tested
 - [ ] Show pending invitations clearly to the owner
 - [ ] Prevent duplicate invitations
 - [ ] Handle inviting someone who is already an editor
@@ -17,39 +10,21 @@
 - [ ] Handle expired invitations
 - [ ] Clean up accepted/declined invitations
 
-## Recipe Management
+**Goal:** Make collaboration reliable and ensure owners can understand and manage access.
 
-- [ ] Confirm a recipe cannot be added twice
-- [ ] Confirm removing a recipe only removes it from the book
-- [ ] Improve recipe/book management if needed
+## Priority 2 — Password Management
 
-## Account
-
-- [ ] Change password
+- [ ] Change password while logged in
 - [ ] Forgot/reset password
-- [ ] Account deletion
+- [ ] Test password-management flows
 
-## PDF / Book Output
+**Goal:** Let users securely update or recover their passwords.
 
-- [ ] Improve PDF table of contents
-- [ ] Make PDF table of contents clickable
-- [ ] Include recipe images in PDF
-- [ ] Improve PDF page breaks
-- [ ] Improve PDF filename
-- [ ] Make PDF print-friendly
+## Priority 3 — Design & Visual Polish
 
-## Future Design
+### Design Foundation
 
-- [ ] Improve cookbook cover
-- [ ] Improve typography
-- [ ] Improve section divider pages
-- [ ] Improve recipe page layout
-- [ ] Add decorative elements
-- [ ] Improve overall visual styling
-
-## Design Foundation
-
-- [ ] Clean up and consolidate styles/common.ts
+- [ ] Clean up and consolidate `styles/common.ts`
 - [ ] Establish shared color system
 - [ ] Establish shared typography
 - [ ] Establish shared spacing
@@ -59,27 +34,13 @@
 - [ ] Establish shared link styles
 - [ ] Establish shared input/form styles
 
-## Current Completed Features
+### Cookbook Design
 
-- [x] User signup/login/logout
-- [x] Admin role
-- [x] Recipe submission
-- [x] Recipe approval/rejection
-- [x] Recipe editing
-- [x] Non-admin suggested recipe edits
-- [x] Admin approval/rejection of suggested recipe edits
-- [x] Unsaved changes warning for recipe edits
-- [x] Recipe edit submission history
-- [x] Recipe categories
-- [x] Create recipe books
-- [x] Add/remove recipes from books
-- [x] Automatic category grouping
-- [x] Alphabetical recipe sorting
-- [x] Collaborator invitations
-- [x] Accept/decline invitations
-- [x] Owner/editor roles
-- [x] Book browser preview
-- [x] Cookbook cover
-- [x] Table of contents
-- [x] Section divider pages
-- [x] PDF generation
+- [ ] Improve cookbook cover
+- [ ] Improve typography
+- [ ] Improve section divider pages
+- [ ] Improve recipe page layout
+- [ ] Add decorative elements
+- [ ] Improve overall visual styling
+
+**Goal:** Build a cohesive, polished design using reusable styles.
