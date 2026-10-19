@@ -54,6 +54,9 @@ export default function BookPage({
   const [bookRecipes, setBookRecipes] = useState<BookRecipe[]>([]);
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [members, setMembers] = useState<Member[]>([]);
+  const [pendingInvitations, setPendingInvitations] = useState<
+    { id: string; invited_email: string; expires_at: string }[]
+  >([]);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   const [loading, setLoading] = useState(true);
@@ -181,6 +184,26 @@ export default function BookPage({
 
       if (!cancelled && !membersError) {
         setMembers((membersData ?? []) as Member[]);
+      }
+
+      if (!cancelled && !membersError) {
+        setMembers((membersData ?? []) as Member[]);
+      }
+
+      const { data: invitationsData, error: invitationsError } = await supabase
+        .from("book_invitations")
+        .select("id, invited_email, expires_at")
+        .eq("book_id", id)
+        .eq("status", "pending")
+        .gt("expires_at", new Date().toISOString())
+        .order("created_at", { ascending: false });
+
+      if (!cancelled && !invitationsError) {
+        setPendingInvitations(invitationsData ?? []);
+      }
+
+      if (!cancelled) {
+        setLoading(false);
       }
 
       if (!cancelled) {
@@ -378,6 +401,18 @@ export default function BookPage({
 
     setInviteEmail("");
     setInviteMessage("Invitation created.");
+
+    const { data } = await supabase
+      .from("book_invitations")
+      .select("id, invited_email, expires_at")
+      .eq("book_id", bookId)
+      .eq("status", "pending")
+      .gt("expires_at", new Date().toISOString())
+      .order("created_at", { ascending: false });
+
+    if (data) {
+      setPendingInvitations(data);
+    }
   }
 
   async function handleRemoveEditor(member: Member) {
@@ -647,6 +682,24 @@ export default function BookPage({
                   </div>
                 ))}
               </div>
+
+              {pendingInvitations.length > 0 && (
+                <div style={styles.memberList}>
+                  <h3 style={styles.inviteTitle}>Pending invitations</h3>
+                  {pendingInvitations.map((invitation) => (
+                    <div key={invitation.id} style={styles.memberRow}>
+                      <div>
+                        <strong>{invitation.invited_email}</strong>
+                        <span style={styles.memberRole}>
+                          Expires{" "}
+                          {new Date(invitation.expires_at).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <span style={styles.memberRole}>Pending</span>
+                    </div>
+                  ))}
+                </div>
+              )}
 
               <div style={styles.inviteBox}>
                 <h3 style={styles.inviteTitle}>Invite an editor</h3>
