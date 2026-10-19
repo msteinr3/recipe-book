@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { commonStyles } from "@/styles/common";
 
 type RecipeMetaEditorProps = {
   recipeId: string;
@@ -17,16 +18,12 @@ type RecipeMetaEditorProps = {
 function formatTime(minutes: number | null) {
   if (minutes === null) return "";
 
-  if (minutes < 60) {
-    return `${minutes} min`;
-  }
+  if (minutes < 60) return `${minutes} min`;
 
   const hours = Math.floor(minutes / 60);
   const remainingMinutes = minutes % 60;
 
-  if (remainingMinutes === 0) {
-    return `${hours} hr`;
-  }
+  if (remainingMinutes === 0) return `${hours} hr`;
 
   return `${hours} hr ${remainingMinutes} min`;
 }
@@ -166,11 +163,11 @@ export default function RecipeMetaEditor({
   }, [editing, prep, cook, servingsValue]);
 
   return (
-    <div style={styles.meta}>
-      <span style={styles.metaItem}>
+    <div style={commonStyles.meta}>
+      <span style={commonStyles.metaItem}>
         <strong>Prep:</strong>{" "}
         {editing === "prep" ? (
-          <span ref={editorRef} style={styles.editor}>
+          <span ref={editorRef} style={commonStyles.editor}>
             <input
               type="number"
               min="0"
@@ -181,7 +178,7 @@ export default function RecipeMetaEditor({
                   hours: Number(e.target.value),
                 })
               }
-              style={styles.timeInput}
+              style={commonStyles.timeInput}
             />
             <span>hr</span>
 
@@ -196,7 +193,7 @@ export default function RecipeMetaEditor({
                   minutes: Number(e.target.value),
                 })
               }
-              style={styles.timeInput}
+              style={commonStyles.timeInput}
             />
             <span>min</span>
           </span>
@@ -206,17 +203,17 @@ export default function RecipeMetaEditor({
               setPrep(splitTime(savedPrep));
               setEditing("prep");
             }}
-            style={styles.editable}
+            style={commonStyles.editable}
           >
             {formatTime(savedPrep)}
           </span>
         )}
       </span>
 
-      <span style={styles.metaItem}>
+      <span style={commonStyles.metaItem}>
         <strong>Cook:</strong>{" "}
         {editing === "cook" ? (
-          <span ref={editorRef} style={styles.editor}>
+          <span ref={editorRef} style={commonStyles.editor}>
             <input
               type="number"
               min="0"
@@ -227,7 +224,7 @@ export default function RecipeMetaEditor({
                   hours: Number(e.target.value),
                 })
               }
-              style={styles.timeInput}
+              style={commonStyles.timeInput}
             />
             <span>hr</span>
 
@@ -242,7 +239,7 @@ export default function RecipeMetaEditor({
                   minutes: Number(e.target.value),
                 })
               }
-              style={styles.timeInput}
+              style={commonStyles.timeInput}
             />
             <span>min</span>
           </span>
@@ -252,14 +249,14 @@ export default function RecipeMetaEditor({
               setCook(splitTime(savedCook));
               setEditing("cook");
             }}
-            style={styles.editable}
+            style={commonStyles.editable}
           >
             {formatTime(savedCook)}
           </span>
         )}
       </span>
 
-      <span style={styles.metaItem}>
+      <span style={commonStyles.metaItem}>
         <strong>Serves:</strong>{" "}
         {editing === "servings" ? (
           <span ref={editorRef}>
@@ -268,7 +265,7 @@ export default function RecipeMetaEditor({
               min="1"
               value={servingsValue}
               onChange={(e) => setServingsValue(Number(e.target.value))}
-              style={styles.servingsInput}
+              style={commonStyles.servingsInput}
             />
           </span>
         ) : (
@@ -277,7 +274,7 @@ export default function RecipeMetaEditor({
               setServingsValue(savedServings ?? 0);
               setEditing("servings");
             }}
-            style={styles.editable}
+            style={commonStyles.editable}
           >
             {savedServings}
           </span>
@@ -286,38 +283,3 @@ export default function RecipeMetaEditor({
     </div>
   );
 }
-
-const styles = {
-  meta: {
-    display: "flex",
-    flexWrap: "nowrap" as const,
-    gap: "20px",
-    marginTop: "24px",
-    color: "#555",
-  },
-
-  metaItem: {
-    whiteSpace: "nowrap" as const,
-  },
-
-  editable: {
-    cursor: "text",
-  },
-
-  editor: {
-    display: "inline-flex",
-    alignItems: "center",
-    gap: "4px",
-    minWidth: "145px",
-  },
-
-  timeInput: {
-    width: "45px",
-    padding: "3px",
-  },
-
-  servingsInput: {
-    width: "50px",
-    padding: "3px",
-  },
-};

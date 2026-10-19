@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { commonStyles } from "@/styles/common";
 
 export const metadata: Metadata = {
   title: "Recipe Book",
@@ -13,26 +14,23 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body style={styles.body}>
-        <nav style={styles.nav}>
-          <Link href="/" style={styles.logo}>
+      <body style={commonStyles.body}>
+        <nav style={commonStyles.nav}>
+          <Link href="/" style={commonStyles.logo}>
             Recipe Book
           </Link>
 
-          <div style={styles.links}>
-            <Link href="/" style={styles.link}>
+          <div style={commonStyles.links}>
+            <Link href="/" style={commonStyles.link}>
               Home
             </Link>
-
-            <Link href="/recipes" style={styles.link}>
+            <Link href="/recipes" style={commonStyles.link}>
               Recipes
             </Link>
-
-            <Link href="/about" style={styles.link}>
+            <Link href="/about" style={commonStyles.link}>
               About
             </Link>
-
-            <Link href="/profile" style={styles.link}>
+            <Link href="/profile" style={commonStyles.link}>
               Profile
             </Link>
           </div>
@@ -43,32 +41,3 @@ export default function RootLayout({
     </html>
   );
 }
-
-const styles = {
-  body: {
-    margin: 0,
-    fontFamily: "Arial, sans-serif",
-    color: "#222",
-  },
-  nav: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: "18px 32px",
-    borderBottom: "1px solid #ddd",
-  },
-  logo: {
-    fontSize: "24px",
-    fontWeight: "700",
-    textDecoration: "none",
-    color: "#222",
-  },
-  links: {
-    display: "flex",
-    gap: "24px",
-  },
-  link: {
-    textDecoration: "none",
-    color: "#222",
-  },
-};

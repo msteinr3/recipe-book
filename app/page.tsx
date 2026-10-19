@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { commonStyles } from "@/styles/common";
+import { commonStyles, designTokens } from "@/styles/common";
 import { supabase } from "@/lib/supabase";
 
 type Recipe = {
@@ -34,11 +34,11 @@ export default function HomePage() {
 
   return (
     <main style={commonStyles.page}>
-      <section style={styles.hero}>
-        <div style={styles.heroContent}>
-          <h1 style={styles.heroTitle}>Recipe Book</h1>
+      <section style={commonStyles.hero}>
+        <div style={commonStyles.heroContent}>
+          <h1 style={commonStyles.heroTitle}>Recipe Book</h1>
 
-          <p style={styles.heroText}>
+          <p style={commonStyles.heroText}>
             A collection of recipes shared, preserved, and enjoyed together.
           </p>
 
@@ -49,9 +49,9 @@ export default function HomePage() {
       </section>
 
       <section style={commonStyles.container}>
-        <div style={styles.sectionHeader}>
+        <div style={commonStyles.sectionHeader}>
           <div>
-            <h2 style={styles.sectionTitle}>Recently Added</h2>
+            <h2 style={commonStyles.sectionTitle}>Recently Added</h2>
             <p style={commonStyles.subtitle}>
               Explore recipes from the collection.
             </p>
@@ -65,7 +65,7 @@ export default function HomePage() {
         {loading ? (
           <p>Loading recipes...</p>
         ) : recipes.length === 0 ? (
-          <div style={styles.empty}>
+          <div style={commonStyles.emptyState}>
             <h3>No recipes yet</h3>
             <p>Be the first to contribute a recipe to the collection.</p>
 
@@ -74,26 +74,26 @@ export default function HomePage() {
             </Link>
           </div>
         ) : (
-          <div style={styles.grid}>
+          <div style={commonStyles.grid}>
             {recipes.map((recipe) => (
-              <article key={recipe.id} style={styles.card}>
+              <article key={recipe.id} style={commonStyles.card}>
                 {recipe.image_url && (
                   <img
                     src={recipe.image_url}
                     alt={recipe.title}
-                    style={styles.image}
+                    style={commonStyles.image}
                   />
                 )}
 
-                <div style={styles.cardContent}>
-                  <h3 style={styles.recipeTitle}>{recipe.title}</h3>
+                <div style={commonStyles.cardContent}>
+                  <h3 style={commonStyles.cardTitle}>{recipe.title}</h3>
 
                   {recipe.category && (
-                    <p style={styles.category}>{recipe.category}</p>
+                    <p style={commonStyles.category}>{recipe.category}</p>
                   )}
 
                   {recipe.description && (
-                    <p style={styles.description}>{recipe.description}</p>
+                    <p style={commonStyles.description}>{recipe.description}</p>
                   )}
 
                   <Link
@@ -111,9 +111,9 @@ export default function HomePage() {
 
       <section style={styles.contribute}>
         <div style={commonStyles.container}>
-          <h2 style={styles.sectionTitle}>Have a recipe to share?</h2>
+          <h2 style={commonStyles.sectionTitle}>Have a recipe to share?</h2>
 
-          <p style={styles.contributeText}>
+          <p style={commonStyles.contributeText}>
             Help grow the collection by submitting a recipe of your own.
           </p>
 
@@ -127,97 +127,9 @@ export default function HomePage() {
 }
 
 const styles = {
-  hero: {
-    padding: "90px 20px",
-    background: "#f7f3ed",
-  },
-
-  heroContent: {
-    maxWidth: "900px",
-    margin: "0 auto",
-    textAlign: "center" as const,
-  },
-
-  heroTitle: {
-    fontSize: "56px",
-    margin: 0,
-  },
-
-  heroText: {
-    maxWidth: "650px",
-    margin: "20px auto 30px",
-    fontSize: "20px",
-    lineHeight: 1.6,
-    color: "#555",
-  },
-
-  sectionHeader: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "flex-end",
-    gap: "24px",
-    marginBottom: "30px",
-  },
-
-  sectionTitle: {
-    fontSize: "32px",
-    margin: 0,
-  },
-
-  grid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-    gap: "24px",
-  },
-
-  card: {
-    border: "1px solid #ddd",
-    borderRadius: "10px",
-    overflow: "hidden" as const,
-    background: "white",
-  },
-
-  image: {
-    width: "100%",
-    height: "200px",
-    objectFit: "cover" as const,
-  },
-
-  cardContent: {
-    padding: "20px",
-  },
-
-  recipeTitle: {
-    margin: 0,
-    fontSize: "24px",
-  },
-
-  category: {
-    marginTop: "8px",
-    color: "#666",
-    fontWeight: "600",
-  },
-
-  description: {
-    lineHeight: 1.5,
-    marginBottom: "18px",
-  },
-
-  empty: {
-    padding: "50px 20px",
-    textAlign: "center" as const,
-    border: "1px solid #ddd",
-    borderRadius: "10px",
-  },
-
   contribute: {
-    marginTop: "70px",
-    padding: "70px 20px",
-    background: "#f7f3ed",
-  },
-
-  contributeText: {
-    margin: "12px 0 24px",
-    color: "#555",
+    marginTop: designTokens.spacing.section,
+    padding: `${designTokens.spacing.section} ${designTokens.spacing.lg}`,
+    background: designTokens.colors.accentBackground,
   },
 };

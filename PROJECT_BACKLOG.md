@@ -2,23 +2,12 @@
 
 ## Priority 1 — Collaborators & Invitations
 
-- [x] Remove an editor from a book — implemented and tested
-- [ ] Show pending invitations clearly to the owner
-- [ ] Prevent duplicate invitations
-- [ ] Handle inviting someone who is already an editor
-- [ ] Prevent inviting yourself
-- [ ] Handle expired invitations
-- [ ] Clean up accepted/declined invitations
-
-**Goal:** Make collaboration reliable and ensure owners can understand and manage access.
+- [ ] Clean up accepted/declined/expired invitations — optional database housekeeping
 
 ## Priority 2 — Password Management
 
-- [ ] Change password while logged in
-- [ ] Forgot/reset password
-- [ ] Test password-management flows
-
-**Goal:** Let users securely update or recover their passwords.
+- [ ] Test password recovery end to end
+- [ ] Verify password-change and reset flows work correctly in all relevant cases
 
 ## Priority 3 — Design & Visual Polish
 
@@ -42,5 +31,3 @@
 - [ ] Improve recipe page layout
 - [ ] Add decorative elements
 - [ ] Improve overall visual styling
-
-**Goal:** Build a cohesive, polished design using reusable styles.

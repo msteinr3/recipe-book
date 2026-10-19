@@ -22,7 +22,6 @@ export default function RecipesPage() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
-
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [userBooks, setUserBooks] = useState<UserBook[]>([]);
   const [addedBookIds, setAddedBookIds] = useState<Set<string>>(new Set());
@@ -53,14 +52,12 @@ export default function RecipesPage() {
   const filteredRecipes = recipes.filter((recipe) => {
     const searchTerm = search.trim().toLowerCase();
 
-    if (!searchTerm) {
-      return true;
-    }
+    if (!searchTerm) return true;
 
-    const title = recipe.title.toLowerCase();
-    const category = recipe.category?.toLowerCase() ?? "";
-
-    return title.includes(searchTerm) || category.includes(searchTerm);
+    return (
+      recipe.title.toLowerCase().includes(searchTerm) ||
+      (recipe.category?.toLowerCase() ?? "").includes(searchTerm)
+    );
   });
 
   const handleAddClick = async (recipe: Recipe) => {
@@ -108,7 +105,6 @@ export default function RecipesPage() {
         .select("id, title")
         .in("id", bookIds)
         .order("title"),
-
       supabase
         .from("book_recipes")
         .select("book_id")
@@ -134,9 +130,7 @@ export default function RecipesPage() {
   };
 
   const handleAddToBook = async (book: UserBook) => {
-    if (!selectedRecipe || addedBookIds.has(book.id)) {
-      return;
-    }
+    if (!selectedRecipe || addedBookIds.has(book.id)) return;
 
     setAddingToBookId(book.id);
     setBookPickerError("");
@@ -166,12 +160,7 @@ export default function RecipesPage() {
 
     if (error) {
       if (error.code === "23505") {
-        setAddedBookIds((current) => {
-          const updated = new Set(current);
-          updated.add(book.id);
-          return updated;
-        });
-
+        setAddedBookIds((current) => new Set(current).add(book.id));
         setBookPickerError(
           `"${selectedRecipe.title}" is already in "${book.title}".`,
         );
@@ -183,14 +172,8 @@ export default function RecipesPage() {
       return;
     }
 
-    setAddedBookIds((current) => {
-      const updated = new Set(current);
-      updated.add(book.id);
-      return updated;
-    });
-
+    setAddedBookIds((current) => new Set(current).add(book.id));
     setAddSuccessMessage(`Added "${selectedRecipe.title}" to "${book.title}".`);
-
     setAddingToBookId(null);
   };
 
@@ -208,22 +191,15 @@ export default function RecipesPage() {
     <>
       <main style={commonStyles.page}>
         <div style={commonStyles.container}>
-          <div style={styles.header}>
+          <div style={commonStyles.sectionHeader}>
             <div>
               <h1 style={commonStyles.title}>Recipes</h1>
-
               <p style={commonStyles.subtitle}>
                 Browse the recipes in our collection.
               </p>
             </div>
 
-            <Link
-              href="/submit"
-              style={{
-                ...commonStyles.button,
-                whiteSpace: "nowrap",
-              }}
-            >
+            <Link href="/submit" style={commonStyles.button}>
               Add New Recipe
             </Link>
           </div>
@@ -233,7 +209,7 @@ export default function RecipesPage() {
             placeholder="Search by recipe name or category..."
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            style={styles.search}
+            style={commonStyles.searchInput}
           />
 
           {loading && <p>Loading recipes...</p>}
@@ -241,11 +217,9 @@ export default function RecipesPage() {
           {errorMessage && <p style={commonStyles.error}>{errorMessage}</p>}
 
           {!loading && !errorMessage && recipes.length === 0 && (
-            <div style={styles.empty}>
+            <div style={commonStyles.emptyState}>
               <h2>No recipes yet</h2>
-
               <p>Be the first to add a recipe to the collection.</p>
-
               <Link href="/submit" style={commonStyles.button}>
                 Add New Recipe
               </Link>
@@ -256,40 +230,38 @@ export default function RecipesPage() {
             !errorMessage &&
             recipes.length > 0 &&
             filteredRecipes.length === 0 && (
-              <div style={styles.empty}>
+              <div style={commonStyles.emptyState}>
                 <h2>No recipes found</h2>
-
                 <p>Try a different recipe name or category.</p>
               </div>
             )}
 
           {!loading && !errorMessage && filteredRecipes.length > 0 && (
-            <div style={styles.list}>
+            <div style={commonStyles.verticalList}>
               {filteredRecipes.map((recipe) => (
-                <div key={recipe.id} style={styles.row}>
+                <div key={recipe.id} style={commonStyles.listRow}>
                   <Link
                     href={`/recipes/${recipe.id}`}
-                    style={styles.recipeLink}
+                    style={commonStyles.horizontalLink}
                   >
-                    <div style={styles.recipeInfo}>
-                      <h2 style={styles.recipeTitle}>{recipe.title}</h2>
-
+                    <div style={commonStyles.flexFill}>
+                      <h2 style={commonStyles.cardTitle}>{recipe.title}</h2>
                       {recipe.category && (
-                        <p style={styles.category}>{recipe.category}</p>
+                        <p style={commonStyles.category}>{recipe.category}</p>
                       )}
                     </div>
 
                     <img
                       src={recipe.image_url || "/images/default-food.jpg"}
                       alt={recipe.title}
-                      style={styles.thumbnail}
+                      style={commonStyles.thumbnail}
                     />
                   </Link>
 
                   <button
                     type="button"
                     onClick={() => handleAddClick(recipe)}
-                    style={styles.addButton}
+                    style={commonStyles.secondaryButton}
                   >
                     + Add
                   </button>
@@ -301,22 +273,22 @@ export default function RecipesPage() {
       </main>
 
       {selectedRecipe && (
-        <div style={styles.overlay} onClick={closeBookPicker}>
+        <div style={commonStyles.modalOverlay} onClick={closeBookPicker}>
           <div
-            style={styles.modal}
+            style={commonStyles.modal}
             onClick={(event) => event.stopPropagation()}
           >
-            <div style={styles.modalHeader}>
+            <div style={commonStyles.modalHeader}>
               <div>
-                <h2 style={styles.modalTitle}>Add to a Book</h2>
-
-                <p style={styles.modalSubtitle}>{selectedRecipe.title}</p>
+                <h2 style={commonStyles.cardTitle}>Add to a Book</h2>
+                <p style={commonStyles.subtitle}>{selectedRecipe.title}</p>
               </div>
 
               <button
                 type="button"
                 onClick={closeBookPicker}
-                style={styles.closeButton}
+                style={commonStyles.modalCloseButton}
+                aria-label="Close"
               >
                 ×
               </button>
@@ -335,9 +307,8 @@ export default function RecipesPage() {
             {!bookPickerLoading &&
               !bookPickerError &&
               userBooks.length === 0 && (
-                <div style={styles.noBooks}>
+                <div style={commonStyles.emptyState}>
                   <p>You don't have any recipe books yet.</p>
-
                   <Link
                     href="/profile"
                     style={commonStyles.button}
@@ -349,7 +320,7 @@ export default function RecipesPage() {
               )}
 
             {!bookPickerLoading && userBooks.length > 0 && (
-              <div style={styles.bookList}>
+              <div style={commonStyles.verticalList}>
                 {userBooks.map((book) => {
                   const alreadyAdded = addedBookIds.has(book.id);
 
@@ -360,16 +331,15 @@ export default function RecipesPage() {
                       onClick={() => handleAddToBook(book)}
                       disabled={alreadyAdded || addingToBookId !== null}
                       style={{
-                        ...styles.bookButton,
-                        ...(alreadyAdded ? styles.bookButtonAdded : {}),
+                        ...commonStyles.pickerButton,
+                        ...(alreadyAdded ? commonStyles.pickerButtonAdded : {}),
                       }}
                     >
                       <span>{book.title}</span>
-
                       <span
                         style={{
-                          ...styles.bookArrow,
-                          ...(alreadyAdded ? styles.addedText : {}),
+                          ...commonStyles.mutedSmallText,
+                          ...(alreadyAdded ? commonStyles.addedText : {}),
                         }}
                       >
                         {alreadyAdded
@@ -389,179 +359,3 @@ export default function RecipesPage() {
     </>
   );
 }
-
-const styles = {
-  header: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    gap: "24px",
-    marginBottom: "24px",
-  },
-
-  search: {
-    width: "100%",
-    boxSizing: "border-box" as const,
-    padding: "12px 14px",
-    marginBottom: "20px",
-    border: "1px solid #ccc",
-    borderRadius: "6px",
-    fontSize: "16px",
-  },
-
-  list: {
-    display: "flex",
-    flexDirection: "column" as const,
-    gap: "6px",
-  },
-
-  row: {
-    display: "flex",
-    alignItems: "center",
-    gap: "16px",
-    padding: "10px 14px",
-    borderRadius: "6px",
-    background: "#f7f3ed",
-  },
-
-  recipeLink: {
-    display: "flex",
-    alignItems: "center",
-    gap: "16px",
-    flex: 1,
-    minWidth: 0,
-    textDecoration: "none",
-    color: "inherit",
-  },
-
-  recipeInfo: {
-    flex: 1,
-    minWidth: 0,
-  },
-
-  recipeTitle: {
-    margin: 0,
-    fontSize: "19px",
-  },
-
-  category: {
-    margin: "4px 0 0",
-    color: "#666",
-    fontSize: "14px",
-  },
-
-  thumbnail: {
-    width: "70px",
-    height: "52px",
-    objectFit: "contain" as const,
-    borderRadius: "4px",
-    background: "#fff",
-    flexShrink: 0,
-  },
-
-  addButton: {
-    padding: "8px 12px",
-    border: "1px solid #ccc",
-    borderRadius: "5px",
-    background: "#fff",
-    color: "#222",
-    cursor: "pointer",
-    fontSize: "14px",
-    whiteSpace: "nowrap" as const,
-    flexShrink: 0,
-  },
-
-  empty: {
-    padding: "60px 20px",
-    textAlign: "center" as const,
-    border: "1px solid #ddd",
-    borderRadius: "12px",
-  },
-
-  overlay: {
-    position: "fixed" as const,
-    inset: 0,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: "20px",
-    background: "rgba(0, 0, 0, 0.45)",
-    zIndex: 1000,
-  },
-
-  modal: {
-    width: "100%",
-    maxWidth: "500px",
-    padding: "24px",
-    borderRadius: "10px",
-    background: "white",
-    boxSizing: "border-box" as const,
-  },
-
-  modalHeader: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    gap: "20px",
-    marginBottom: "20px",
-  },
-
-  modalTitle: {
-    margin: 0,
-    fontSize: "24px",
-  },
-
-  modalSubtitle: {
-    margin: "6px 0 0",
-    color: "#666",
-  },
-
-  closeButton: {
-    border: "none",
-    background: "transparent",
-    fontSize: "28px",
-    lineHeight: 1,
-    cursor: "pointer",
-    color: "#666",
-  },
-
-  bookList: {
-    display: "flex",
-    flexDirection: "column" as const,
-    gap: "8px",
-  },
-
-  bookButton: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    width: "100%",
-    padding: "14px 16px",
-    border: "1px solid #ddd",
-    borderRadius: "6px",
-    background: "#f7f3ed",
-    cursor: "pointer",
-    textAlign: "left" as const,
-    fontSize: "16px",
-  },
-
-  bookButtonAdded: {
-    background: "#eee",
-    cursor: "default",
-  },
-
-  bookArrow: {
-    color: "#666",
-    fontSize: "14px",
-  },
-
-  addedText: {
-    color: "#333",
-    fontWeight: "600",
-  },
-
-  noBooks: {
-    textAlign: "center" as const,
-    padding: "20px 0",
-  },
-};

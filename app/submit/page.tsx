@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { type FormEvent, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { commonStyles } from "@/styles/common";
 
@@ -114,12 +114,12 @@ export default function SubmitRecipePage() {
       <div style={commonStyles.narrowContainer}>
         <h1 style={commonStyles.title}>Submit a Recipe</h1>
 
-        <p style={styles.subtitle}>
+        <p style={commonStyles.subtitle}>
           Submit a recipe for review. Approved recipes will become part of the
           recipe collection.
         </p>
 
-        <form onSubmit={handleSubmit} style={styles.form}>
+        <form onSubmit={handleSubmit} style={commonStyles.form}>
           <label style={commonStyles.label}>
             Recipe Name *
             <input name="title" required style={commonStyles.input} />
@@ -134,11 +134,11 @@ export default function SubmitRecipePage() {
             />
           </label>
 
-          <section style={styles.section}>
-            <h2 style={styles.sectionTitle}>Ingredients</h2>
+          <section style={commonStyles.section}>
+            <h2 style={commonStyles.sectionTitle}>Ingredients</h2>
 
             {ingredients.map((ingredient, index) => (
-              <div key={index} style={styles.ingredientRow}>
+              <div key={index} style={commonStyles.ingredientRow}>
                 <input
                   placeholder="Ingredient"
                   value={ingredient.item}
@@ -176,12 +176,12 @@ export default function SubmitRecipePage() {
             </button>
           </section>
 
-          <section style={styles.section}>
-            <h2 style={styles.sectionTitle}>Instructions</h2>
+          <section style={commonStyles.section}>
+            <h2 style={commonStyles.sectionTitle}>Instructions</h2>
 
             {instructions.map((instruction, index) => (
-              <div key={index} style={styles.instructionRow}>
-                <span style={styles.stepNumber}>{index + 1}.</span>
+              <div key={index} style={commonStyles.instructionRow}>
+                <span style={commonStyles.stepNumber}>{index + 1}.</span>
 
                 <textarea
                   value={instruction}
@@ -211,7 +211,7 @@ export default function SubmitRecipePage() {
             </button>
           </section>
 
-          <div style={styles.twoColumns}>
+          <div style={commonStyles.twoColumns}>
             <label style={commonStyles.label}>
               Prep Time (minutes)
               <input
@@ -307,50 +307,3 @@ export default function SubmitRecipePage() {
     </main>
   );
 }
-
-const styles = {
-  subtitle: {
-    marginBottom: "40px",
-  },
-
-  form: {
-    display: "flex",
-    flexDirection: "column" as const,
-    gap: "24px",
-  },
-
-  section: {
-    display: "flex",
-    flexDirection: "column" as const,
-    gap: "14px",
-  },
-
-  sectionTitle: {
-    fontSize: "24px",
-    margin: 0,
-  },
-
-  ingredientRow: {
-    display: "grid",
-    gridTemplateColumns: "1fr 180px auto",
-    gap: "8px",
-  },
-
-  instructionRow: {
-    display: "grid",
-    gridTemplateColumns: "30px 1fr auto",
-    gap: "8px",
-    alignItems: "start",
-  },
-
-  stepNumber: {
-    paddingTop: "12px",
-    fontWeight: "600",
-  },
-
-  twoColumns: {
-    display: "grid",
-    gridTemplateColumns: "1fr 1fr",
-    gap: "16px",
-  },
-};

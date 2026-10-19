@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useEffect, useState } from "react";
+import { type FormEvent, useEffect, useState } from "react";
 import { commonStyles } from "@/styles/common";
 import { supabase } from "@/lib/supabase";
 
@@ -61,6 +61,7 @@ export default function ProfilePage() {
     ) {
       setIsResettingPassword(true);
     }
+
     const loadProfile = async () => {
       setLoading(true);
       setErrorMessage("");
@@ -68,6 +69,11 @@ export default function ProfilePage() {
       const { data, error } = await supabase.auth.getUser();
 
       if (error || !data.user) {
+        setUserId(null);
+        setUserEmail(null);
+        setBooks([]);
+        setInvitations([]);
+        setIsAdmin(false);
         setLoading(false);
         return;
       }
@@ -136,7 +142,6 @@ export default function ProfilePage() {
       }
 
       setInvitations((invitationData ?? []) as Invitation[]);
-
       setLoading(false);
     };
 
@@ -159,7 +164,6 @@ export default function ProfilePage() {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
     setMessage("");
     setErrorMessage("");
 
@@ -251,6 +255,7 @@ export default function ProfilePage() {
     setMessage(
       "Your password has been reset successfully. You can now log in.",
     );
+
     await supabase.auth.signOut();
     window.history.replaceState({}, "", "/profile");
   };
@@ -308,7 +313,6 @@ export default function ProfilePage() {
 
   const handleCreateBook = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
     setMessage("");
     setErrorMessage("");
 
@@ -382,7 +386,6 @@ export default function ProfilePage() {
     });
 
     setMessage(`You joined "${invitation.book_title}".`);
-
     setProcessingInvitationId(null);
   };
 
@@ -406,7 +409,6 @@ export default function ProfilePage() {
     );
 
     setMessage(`You declined the invitation to "${invitation.book_title}".`);
-
     setProcessingInvitationId(null);
   };
 
@@ -454,7 +456,7 @@ export default function ProfilePage() {
             Choose a new password for your account.
           </p>
 
-          <form onSubmit={handleResetPassword} style={styles.form}>
+          <form onSubmit={handleResetPassword} style={commonStyles.form}>
             <label style={commonStyles.label}>
               New Password
               <input
@@ -509,7 +511,7 @@ export default function ProfilePage() {
               : "Create an account to save recipes and build your own books."}
           </p>
 
-          <form onSubmit={handleSubmit} style={styles.form}>
+          <form onSubmit={handleSubmit} style={commonStyles.form}>
             <label style={commonStyles.label}>
               Email
               <input
@@ -517,6 +519,7 @@ export default function ProfilePage() {
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 required
+                autoComplete="email"
                 style={commonStyles.input}
               />
             </label>
@@ -529,6 +532,9 @@ export default function ProfilePage() {
                 onChange={(event) => setPassword(event.target.value)}
                 required
                 minLength={6}
+                autoComplete={
+                  mode === "login" ? "current-password" : "new-password"
+                }
                 style={commonStyles.input}
               />
             </label>
@@ -539,7 +545,7 @@ export default function ProfilePage() {
               <button
                 type="button"
                 onClick={handleForgotPassword}
-                style={styles.forgotPasswordButton}
+                style={commonStyles.forgotPasswordButton}
               >
                 Forgot password?
               </button>
@@ -575,8 +581,8 @@ export default function ProfilePage() {
       <div style={commonStyles.narrowContainer}>
         <h1 style={commonStyles.title}>Profile</h1>
 
-        <div style={styles.profileCard}>
-          <div style={styles.accountHeader}>
+        <div style={commonStyles.profileCard}>
+          <div style={commonStyles.accountHeader}>
             <h2 style={{ margin: 0 }}>Account</h2>
 
             <button
@@ -589,7 +595,7 @@ export default function ProfilePage() {
                 setMessage("");
                 setErrorMessage("");
               }}
-              style={styles.editButton}
+              style={commonStyles.editButton}
             >
               {isEditingAccount ? "Cancel" : "Edit"}
             </button>
@@ -600,7 +606,7 @@ export default function ProfilePage() {
           </p>
 
           {isEditingAccount && (
-            <form onSubmit={handleChangePassword} style={styles.form}>
+            <form onSubmit={handleChangePassword} style={commonStyles.form}>
               <h3>Change Password</h3>
 
               <label style={commonStyles.label}>
@@ -659,23 +665,25 @@ export default function ProfilePage() {
         </div>
 
         {invitations.length > 0 && (
-          <section style={styles.section}>
-            <h2 style={styles.sectionTitle}>Pending Invitations</h2>
+          <section style={commonStyles.section}>
+            <h2 style={commonStyles.sectionTitle}>Pending Invitations</h2>
 
-            <div style={styles.invitationList}>
+            <div style={commonStyles.invitationList}>
               {invitations.map((invitation) => (
-                <div key={invitation.id} style={styles.invitationRow}>
-                  <div style={styles.invitationInfo}>
-                    <h3 style={styles.bookTitle}>{invitation.book_title}</h3>
+                <div key={invitation.id} style={commonStyles.invitationRow}>
+                  <div style={commonStyles.invitationInfo}>
+                    <h3 style={commonStyles.bookTitle}>
+                      {invitation.book_title}
+                    </h3>
 
-                    <p style={styles.bookDescription}>
+                    <p style={commonStyles.bookDescription}>
                       {invitation.invited_by_email
                         ? `Invited by ${invitation.invited_by_email}`
                         : "You've been invited to collaborate on this book."}
                     </p>
                   </div>
 
-                  <div style={styles.invitationActions}>
+                  <div style={commonStyles.invitationActions}>
                     <button
                       type="button"
                       onClick={() => handleAcceptInvitation(invitation)}
@@ -703,15 +711,14 @@ export default function ProfilePage() {
         )}
 
         {message && <p style={commonStyles.success}>{message}</p>}
-
         {errorMessage && <p style={commonStyles.error}>{errorMessage}</p>}
 
-        <section style={styles.section}>
-          <div style={styles.sectionHeader}>
+        <section style={commonStyles.section}>
+          <div style={commonStyles.sectionHeader}>
             <div>
-              <h2 style={styles.sectionTitle}>My Recipe Books</h2>
+              <h2 style={commonStyles.sectionTitle}>My Recipe Books</h2>
 
-              <p style={styles.sectionDescription}>
+              <p style={commonStyles.sectionDescription}>
                 Books you own or collaborate on.
               </p>
             </div>
@@ -730,7 +737,10 @@ export default function ProfilePage() {
           </div>
 
           {showCreateBook && (
-            <form onSubmit={handleCreateBook} style={styles.createBookForm}>
+            <form
+              onSubmit={handleCreateBook}
+              style={commonStyles.createBookForm}
+            >
               <label style={commonStyles.label}>
                 Book Title
                 <input
@@ -758,25 +768,29 @@ export default function ProfilePage() {
           )}
 
           {books.length === 0 ? (
-            <div style={styles.empty}>
+            <div style={commonStyles.empty}>
               <h3>No books yet</h3>
-
               <p>Create your first recipe book to get started.</p>
             </div>
           ) : (
-            <div style={styles.bookList}>
+            <div style={commonStyles.bookList}>
               {books.map((book) => (
-                <div key={book.id} style={styles.bookRow}>
-                  <Link href={`/books/${book.id}`} style={styles.bookLink}>
+                <div key={book.id} style={commonStyles.bookRow}>
+                  <Link
+                    href={`/books/${book.id}`}
+                    style={commonStyles.bookLink}
+                  >
                     <div>
-                      <h3 style={styles.bookTitle}>{book.title}</h3>
+                      <h3 style={commonStyles.bookTitle}>{book.title}</h3>
 
                       {book.description && (
-                        <p style={styles.bookDescription}>{book.description}</p>
+                        <p style={commonStyles.bookDescription}>
+                          {book.description}
+                        </p>
                       )}
                     </div>
 
-                    <span style={styles.role}>
+                    <span style={commonStyles.role}>
                       {book.role === "owner" ? "Owner" : "Editor"}
                     </span>
                   </Link>
@@ -785,7 +799,7 @@ export default function ProfilePage() {
                     <button
                       type="button"
                       onClick={() => handleDeleteBook(book)}
-                      style={styles.deleteButton}
+                      style={commonStyles.deleteButton}
                     >
                       Delete
                     </button>
@@ -797,9 +811,8 @@ export default function ProfilePage() {
         </section>
 
         {isAdmin && (
-          <section style={styles.adminSection}>
+          <section style={commonStyles.adminSection}>
             <h2>Admin Tools</h2>
-
             <p>You have administrator access to the recipe collection.</p>
 
             <Link href="/admin" style={commonStyles.button}>
@@ -811,173 +824,3 @@ export default function ProfilePage() {
     </main>
   );
 }
-
-const styles = {
-  form: {
-    display: "flex",
-    flexDirection: "column" as const,
-    gap: "20px",
-    marginBottom: "20px",
-  },
-
-  profileCard: {
-    marginTop: "30px",
-    padding: "24px",
-    border: "1px solid #ddd",
-    borderRadius: "8px",
-  },
-
-  accountHeader: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: "12px",
-  },
-
-  editButton: {
-    padding: "5px 10px",
-    border: "1px solid #ddd",
-    borderRadius: "6px",
-    background: "white",
-    cursor: "pointer",
-    fontSize: "14px",
-  },
-
-  section: {
-    marginTop: "40px",
-  },
-
-  sectionHeader: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    gap: "20px",
-    marginBottom: "24px",
-  },
-
-  sectionTitle: {
-    margin: 0,
-    fontSize: "28px",
-  },
-
-  sectionDescription: {
-    marginTop: "8px",
-    color: "#666",
-  },
-
-  invitationList: {
-    display: "flex",
-    flexDirection: "column" as const,
-    gap: "8px",
-  },
-
-  invitationRow: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: "20px",
-    padding: "16px",
-    borderRadius: "8px",
-    background: "#f7f3ed",
-  },
-
-  invitationInfo: {
-    flex: 1,
-    minWidth: 0,
-  },
-
-  invitationActions: {
-    display: "flex",
-    gap: "8px",
-    flexShrink: 0,
-  },
-
-  createBookForm: {
-    display: "flex",
-    flexDirection: "column" as const,
-    gap: "20px",
-    padding: "20px",
-    marginBottom: "24px",
-    border: "1px solid #ddd",
-    borderRadius: "8px",
-  },
-
-  empty: {
-    padding: "40px 20px",
-    border: "1px solid #ddd",
-    borderRadius: "8px",
-    textAlign: "center" as const,
-  },
-
-  bookList: {
-    display: "flex",
-    flexDirection: "column" as const,
-    gap: "8px",
-  },
-
-  bookRow: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: "12px",
-    padding: "16px",
-    borderRadius: "8px",
-    background: "#f7f3ed",
-  },
-
-  bookLink: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: "20px",
-    flex: 1,
-    minWidth: 0,
-    textDecoration: "none",
-    color: "inherit",
-  },
-
-  deleteButton: {
-    padding: "8px 12px",
-    border: "1px solid #b42318",
-    borderRadius: "6px",
-    background: "white",
-    color: "#b42318",
-    cursor: "pointer",
-    flexShrink: 0,
-  },
-
-  bookTitle: {
-    margin: 0,
-    fontSize: "20px",
-  },
-
-  bookDescription: {
-    margin: "6px 0 0",
-    color: "#666",
-  },
-
-  role: {
-    fontSize: "14px",
-    fontWeight: "600",
-    color: "#666",
-    flexShrink: 0,
-  },
-
-  adminSection: {
-    marginTop: "40px",
-    padding: "24px",
-    borderRadius: "8px",
-    background: "#f7f3ed",
-  },
-
-  forgotPasswordButton: {
-    alignSelf: "flex-start",
-    padding: 0,
-    border: "none",
-    background: "none",
-    color: "#5b5147",
-    textDecoration: "underline",
-    cursor: "pointer",
-    fontSize: "14px",
-  },
-};
