@@ -27,6 +27,10 @@ type Invitation = {
 export default function ProfilePage() {
   const [userId, setUserId] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [isEditingAccount, setIsEditingAccount] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -184,6 +188,52 @@ export default function ProfilePage() {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     window.location.reload();
+  };
+
+  const handleChangePassword = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setMessage("");
+    setErrorMessage("");
+
+    if (newPassword !== confirmNewPassword) {
+      setErrorMessage("The new passwords do not match.");
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      setErrorMessage("The new password must be at least 6 characters.");
+      return;
+    }
+
+    if (!userEmail) {
+      setErrorMessage("Unable to identify your account.");
+      return;
+    }
+
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email: userEmail,
+      password: currentPassword,
+    });
+
+    if (signInError) {
+      setErrorMessage("Your current password is incorrect.");
+      return;
+    }
+
+    const { error } = await supabase.auth.updateUser({
+      password: newPassword,
+    });
+
+    if (error) {
+      setErrorMessage(error.message);
+      return;
+    }
+
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmNewPassword("");
+    setIsEditingAccount(false);
+    setMessage("Your password was changed successfully.");
   };
 
   const handleCreateBook = async (event: FormEvent<HTMLFormElement>) => {
@@ -396,11 +446,78 @@ export default function ProfilePage() {
         <h1 style={commonStyles.title}>Profile</h1>
 
         <div style={styles.profileCard}>
-          <h2>Account</h2>
+          <div style={styles.accountHeader}>
+            <h2 style={{ margin: 0 }}>Account</h2>
+
+            <button
+              type="button"
+              onClick={() => {
+                setIsEditingAccount((current) => !current);
+                setCurrentPassword("");
+                setNewPassword("");
+                setConfirmNewPassword("");
+                setMessage("");
+                setErrorMessage("");
+              }}
+              style={styles.editButton}
+            >
+              {isEditingAccount ? "Cancel" : "Edit"}
+            </button>
+          </div>
 
           <p>
             <strong>Email:</strong> {userEmail}
           </p>
+
+          {isEditingAccount && (
+            <form onSubmit={handleChangePassword} style={styles.form}>
+              <h3>Change Password</h3>
+
+              <label style={commonStyles.label}>
+                Current Password
+                <input
+                  type="password"
+                  value={currentPassword}
+                  onChange={(event) => setCurrentPassword(event.target.value)}
+                  required
+                  autoComplete="current-password"
+                  style={commonStyles.input}
+                />
+              </label>
+
+              <label style={commonStyles.label}>
+                New Password
+                <input
+                  type="password"
+                  value={newPassword}
+                  onChange={(event) => setNewPassword(event.target.value)}
+                  required
+                  minLength={6}
+                  autoComplete="new-password"
+                  style={commonStyles.input}
+                />
+              </label>
+
+              <label style={commonStyles.label}>
+                Confirm New Password
+                <input
+                  type="password"
+                  value={confirmNewPassword}
+                  onChange={(event) =>
+                    setConfirmNewPassword(event.target.value)
+                  }
+                  required
+                  minLength={6}
+                  autoComplete="new-password"
+                  style={commonStyles.input}
+                />
+              </label>
+
+              <button type="submit" style={commonStyles.button}>
+                Save Password
+              </button>
+            </form>
+          )}
 
           <button
             type="button"
@@ -578,6 +695,22 @@ const styles = {
     padding: "24px",
     border: "1px solid #ddd",
     borderRadius: "8px",
+  },
+
+  accountHeader: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: "12px",
+  },
+
+  editButton: {
+    padding: "5px 10px",
+    border: "1px solid #ddd",
+    borderRadius: "6px",
+    background: "white",
+    cursor: "pointer",
+    fontSize: "14px",
   },
 
   section: {
