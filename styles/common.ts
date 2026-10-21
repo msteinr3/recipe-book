@@ -8,11 +8,18 @@ export const designTokens = {
     error: "#ffebee",
     success: "#e8f5e9",
     disabled: "#eee",
+    subtleBackground: "#f7f7f7",
+    tagBackground: "#f0f0f0",
+    previewBackground: "#f3f3f3",
+    sectionBackground: "#fafafa",
+    inputBorder: "#ccc",
     overlay: "rgba(0, 0, 0, 0.45)",
+    dialogOverlay: "rgba(0, 0, 0, 0.4)",
     danger: "#b42318",
     accentText: "#5b5147",
     primaryButton: "green",
   },
+
   spacing: {
     xs: "4px",
     sm: "8px",
@@ -20,32 +27,64 @@ export const designTokens = {
     lg: "16px",
     xl: "24px",
     xxl: "32px",
+    compact: "10px",
+    roomy: "20px",
+    wide: "30px",
+    mdPlus: "15px",
+    lgPlus: "18px",
+    sectionLarge: "50px",
+    xxxl: "60px",
+    pageInset: "70px",
     page: "64px",
     hero: "80px",
+    section: "40px",
   },
+
   sizes: {
+    stepNumber: "30px",
+    thumbnailHeight: "52px",
+    timeInputWidth: "60px",
+    servingsInputWidth: "64px",
+    thumbnailWidth: "70px",
+    editorMinWidth: "145px",
+    ingredientUnit: "180px",
     imageHeight: "200px",
     cardMinWidth: "280px",
+    recipeImage: "280px",
+    recipeImageSpace: "320px",
+    mediumContent: "500px",
+    largeContent: "700px",
     heroText: "650px",
     narrowContainer: "800px",
     heroContent: "900px",
     container: "1100px",
-    thumbnailWidth: "70px",
-    thumbnailHeight: "52px",
-    modalWidth: "500px",
-    recipeImage: "280px",
-    recipeImageSpace: "320px",
-    editorMinWidth: "145px",
-    timeInputWidth: "60px",
-    servingsInputWidth: "64px",
+    bookManageInput: "250px",
+    bookManageRecipeImageWidth: "90px",
+    bookManageRecipeImageHeight: "70px",
+    bookManagePickerImageWidth: "60px",
+    bookManagePickerImageHeight: "50px",
+    previewCover: "650px",
+    previewSection: "500px",
+    previewContent: "600px",
+    previewRecipeImageWidth: "220px",
+    previewRecipeImageHeight: "160px",
+    recipeFieldInput: "200px",
+    recipeFieldTextareaHeight: "100px",
+    bookManageDescriptionHeight: "90px",
+    recipeImageLayer: "400px",
+    quantityInput: "70px",
+    instructionInput: "40px",
     ingredientAmount: "1fr",
-    ingredientUnit: "180px",
-    stepNumber: "30px",
   },
+
   typography: {
+    small: "14px",
+    bookDescription: "17px",
     body: "16px",
+    recipeDescription: "18px",
     intro: "20px",
     headingSmall: "24px",
+    closeButton: "28px",
     headingMedium: "32px",
     headingLarge: "40px",
     heroTitle: "56px",
@@ -55,20 +94,29 @@ export const designTokens = {
     lineHeightBody: 1.5,
     lineHeightRelaxed: 1.6,
     lineHeightDescription: 1.7,
-    small: "14px",
-    closeButton: "28px",
-    recipeDescription: "18px",
   },
+
   radius: {
     sm: "6px",
+    control: "8px",
     md: "10px",
+    lg: "12px",
+    pill: "999px",
   },
+
   shadows: {
     card: "0 2px 8px rgba(0, 0, 0, 0.08)",
   },
+
+  layout: {
+    recipeImageTop: "120px",
+    overlayZIndex: 1000,
+    gridColumns: "1fr 1fr",
+  },
 };
 
-const { colors, spacing, sizes, typography, radius, shadows } = designTokens;
+const { colors, spacing, sizes, typography, radius, shadows, layout } =
+  designTokens;
 
 const fieldStyle = {
   padding: spacing.md,
@@ -107,6 +155,37 @@ const commonEmptyState = {
   borderRadius: radius.md,
 };
 
+const commonCardSurface = {
+  border: `1px solid ${colors.border}`,
+  borderRadius: radius.md,
+  background: colors.background,
+  boxShadow: shadows.card,
+};
+
+const commonButtonBase = {
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: spacing.sm,
+  padding: `${spacing.sm} ${spacing.md}`,
+  borderRadius: radius.sm,
+  cursor: "pointer",
+  fontSize: typography.body,
+};
+
+const columnForm = {
+  display: "flex",
+  flexDirection: "column" as const,
+};
+
+const commonSecondaryButton = {
+  ...commonButtonBase,
+  border: `1px solid ${colors.border}`,
+  background: colors.background,
+  color: colors.text,
+  textDecoration: "none",
+};
+
 const horizontalButton = {
   ...flexRow,
   justifyContent: "space-between",
@@ -138,30 +217,634 @@ const commonModalOverlay = {
   justifyContent: "center",
   padding: spacing.lg,
   background: colors.overlay,
-  zIndex: 1000,
+  zIndex: layout.overlayZIndex,
 };
 
 const commonModal = {
   width: "100%",
-  maxWidth: sizes.modalWidth,
+  maxWidth: sizes.mediumContent,
   padding: spacing.xl,
   borderRadius: radius.md,
   background: colors.background,
   boxSizing: "border-box" as const,
 };
 
-const commonButtonBase = {
-  display: "inline-flex",
+export const bookPdfDownloadButtonStyle = {
+  display: "inline-block" as const,
+  padding: "10px 16px",
+  borderRadius: 8,
+  backgroundColor: colors.text,
+  color: colors.background,
+  textDecoration: "none",
+  fontWeight: 600,
+};
+
+const pdfCenteredPage = {
+  position: "relative",
+  fontFamily: "Helvetica",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  textAlign: "center",
+} as const;
+
+export const bookPdfStyles = {
+  coverPage: {
+    ...pdfCenteredPage,
+    padding: 60,
+  },
+  coverContent: { width: "100%", alignItems: "center" },
+  coverLabel: {
+    fontSize: 12,
+    letterSpacing: 4,
+    marginBottom: 25,
+    color: colors.muted,
+  },
+  coverTitle: { fontSize: 38, marginBottom: 25 },
+  coverDescription: {
+    fontSize: 14,
+    lineHeight: 1.5,
+    maxWidth: 420,
+    color: colors.muted,
+  },
+  coverCount: { marginTop: 35, fontSize: 12, color: colors.muted },
+  page: {
+    position: "relative",
+    paddingTop: 55,
+    paddingBottom: 55,
+    paddingLeft: 55,
+    paddingRight: 55,
+    fontFamily: "Helvetica",
+  },
+  pageTitle: { fontSize: 28, marginBottom: 35 },
+  tocSection: { marginBottom: 22 },
+  tocCategory: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 7,
+  },
+  tocRecipe: {
+    fontSize: 11,
+    color: colors.muted,
+    marginLeft: 15,
+    marginBottom: 4,
+  },
+  sectionPage: {
+    ...pdfCenteredPage,
+    padding: 55,
+  },
+  sectionContent: { alignItems: "center" },
+  sectionLabel: {
+    fontSize: 12,
+    letterSpacing: 4,
+    color: colors.muted,
+    marginBottom: 20,
+  },
+  sectionTitle: { fontSize: 34, marginBottom: 15 },
+  sectionCount: { fontSize: 12, color: colors.muted },
+  recipeCategory: { fontSize: 11, color: colors.muted, marginBottom: 8 },
+  recipeTitle: { fontSize: 28, marginBottom: 20 },
+  description: {
+    fontSize: 12,
+    lineHeight: 1.5,
+    color: colors.muted,
+    marginBottom: 18,
+  },
+  meta: {
+    flexDirection: "row",
+    gap: 15,
+    fontSize: 10,
+    color: colors.muted,
+    marginBottom: 15,
+  },
+  recipeSection: { marginTop: 24 },
+  recipeSectionTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  listItem: { fontSize: 11, lineHeight: 1.6, marginBottom: 5 },
+  bodyText: { fontSize: 11, lineHeight: 1.6 },
+  footer: {
+    position: "absolute",
+    bottom: 25,
+    left: 0,
+    right: 0,
+    textAlign: "center",
+    fontSize: 9,
+    color: colors.muted,
+  },
+} as const;
+
+const recipeDetailsContainer = {
+  maxWidth: sizes.narrowContainer,
+  margin: "0 auto",
+  position: "relative" as const,
+};
+
+const bookManageTitleBase = {
+  fontSize: typography.headingLarge,
+  margin: 0,
+};
+const bookManageDescriptionBase = {
+  fontSize: typography.bookDescription,
+  lineHeight: 1.6,
+  color: colors.muted,
+  marginTop: spacing.compact,
+};
+const bookManageButtonBase = {
+  padding: `${spacing.compact} ${spacing.lg}`,
+  borderRadius: radius.control,
+  fontWeight: typography.weightSemibold,
+};
+const bookManageImageBase = {
+  objectFit: "cover" as const,
+  flexShrink: 0,
+};
+const centeredBookPreview = {
+  maxWidth: sizes.heroContent,
+  margin: "0 auto",
+};
+const bookPreviewCenteredContent = {
+  display: "flex",
   alignItems: "center",
   justifyContent: "center",
+  textAlign: "center" as const,
+};
+const columnList = {
+  display: "flex",
+  flexDirection: "column" as const,
+};
+const tagList = {
+  display: "flex",
+  flexWrap: "wrap" as const,
   gap: spacing.sm,
-  padding: `${spacing.sm} ${spacing.md}`,
-  borderRadius: radius.sm,
+};
+const tagBase = {
+  borderRadius: radius.pill,
+  background: colors.tagBackground,
+};
+
+const recipePickerButton = horizontalButton;
+const recipePickerButtonAdded = {
+  ...horizontalButton,
+  background: colors.disabled,
+  cursor: "default",
+};
+const recipePickerButtonText = {
+  color: colors.muted,
+  fontSize: typography.small,
+};
+const recipePickerButtonTextAdded = {
+  ...recipePickerButtonText,
+  color: colors.text,
+  fontWeight: typography.weightSemibold,
+};
+
+const fullWidthSubmitButton = {
+  display: "block",
+  width: "100%",
+  padding: spacing.lg,
+  marginBottom: spacing.xxl,
+  background: colors.primaryButton,
+  color: colors.background,
+  border: "none",
+  borderRadius: radius.md,
+  fontSize: typography.intro,
+  fontWeight: typography.weightBold,
   cursor: "pointer",
-  fontSize: typography.body,
 };
 
 export const commonStyles = {
+  admin: {
+    header: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      gap: spacing.xl,
+      marginBottom: spacing.section,
+    },
+    sectionHeading: {
+      fontSize: typography.closeButton,
+      marginBottom: spacing.xl,
+    },
+    item: {
+      border: `1px solid ${colors.border}`,
+      borderRadius: radius.sm,
+      padding: spacing.lg,
+    },
+    summary: {
+      cursor: "pointer",
+      fontWeight: typography.weightSemibold,
+    },
+    details: { marginTop: spacing.lg },
+    rejectButton: {
+      ...commonSecondaryButton,
+      color: colors.danger,
+      borderColor: colors.danger,
+    },
+  },
+
+  bookManage: {
+    header: { marginTop: "28px" },
+    titleInput: {
+      width: "100%",
+      maxWidth: sizes.largeContent,
+      boxSizing: "border-box" as const,
+      fontSize: typography.headingMedium,
+      fontWeight: typography.weightBold,
+      padding: `${spacing.xs} ${spacing.sm}`,
+      border: `1px solid ${colors.inputBorder}`,
+      borderRadius: radius.control,
+      outline: "none",
+    },
+    description: bookManageDescriptionBase,
+    descriptionInput: {
+      display: "block",
+      width: "100%",
+      maxWidth: sizes.largeContent,
+      minHeight: sizes.bookManageDescriptionHeight,
+      boxSizing: "border-box" as const,
+      fontSize: typography.bookDescription,
+      lineHeight: 1.6,
+      padding: spacing.sm,
+      border: `1px solid ${colors.inputBorder}`,
+      borderRadius: radius.control,
+      resize: "vertical" as const,
+    },
+    role: {
+      display: "inline-block",
+      marginTop: spacing.md,
+      padding: "5px 10px",
+      borderRadius: radius.pill,
+      background: colors.tagBackground,
+      color: colors.muted,
+      fontSize: typography.small,
+      fontWeight: typography.weightSemibold,
+    },
+    previewButton: {
+      display: "inline-block",
+      ...bookManageButtonBase,
+      background: colors.text,
+      color: colors.background,
+      textDecoration: "none",
+    },
+    primaryButton: {
+      ...bookManageButtonBase,
+      border: "none",
+      background: colors.text,
+      color: colors.background,
+      cursor: "pointer",
+    },
+    emptyState: {
+      marginTop: spacing.section,
+      padding: spacing.wide,
+      borderRadius: radius.lg,
+      background: colors.subtleBackground,
+    },
+    sections: { marginTop: spacing.section },
+    section: { marginBottom: spacing.sectionLarge },
+    sectionTitle: {
+      fontSize: typography.closeButton,
+      marginBottom: spacing.lgPlus,
+    },
+    recipeList: {
+      ...columnList,
+      gap: spacing.md,
+    },
+    recipeRow: {
+      display: "flex",
+      alignItems: "center",
+      gap: spacing.md,
+      padding: spacing.md,
+      border: `1px solid ${colors.border}`,
+      borderRadius: radius.md,
+    },
+    recipeLink: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: spacing.roomy,
+      flex: 1,
+      textDecoration: "none",
+      color: "inherit",
+    },
+    recipeInfo: { minWidth: 0 },
+    recipeTitle: { margin: 0, fontSize: "19px" },
+    recipeCategory: {
+      margin: "5px 0 0",
+      color: colors.muted,
+      fontSize: typography.small,
+    },
+    recipeImage: {
+      width: sizes.bookManageRecipeImageWidth,
+      height: sizes.bookManageRecipeImageHeight,
+      ...bookManageImageBase,
+      borderRadius: radius.control,
+    },
+    removeButton: {
+      padding: `${spacing.sm} ${spacing.md}`,
+      borderRadius: radius.control,
+      border: `1px solid ${colors.inputBorder}`,
+      background: colors.background,
+      cursor: "pointer",
+    },
+    collaborators: {
+      marginTop: spacing.xxxl,
+      paddingTop: "35px",
+      borderTop: `1px solid ${colors.border}`,
+    },
+    collaboratorsTitle: { fontSize: "26px", marginBottom: spacing.roomy },
+    memberList: {
+      ...columnList,
+      gap: spacing.compact,
+    },
+    memberRow: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: spacing.roomy,
+      padding: "12px 14px",
+      border: `1px solid ${colors.border}`,
+      borderRadius: radius.control,
+    },
+    memberRole: {
+      marginLeft: spacing.compact,
+      color: colors.muted,
+      fontSize: typography.small,
+    },
+    inviteBox: { marginTop: spacing.xxl },
+    inviteTitle: { fontSize: typography.intro, marginBottom: spacing.md },
+    inviteRow: {
+      display: "flex",
+      gap: spacing.compact,
+      flexWrap: "wrap" as const,
+    },
+    input: {
+      flex: 1,
+      minWidth: sizes.bookManageInput,
+      padding: `${spacing.compact} ${spacing.md}`,
+      borderRadius: radius.control,
+      border: `1px solid ${colors.inputBorder}`,
+    },
+    message: { marginTop: spacing.compact, color: colors.muted },
+    error: { marginTop: spacing.roomy, color: colors.danger },
+    pickerRow: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: spacing.mdPlus,
+      padding: spacing.compact,
+      border: `1px solid ${colors.border}`,
+      borderRadius: radius.control,
+    },
+    pickerRecipeInfo: {
+      display: "flex",
+      alignItems: "center",
+      gap: spacing.md,
+      minWidth: 0,
+    },
+    pickerImage: {
+      width: sizes.bookManagePickerImageWidth,
+      height: sizes.bookManagePickerImageHeight,
+      ...bookManageImageBase,
+      borderRadius: radius.control,
+    },
+    pickerCategory: {
+      marginTop: spacing.xs,
+      color: colors.muted,
+      fontSize: "13px",
+    },
+    addButton: {
+      padding: `${spacing.sm} ${spacing.md}`,
+      borderRadius: radius.control,
+      border: "none",
+      background: colors.text,
+      color: colors.background,
+      cursor: "pointer",
+      whiteSpace: "nowrap" as const,
+    },
+    addedButton: {
+      padding: `${spacing.sm} ${spacing.md}`,
+      borderRadius: radius.control,
+      border: `1px solid ${colors.inputBorder}`,
+      background: colors.previewBackground,
+      color: colors.muted,
+      cursor: "default",
+      whiteSpace: "nowrap" as const,
+    },
+    collaboratorRemoveButton: {
+      padding: "6px 12px",
+      border: `1px solid ${colors.inputBorder}`,
+      borderRadius: radius.sm,
+      background: colors.background,
+      cursor: "pointer",
+    },
+    bookTitleOwner: {
+      ...bookManageTitleBase,
+      cursor: "text",
+    },
+    bookTitleReadOnly: {
+      ...bookManageTitleBase,
+      cursor: "default",
+    },
+    bookDescriptionOwner: { ...bookManageDescriptionBase, cursor: "text" },
+    bookDescriptionReadOnly: {
+      ...bookManageDescriptionBase,
+      cursor: "default",
+    },
+  },
+
+  bookPreview: {
+    page: {
+      minHeight: "100vh",
+      background: colors.previewBackground,
+      paddingBottom: spacing.xxxl,
+    },
+    messagePage: {
+      ...centeredBookPreview,
+      padding: `${spacing.section} ${spacing.roomy}`,
+    },
+    topBar: {
+      ...centeredBookPreview,
+      padding: `${spacing.xl} ${spacing.roomy}`,
+    },
+    topBarContent: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: spacing.mdPlus,
+      flexWrap: "wrap" as const,
+    },
+    backLink: { color: colors.text, textDecoration: "none" },
+    book: {
+      width: "100%",
+      ...centeredBookPreview,
+      background: colors.background,
+    },
+    cover: {
+      minHeight: sizes.previewCover,
+      ...bookPreviewCenteredContent,
+      padding: `${spacing.xxxl} ${spacing.section}`,
+      borderBottom: `1px solid ${colors.border}`,
+    },
+    coverLabel: {
+      fontSize: typography.small,
+      letterSpacing: "4px",
+      color: colors.muted,
+      marginBottom: spacing.xl,
+    },
+    coverTitle: { fontSize: "52px", lineHeight: 1.1, margin: 0 },
+    coverDescription: {
+      maxWidth: sizes.previewContent,
+      margin: `${spacing.wide} auto 0`,
+      fontSize: typography.recipeDescription,
+      lineHeight: 1.7,
+      color: colors.muted,
+    },
+    coverRecipeCount: { marginTop: spacing.section, color: colors.muted },
+    pageSection: {
+      minHeight: sizes.previewCover,
+      padding: spacing.pageInset,
+      borderBottom: `1px solid ${colors.border}`,
+    },
+    pageTitle: { fontSize: "36px", marginBottom: spacing.section },
+    toc: { display: "flex", flexDirection: "column" as const, gap: "28px" },
+    tocSection: {
+      display: "flex",
+      flexDirection: "column" as const,
+      gap: spacing.sm,
+    },
+    tocSectionLink: {
+      fontSize: "21px",
+      fontWeight: "700",
+      color: colors.text,
+      textDecoration: "none",
+    },
+    tocRecipes: {
+      display: "flex",
+      flexDirection: "column" as const,
+      gap: spacing.xs,
+      paddingLeft: spacing.lgPlus,
+    },
+    tocRecipeLink: { color: colors.muted, textDecoration: "none" },
+    sectionDivider: {
+      minHeight: sizes.previewSection,
+      ...bookPreviewCenteredContent,
+      padding: `${spacing.xxxl} ${spacing.section}`,
+      background: colors.sectionBackground,
+      borderBottom: `1px solid ${colors.border}`,
+      scrollMarginTop: spacing.roomy,
+      pageBreakBefore: "always" as const,
+    },
+    sectionLabel: {
+      fontSize: typography.small,
+      letterSpacing: "4px",
+      color: colors.muted,
+      marginBottom: spacing.lgPlus,
+    },
+    sectionTitle: { fontSize: "48px", margin: 0 },
+    sectionCount: { marginTop: spacing.roomy, color: colors.muted },
+    recipePage: {
+      minHeight: sizes.previewCover,
+      padding: `${spacing.xxxl} ${spacing.pageInset}`,
+      borderBottom: `1px solid ${colors.border}`,
+      scrollMarginTop: spacing.roomy,
+      pageBreakBefore: "always" as const,
+    },
+    recipeHeader: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "flex-start",
+      gap: spacing.wide,
+    },
+    recipeHeaderInfo: { flex: 1 },
+    recipeCategory: { margin: 0, color: colors.muted, fontSize: typography.small },
+    recipeTitle: {
+      fontSize: "38px",
+      lineHeight: 1.15,
+      marginTop: spacing.compact,
+    },
+    recipeImage: {
+      width: sizes.previewRecipeImageWidth,
+      height: sizes.previewRecipeImageHeight,
+      objectFit: "cover" as const,
+      borderRadius: radius.md,
+      flexShrink: 0,
+    },
+    recipeDescription: {
+      fontSize: typography.recipeDescription,
+      lineHeight: 1.7,
+      color: colors.muted,
+      marginTop: "25px",
+    },
+    meta: {
+      display: "flex",
+      flexWrap: "wrap" as const,
+      gap: spacing.lgPlus,
+      marginTop: "22px",
+      color: colors.muted,
+    },
+    recipeSection: { marginTop: "38px" },
+    recipeSectionTitle: { fontSize: "22px", marginBottom: "14px" },
+    ingredientList: { lineHeight: 1.8, paddingLeft: spacing.xl },
+    instructionList: { lineHeight: 1.9, paddingLeft: spacing.xl },
+    tags: tagList,
+    tag: {
+      ...tagBase,
+      padding: "5px 10px",
+    },
+  },
+
+  aboutParagraph: {
+    marginTop: spacing.xl,
+    lineHeight: typography.lineHeightDescription,
+    fontSize: typography.recipeDescription,
+  },
+
+  invitationMessage: {
+    marginTop: spacing.xl,
+    lineHeight: typography.lineHeightRelaxed,
+  },
+
+  contributeSection: {
+    marginTop: spacing.section,
+    padding: `${spacing.section} ${spacing.lg}`,
+    background: colors.accentBackground,
+  },
+
+  recipeFieldInput: {
+    padding: spacing.xs,
+    fontSize: "inherit",
+    width: "auto",
+    minWidth: sizes.recipeFieldInput,
+    boxSizing: "border-box" as const,
+  },
+
+  recipeFieldTextarea: {
+    padding: spacing.xs,
+    fontSize: "inherit",
+    width: sizes.mediumContent,
+    maxWidth: "100%",
+    minHeight: sizes.recipeFieldTextareaHeight,
+    boxSizing: "border-box" as const,
+    fontFamily: "inherit",
+  },
+
+  recipeFieldSelect: {
+    padding: spacing.xs,
+    fontSize: "inherit",
+  },
+
+  hiddenSubmitForm: { display: "none" },
+
+  recipeDetailsContainer,
+
+  recipePickerButton,
+  recipePickerButtonAdded,
+  recipePickerButtonText,
+  recipePickerButtonTextAdded,
+
   body: {
     margin: 0,
     fontFamily: "Arial, sans-serif",
@@ -264,26 +947,10 @@ export const commonStyles = {
     fontWeight: typography.weightSemibold,
   },
 
-  fullWidthSubmitButton: {
-    display: "block",
-    width: "100%",
-    padding: spacing.lg,
-    marginBottom: spacing.xxl,
-    background: colors.primaryButton,
-    color: colors.background,
-    border: "none",
-    borderRadius: radius.md,
-    fontSize: typography.intro,
-    fontWeight: typography.weightBold,
-    cursor: "pointer",
-  },
+  fullWidthSubmitButton,
 
   secondaryButton: {
-    ...commonButtonBase,
-    border: `1px solid ${colors.border}`,
-    background: colors.background,
-    color: colors.text,
-    textDecoration: "none",
+    ...commonSecondaryButton,
   },
 
   textButton: {
@@ -292,6 +959,13 @@ export const commonStyles = {
     color: colors.muted,
     cursor: "pointer",
     fontSize: typography.body,
+  },
+
+  buttonRow: {
+    display: "flex",
+    flexWrap: "wrap" as const,
+    gap: spacing.md,
+    marginTop: spacing.xl,
   },
 
   link: {
@@ -310,11 +984,8 @@ export const commonStyles = {
   },
 
   card: {
-    border: `1px solid ${colors.border}`,
-    borderRadius: radius.md,
+    ...commonCardSurface,
     overflow: "hidden" as const,
-    background: colors.background,
-    boxShadow: shadows.card,
   },
 
   cardContent: {
@@ -327,11 +998,8 @@ export const commonStyles = {
   },
 
   emptyState: commonEmptyState,
-  empty: commonEmptyState,
 
   verticalList,
-  invitationList: verticalList,
-  bookList: verticalList,
 
   listRow: {
     ...flexRow,
@@ -351,9 +1019,12 @@ export const commonStyles = {
   flexFill,
 
   image: {
-    width: "100%",
-    height: sizes.imageHeight,
-    objectFit: "cover" as const,
+    display: "block",
+    width: "auto",
+    height: "auto",
+    maxWidth: "100%",
+    maxHeight: sizes.imageHeight,
+    objectFit: "contain" as const,
   },
 
   thumbnail: {
@@ -415,12 +1086,16 @@ export const commonStyles = {
 
   dialogOverlay: {
     ...commonModalOverlay,
-    background: "rgba(0, 0, 0, 0.4)",
+    background: colors.dialogOverlay,
   },
 
   modal: commonModal,
-  dialog: commonModal,
-
+  largeModal: {
+    ...commonModal,
+    maxWidth: sizes.largeContent,
+    maxHeight: "85vh",
+    overflowY: "auto" as const,
+  },
   modalHeader: {
     display: "flex",
     justifyContent: "space-between",
@@ -440,6 +1115,14 @@ export const commonStyles = {
     marginBottom: spacing.lg,
   },
 
+  messageTitle: {
+    marginTop: spacing.wide,
+  },
+
+  messageText: {
+    marginTop: spacing.md,
+  },
+
   dialogActions: verticalList,
 
   destructiveButton: {
@@ -449,37 +1132,16 @@ export const commonStyles = {
     border: `1px solid ${colors.danger}`,
   },
 
-  pickerButton: horizontalButton,
-
-  pickerButtonAdded: {
-    background: colors.disabled,
-    cursor: "default",
-  },
-
-  mutedSmallText: {
-    color: colors.muted,
-    fontSize: typography.small,
-  },
-
-  addedText: {
-    color: colors.text,
-    fontWeight: typography.weightSemibold,
-  },
-
   form: {
-    display: "flex",
-    flexDirection: "column" as const,
+    ...columnForm,
     gap: spacing.xl,
     marginBottom: spacing.xl,
   },
 
   profileCard: {
+    ...commonCardSurface,
     marginTop: spacing.xxl,
     padding: spacing.xl,
-    border: `1px solid ${colors.border}`,
-    borderRadius: radius.md,
-    background: colors.background,
-    boxShadow: shadows.card,
   },
 
   accountHeader: {
@@ -499,10 +1161,14 @@ export const commonStyles = {
   },
 
   section: {
-    display: "flex",
-    flexDirection: "column" as const,
+    ...columnList,
     gap: spacing.md,
     marginTop: spacing.xxl,
+  },
+
+  formSection: {
+    ...columnList,
+    gap: spacing.md,
   },
 
   sectionDescription: {
@@ -529,8 +1195,7 @@ export const commonStyles = {
   },
 
   createBookForm: {
-    display: "flex",
-    flexDirection: "column" as const,
+    ...columnForm,
     gap: spacing.lg,
     padding: spacing.lg,
     marginBottom: spacing.xl,
@@ -598,6 +1263,7 @@ export const commonStyles = {
     fontSize: typography.small,
   },
 
+  // Recipe form grid layouts
   ingredientRow: {
     display: "grid",
     gridTemplateColumns: `${sizes.ingredientAmount} ${sizes.ingredientUnit} auto`,
@@ -618,7 +1284,7 @@ export const commonStyles = {
 
   twoColumns: {
     display: "grid",
-    gridTemplateColumns: "1fr 1fr",
+    gridTemplateColumns: layout.gridColumns,
     gap: spacing.lg,
   },
 
@@ -631,7 +1297,10 @@ export const commonStyles = {
   recipeImageLayer: {
     position: "absolute" as const,
     right: 0,
-    top: "120px",
+    top: layout.recipeImageTop,
+    maxWidth: "100%",
+    maxHeight: sizes.recipeImageLayer,
+    overflow: "hidden",
   },
 
   recipeDetailImage: {
@@ -678,14 +1347,92 @@ export const commonStyles = {
   },
 
   timeInput: {
+    ...fieldStyle,
     width: sizes.timeInputWidth,
+    padding: spacing.xs,
+  },
+
+  servingsInput: {
+    ...fieldStyle,
+    width: sizes.servingsInputWidth,
+    padding: spacing.xs,
+  },
+
+  // Recipe list editor
+  ingredients: {
+    lineHeight: 1.8,
+    paddingLeft: spacing.xl,
+  },
+
+  instructions: {
+    lineHeight: 1.8,
+    paddingLeft: spacing.xl,
+  },
+
+  ingredientEditorRow: {
+    display: "flex",
+    gap: spacing.sm,
+    marginBottom: spacing.sm,
+    alignItems: "center",
+  },
+
+  quantityInput: {
+    width: sizes.quantityInput,
     padding: spacing.xs,
     boxSizing: "border-box" as const,
   },
 
-  servingsInput: {
-    width: sizes.servingsInputWidth,
+  itemInput: {
+    width: "35%",
     padding: spacing.xs,
     boxSizing: "border-box" as const,
+  },
+
+  instructionEditorRow: {
+    display: "flex",
+    gap: spacing.sm,
+    marginBottom: spacing.sm,
+    alignItems: "flex-start",
+  },
+
+  instructionInput: {
+    width: "50%",
+    minHeight: sizes.instructionInput,
+    padding: "6px",
+    boxSizing: "border-box" as const,
+    fontFamily: "inherit",
+    fontSize: "inherit",
+  },
+
+  removeButton: {
+    padding: `${spacing.xs} ${spacing.sm}`,
+    cursor: "pointer",
+  },
+
+  editorButtons: {
+    display: "flex",
+    gap: spacing.sm,
+    marginTop: spacing.md,
+  },
+
+  editorButton: {
+    ...commonButtonBase,
+    padding: `${spacing.xs} ${spacing.sm}`,
+  },
+
+  tags: {
+    ...tagList,
+  },
+
+  tag: {
+    ...tagBase,
+    padding: `${spacing.xs} ${spacing.md}`,
+  },
+
+  tagsInput: {
+    width: "100%",
+    padding: spacing.xs,
+    boxSizing: "border-box" as const,
+    fontSize: "inherit",
   },
 };

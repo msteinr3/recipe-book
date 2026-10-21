@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { commonStyles } from "@/styles/common";
 
 type RecipeMetaEditorProps = {
@@ -61,77 +61,82 @@ export default function RecipeMetaEditor({
 
   const editorRef = useRef<HTMLSpanElement>(null);
 
-  async function saveTime(
-    type: "prep" | "cook",
-    hours: number,
-    minutes: number,
-  ) {
-    const totalMinutes = hours * 60 + minutes;
+  const saveTime = useCallback(
+    async (type: "prep" | "cook", hours: number, minutes: number) => {
+      const totalMinutes = hours * 60 + minutes;
 
-    if (!isAdmin) {
-      onChange(type === "prep" ? "prep_minutes" : "cook_minutes", totalMinutes);
+      if (!isAdmin) {
+        onChange(
+          type === "prep" ? "prep_minutes" : "cook_minutes",
+          totalMinutes,
+        );
 
-      if (type === "prep") {
-        setSavedPrep(totalMinutes);
-      } else {
-        setSavedCook(totalMinutes);
+        if (type === "prep") {
+          setSavedPrep(totalMinutes);
+        } else {
+          setSavedCook(totalMinutes);
+        }
+
+        return;
       }
 
-      return;
-    }
+      const response = await fetch("/api/recipes/update-meta", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          recipeId,
+          field: type === "prep" ? "prep_minutes" : "cook_minutes",
+          value: totalMinutes,
+        }),
+      });
 
-    const response = await fetch("/api/recipes/update-meta", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        recipeId,
-        field: type === "prep" ? "prep_minutes" : "cook_minutes",
-        value: totalMinutes,
-      }),
-    });
+      const result = await response.json();
 
-    const result = await response.json();
+      console.log("SAVE RESULT:", response.status, result);
 
-    console.log("SAVE RESULT:", response.status, result);
-
-    if (response.ok) {
-      if (type === "prep") {
-        setSavedPrep(totalMinutes);
-      } else {
-        setSavedCook(totalMinutes);
+      if (response.ok) {
+        if (type === "prep") {
+          setSavedPrep(totalMinutes);
+        } else {
+          setSavedCook(totalMinutes);
+        }
       }
-    }
-  }
+    },
+    [isAdmin, onChange, recipeId],
+  );
 
-  async function saveServings(value: number) {
-    if (!isAdmin) {
-      onChange("servings", value);
-      setSavedServings(value);
-      return;
-    }
+  const saveServings = useCallback(
+    async (value: number) => {
+      if (!isAdmin) {
+        onChange("servings", value);
+        setSavedServings(value);
+        return;
+      }
 
-    const response = await fetch("/api/recipes/update-meta", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        recipeId,
-        field: "servings",
-        value,
-      }),
-    });
+      const response = await fetch("/api/recipes/update-meta", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          recipeId,
+          field: "servings",
+          value,
+        }),
+      });
 
-    const result = await response.json();
+      const result = await response.json();
 
-    console.log("SAVE RESULT:", response.status, result);
+      console.log("SAVE RESULT:", response.status, result);
 
-    if (response.ok) {
-      setSavedServings(value);
-    }
-  }
+      if (response.ok) {
+        setSavedServings(value);
+      }
+    },
+    [isAdmin, onChange, recipeId],
+  );
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -160,7 +165,7 @@ export default function RecipeMetaEditor({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [editing, prep, cook, servingsValue]);
+  }, [editing, prep, cook, saveServings, saveTime, servingsValue]);
 
   return (
     <div style={commonStyles.meta}>

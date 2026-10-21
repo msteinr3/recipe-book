@@ -47,12 +47,7 @@ export default async function RecipePage({
 
   return (
     <main style={commonStyles.page}>
-      <div
-        style={{
-          ...commonStyles.narrowContainer,
-          position: "relative",
-        }}
-      >
+      <div style={commonStyles.recipeDetailsContainer}>
         <RecipePageContent recipe={recipe} />
       </div>
     </main>

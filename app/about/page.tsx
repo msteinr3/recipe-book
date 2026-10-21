@@ -6,16 +6,16 @@ export default function AboutPage() {
       <div style={commonStyles.narrowContainer}>
         <h1 style={commonStyles.title}>About</h1>
 
-        <p style={styles.paragraph}>
+        <p style={commonStyles.aboutParagraph}>
           Recipe Book is a place to collect, preserve, and share recipes.
         </p>
 
-        <p style={styles.paragraph}>
+        <p style={commonStyles.aboutParagraph}>
           Anyone can submit a recipe. Recipes are reviewed before they are added
           to the collection.
         </p>
 
-        <p style={styles.paragraph}>
+        <p style={commonStyles.aboutParagraph}>
           Over time, the collection will also be used to create recipe books
           that can be selected, organized, and printed.
         </p>
@@ -23,11 +23,3 @@ export default function AboutPage() {
     </main>
   );
 }
-
-const styles = {
-  paragraph: {
-    marginTop: "24px",
-    lineHeight: 1.7,
-    fontSize: "18px",
-  },
-};

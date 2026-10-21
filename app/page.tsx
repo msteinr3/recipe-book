@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { commonStyles, designTokens } from "@/styles/common";
+import { commonStyles } from "@/styles/common";
 import { supabase } from "@/lib/supabase";
 
 type Recipe = {
@@ -109,7 +109,7 @@ export default function HomePage() {
         )}
       </section>
 
-      <section style={styles.contribute}>
+      <section style={commonStyles.contributeSection}>
         <div style={commonStyles.container}>
           <h2 style={commonStyles.sectionTitle}>Have a recipe to share?</h2>
 
@@ -125,11 +125,3 @@ export default function HomePage() {
     </main>
   );
 }
-
-const styles = {
-  contribute: {
-    marginTop: designTokens.spacing.section,
-    padding: `${designTokens.spacing.section} ${designTokens.spacing.lg}`,
-    background: designTokens.colors.accentBackground,
-  },
-};

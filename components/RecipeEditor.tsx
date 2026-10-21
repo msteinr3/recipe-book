@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import RecipeFieldEditor from "@/components/RecipeFieldEditor";
 import RecipeMetaEditor from "@/components/RecipeMetaEditor";
 import RecipeListEditor from "@/components/RecipeListEditor";
+import { commonStyles } from "@/styles/common";
 
 type Ingredient = {
   quantity: string;
@@ -47,8 +48,40 @@ export default function RecipeEditor({
   const beforeUnloadHandlerRef = useRef<
     ((event: BeforeUnloadEvent) => void) | null
   >(null);
+  const submitFormRef = useRef<HTMLFormElement>(null);
 
   const hasChanges = JSON.stringify(draft) !== JSON.stringify(recipe);
+
+  const submitChanges = useCallback(async () => {
+    const response = await fetch("/api/recipes/submit-edit", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        recipeId: recipe.id,
+        recipeData: draft,
+      }),
+    });
+
+    const result = await response.json();
+
+    console.log("SUBMIT RESULT:", response.status, result);
+
+    if (response.ok) {
+      if (beforeUnloadHandlerRef.current) {
+        window.removeEventListener(
+          "beforeunload",
+          beforeUnloadHandlerRef.current,
+        );
+        beforeUnloadHandlerRef.current = null;
+      }
+
+      setSubmitted(true);
+      onUnsavedChanges?.(false);
+      onSubmitComplete?.();
+    }
+  }, [draft, onSubmitComplete, onUnsavedChanges, recipe.id]);
 
   useEffect(() => {
     onUnsavedChanges?.(!isAdmin && hasChanges && !submitted);
@@ -81,8 +114,13 @@ export default function RecipeEditor({
       return;
     }
 
-    submitChanges();
-  }, [submitRequest]);
+    submitFormRef.current?.requestSubmit();
+  }, [hasChanges, isAdmin, submitChanges, submitRequest, submitted]);
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    void submitChanges();
+  }
 
   function updateDraft(field: keyof Recipe, value: Recipe[keyof Recipe]) {
     setDraft((current) => ({
@@ -94,50 +132,27 @@ export default function RecipeEditor({
 
   const showSubmitButton = !isAdmin && hasChanges && !submitted;
 
-  async function submitChanges() {
-    const response = await fetch("/api/recipes/submit-edit", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        recipeId: recipe.id,
-        recipeData: draft,
-      }),
-    });
-
-    const result = await response.json();
-
-    console.log("SUBMIT RESULT:", response.status, result);
-
-    if (response.ok) {
-      if (beforeUnloadHandlerRef.current) {
-        window.removeEventListener(
-          "beforeunload",
-          beforeUnloadHandlerRef.current,
-        );
-        beforeUnloadHandlerRef.current = null;
-      }
-
-      setSubmitted(true);
-      onUnsavedChanges?.(false);
-      onSubmitComplete?.();
-    }
-  }
-
   return (
     <div>
+      <form
+        ref={submitFormRef}
+        onSubmit={handleSubmit}
+        style={commonStyles.hiddenSubmitForm}
+      >
+        <button type="submit" />
+      </form>
+
       {showSubmitButton && (
         <button
           type="button"
-          onClick={submitChanges}
-          style={styles.submitButton}
+          onClick={() => submitFormRef.current?.requestSubmit()}
+          style={commonStyles.fullWidthSubmitButton}
         >
           Submit Suggested Changes
         </button>
       )}
 
-      <h1 style={styles.title}>
+      <h1 style={commonStyles.title}>
         <RecipeFieldEditor
           recipeId={recipe.id}
           field="title"
@@ -147,7 +162,7 @@ export default function RecipeEditor({
       </h1>
 
       {recipe.category && (
-        <p style={styles.category}>
+        <p style={commonStyles.category}>
           <RecipeFieldEditor
             recipeId={recipe.id}
             field="category"
@@ -157,15 +172,15 @@ export default function RecipeEditor({
         </p>
       )}
 
-      <div style={styles.imageLayer}>
+      <div style={commonStyles.recipeImageLayer}>
         <img
           src={recipe.image_url || "/images/default-food.jpg"}
           alt={recipe.title}
-          style={styles.image}
+          style={commonStyles.recipeDetailImage}
         />
       </div>
 
-      <div style={styles.descriptionLayer}>
+      <div style={commonStyles.recipeDescription}>
         <RecipeFieldEditor
           recipeId={recipe.id}
           field="description"
@@ -185,7 +200,7 @@ export default function RecipeEditor({
         onChange={(field, value) => updateDraft(field, value)}
       />
 
-      <section style={styles.section}>
+      <section style={commonStyles.section}>
         <h2>Ingredients</h2>
 
         <RecipeListEditor
@@ -197,7 +212,7 @@ export default function RecipeEditor({
         />
       </section>
 
-      <section style={styles.section}>
+      <section style={commonStyles.section}>
         <h2>Instructions</h2>
 
         <RecipeListEditor
@@ -210,7 +225,7 @@ export default function RecipeEditor({
       </section>
 
       {draft.tags.length > 0 && (
-        <section style={styles.section}>
+        <section style={commonStyles.section}>
           <h2>Tags</h2>
 
           <RecipeListEditor
@@ -224,7 +239,7 @@ export default function RecipeEditor({
       )}
 
       {draft.source && (
-        <section style={styles.section}>
+        <section style={commonStyles.section}>
           <h2>Source</h2>
 
           <p>
@@ -239,7 +254,7 @@ export default function RecipeEditor({
       )}
 
       {draft.notes && (
-        <section style={styles.section}>
+        <section style={commonStyles.section}>
           <h2>Notes</h2>
 
           <p>

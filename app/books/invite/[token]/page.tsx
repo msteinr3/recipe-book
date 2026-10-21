@@ -69,11 +69,11 @@ export default function BookInvitePage() {
 
         {!loggedIn ? (
           <>
-            <p style={styles.message}>
-              You've been invited to collaborate on a recipe book.
+            <p style={commonStyles.invitationMessage}>
+              You&apos;ve been invited to collaborate on a recipe book.
             </p>
 
-            <p style={styles.message}>
+            <p style={commonStyles.invitationMessage}>
               Log in or create an account using the email address that received
               this invitation.
             </p>
@@ -84,8 +84,8 @@ export default function BookInvitePage() {
           </>
         ) : (
           <>
-            <p style={styles.message}>
-              You've been invited to collaborate on a recipe book.
+            <p style={commonStyles.invitationMessage}>
+              You&apos;ve been invited to collaborate on a recipe book.
             </p>
 
             {errorMessage && <p style={commonStyles.error}>{errorMessage}</p>}
@@ -105,10 +105,3 @@ export default function BookInvitePage() {
     </main>
   );
 }
-
-const styles = {
-  message: {
-    marginTop: "20px",
-    lineHeight: 1.6,
-  },
-};

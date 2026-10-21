@@ -277,7 +277,7 @@ export default function AdminPage() {
   };
 
   const renderEditForm = (saveLabel: string, onSave: () => void) => (
-    <div style={styles.editForm}>
+    <div style={commonStyles.form}>
       <label style={commonStyles.label}>
         Recipe Name
         <input
@@ -297,11 +297,11 @@ export default function AdminPage() {
         />
       </label>
 
-      <div style={styles.section}>
-        <h3 style={styles.sectionTitle}>Ingredients</h3>
+      <div style={commonStyles.formSection}>
+        <h3 style={commonStyles.sectionTitle}>Ingredients</h3>
 
         {(editData.ingredients ?? []).map((ingredient, index) => (
-          <div key={index} style={styles.ingredientRow}>
+          <div key={index} style={commonStyles.ingredientRow}>
             <input
               placeholder="Quantity"
               value={ingredient.quantity}
@@ -339,12 +339,12 @@ export default function AdminPage() {
         </button>
       </div>
 
-      <div style={styles.section}>
-        <h3 style={styles.sectionTitle}>Instructions</h3>
+      <div style={commonStyles.formSection}>
+        <h3 style={commonStyles.sectionTitle}>Instructions</h3>
 
         {(editData.instructions ?? []).map((instruction, index) => (
-          <div key={index} style={styles.instructionRow}>
-            <span style={styles.stepNumber}>{index + 1}.</span>
+          <div key={index} style={commonStyles.instructionRow}>
+            <span style={commonStyles.stepNumber}>{index + 1}.</span>
 
             <textarea
               value={instruction}
@@ -372,7 +372,7 @@ export default function AdminPage() {
         </button>
       </div>
 
-      <div style={styles.twoColumns}>
+      <div style={commonStyles.twoColumns}>
         <label style={commonStyles.label}>
           Prep Time (minutes)
           <input
@@ -470,7 +470,7 @@ export default function AdminPage() {
         />
       </label>
 
-      <div style={styles.actions}>
+      <div style={commonStyles.buttonRow}>
         <button
           type="button"
           onClick={cancelEditing}
@@ -502,7 +502,7 @@ export default function AdminPage() {
         <div style={commonStyles.narrowContainer}>
           <h1 style={commonStyles.title}>Admin Login</h1>
 
-          <form onSubmit={handleLogin} style={styles.loginForm}>
+          <form onSubmit={handleLogin} style={commonStyles.form}>
             <label style={commonStyles.label}>
               Email
               <input
@@ -539,7 +539,7 @@ export default function AdminPage() {
   return (
     <main style={commonStyles.page}>
       <div style={commonStyles.container}>
-        <div style={styles.header}>
+        <div style={commonStyles.admin.header}>
           <h1 style={commonStyles.title}>Admin</h1>
 
           <button
@@ -554,20 +554,20 @@ export default function AdminPage() {
         {errorMessage && <p style={commonStyles.error}>{errorMessage}</p>}
 
         <section>
-          <h2 style={styles.sectionHeading}>Pending Recipes</h2>
+          <h2 style={commonStyles.admin.sectionHeading}>Pending Recipes</h2>
 
           {submissions.length === 0 ? (
             <p>No pending recipe submissions.</p>
           ) : (
-            <div style={styles.list}>
+            <div style={commonStyles.verticalList}>
               {submissions.map((submission) => (
-                <details key={submission.id} style={styles.item}>
-                  <summary style={styles.summary}>
+                <details key={submission.id} style={commonStyles.admin.item}>
+                  <summary style={commonStyles.admin.summary}>
                     {submission.data.recipeId ? "Suggested Edit — " : ""}
                     {submission.data.title || "Untitled Recipe"}
                   </summary>
 
-                  <div style={styles.details}>
+                  <div style={commonStyles.admin.details}>
                     {editingSubmissionId === submission.id ? (
                       renderEditForm("Save Changes", () =>
                         handleSavePendingEdit(submission.id),
@@ -585,7 +585,7 @@ export default function AdminPage() {
                           </p>
                         )}
 
-                        <div style={styles.actions}>
+                        <div style={commonStyles.buttonRow}>
                           <button
                             type="button"
                             onClick={() => startEditingSubmission(submission)}
@@ -605,7 +605,7 @@ export default function AdminPage() {
                           <button
                             type="button"
                             onClick={() => handleReject(submission.id)}
-                            style={styles.rejectButton}
+                            style={commonStyles.admin.rejectButton}
                           >
                             Reject
                           </button>
@@ -622,99 +622,3 @@ export default function AdminPage() {
     </main>
   );
 }
-
-const styles = {
-  loginForm: {
-    display: "flex",
-    flexDirection: "column" as const,
-    gap: "20px",
-  },
-
-  header: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: "24px",
-    marginBottom: "40px",
-  },
-
-  sectionHeading: {
-    fontSize: "28px",
-    marginBottom: "20px",
-  },
-
-  list: {
-    display: "flex",
-    flexDirection: "column" as const,
-    gap: "12px",
-  },
-
-  item: {
-    border: "1px solid #ddd",
-    borderRadius: "8px",
-    padding: "16px",
-  },
-
-  summary: {
-    cursor: "pointer",
-    fontWeight: "600",
-  },
-
-  details: {
-    marginTop: "16px",
-  },
-
-  editForm: {
-    display: "flex",
-    flexDirection: "column" as const,
-    gap: "18px",
-  },
-
-  section: {
-    display: "flex",
-    flexDirection: "column" as const,
-    gap: "14px",
-  },
-
-  sectionTitle: {
-    fontSize: "22px",
-    margin: 0,
-  },
-
-  ingredientRow: {
-    display: "grid",
-    gridTemplateColumns: "120px 1fr auto",
-    gap: "8px",
-  },
-
-  instructionRow: {
-    display: "grid",
-    gridTemplateColumns: "30px 1fr auto",
-    gap: "8px",
-    alignItems: "start",
-  },
-
-  stepNumber: {
-    paddingTop: "12px",
-    fontWeight: "600",
-  },
-
-  twoColumns: {
-    display: "grid",
-    gridTemplateColumns: "1fr 1fr",
-    gap: "16px",
-  },
-
-  actions: {
-    display: "flex",
-    flexWrap: "wrap" as const,
-    gap: "10px",
-    marginTop: "20px",
-  },
-
-  rejectButton: {
-    ...commonStyles.secondaryButton,
-    color: "#b00020",
-    borderColor: "#b00020",
-  },
-};

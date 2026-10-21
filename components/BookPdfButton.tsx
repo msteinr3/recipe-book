@@ -4,10 +4,13 @@ import {
   Document,
   Page,
   PDFDownloadLink,
-  StyleSheet,
   Text,
   View,
 } from "@react-pdf/renderer";
+import {
+  bookPdfDownloadButtonStyle,
+  bookPdfStyles as styles,
+} from "@/styles/common";
 
 type Recipe = {
   id: string;
@@ -220,180 +223,9 @@ export default function BookPdfButton({ book, sections }: Props) {
     <PDFDownloadLink
       document={<BookPdfDocument book={book} sections={sections} />}
       fileName={fileName}
-      style={styles.downloadButton}
+      style={bookPdfDownloadButtonStyle}
     >
       {({ loading }) => (loading ? "Preparing PDF..." : "Generate PDF")}
     </PDFDownloadLink>
   );
 }
-
-const styles = StyleSheet.create({
-  coverPage: {
-    position: "relative",
-    padding: 60,
-    fontFamily: "Helvetica",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    textAlign: "center",
-  },
-
-  coverContent: {
-    width: "100%",
-    alignItems: "center",
-  },
-
-  coverLabel: {
-    fontSize: 12,
-    letterSpacing: 4,
-    marginBottom: 25,
-    color: "#666666",
-  },
-
-  coverTitle: {
-    fontSize: 38,
-    marginBottom: 25,
-  },
-
-  coverDescription: {
-    fontSize: 14,
-    lineHeight: 1.5,
-    maxWidth: 420,
-    color: "#555555",
-  },
-
-  coverCount: {
-    marginTop: 35,
-    fontSize: 12,
-    color: "#666666",
-  },
-
-  page: {
-    position: "relative",
-    paddingTop: 55,
-    paddingBottom: 55,
-    paddingLeft: 55,
-    paddingRight: 55,
-    fontFamily: "Helvetica",
-  },
-
-  pageTitle: {
-    fontSize: 28,
-    marginBottom: 35,
-  },
-
-  tocSection: {
-    marginBottom: 22,
-  },
-
-  tocCategory: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginBottom: 7,
-  },
-
-  tocRecipe: {
-    fontSize: 11,
-    color: "#555555",
-    marginLeft: 15,
-    marginBottom: 4,
-  },
-
-  sectionPage: {
-    position: "relative",
-    padding: 55,
-    fontFamily: "Helvetica",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    textAlign: "center",
-  },
-
-  sectionContent: {
-    alignItems: "center",
-  },
-
-  sectionLabel: {
-    fontSize: 12,
-    letterSpacing: 4,
-    color: "#666666",
-    marginBottom: 20,
-  },
-
-  sectionTitle: {
-    fontSize: 34,
-    marginBottom: 15,
-  },
-
-  sectionCount: {
-    fontSize: 12,
-    color: "#666666",
-  },
-
-  recipeCategory: {
-    fontSize: 11,
-    color: "#666666",
-    marginBottom: 8,
-  },
-
-  recipeTitle: {
-    fontSize: 28,
-    marginBottom: 20,
-  },
-
-  description: {
-    fontSize: 12,
-    lineHeight: 1.5,
-    color: "#555555",
-    marginBottom: 18,
-  },
-
-  meta: {
-    flexDirection: "row",
-    gap: 15,
-    fontSize: 10,
-    color: "#666666",
-    marginBottom: 15,
-  },
-
-  recipeSection: {
-    marginTop: 24,
-  },
-
-  recipeSectionTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-
-  listItem: {
-    fontSize: 11,
-    lineHeight: 1.6,
-    marginBottom: 5,
-  },
-
-  bodyText: {
-    fontSize: 11,
-    lineHeight: 1.6,
-  },
-
-  footer: {
-    position: "absolute",
-    bottom: 25,
-    left: 0,
-    right: 0,
-    textAlign: "center",
-    fontSize: 9,
-    color: "#888888",
-  },
-
-  downloadButton: {
-    display: "inline-block",
-    padding: "10px 16px",
-    borderRadius: 8,
-    backgroundColor: "#222222",
-    color: "#ffffff",
-    textDecoration: "none",
-    fontWeight: 600,
-  },
-});

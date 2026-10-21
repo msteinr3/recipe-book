@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { type FormEvent, useEffect, useState } from "react";
+import { Suspense, type FormEvent, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { commonStyles } from "@/styles/common";
 import { supabase } from "@/lib/supabase";
 
@@ -25,6 +26,24 @@ type Invitation = {
 };
 
 export default function ProfilePage() {
+  return (
+    <Suspense
+      fallback={
+        <main style={commonStyles.page}>
+          <div style={commonStyles.narrowContainer}>
+            <p>Loading...</p>
+          </div>
+        </main>
+      }
+    >
+      <ProfilePageContent />
+    </Suspense>
+  );
+}
+
+function ProfilePageContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [userId, setUserId] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [isEditingAccount, setIsEditingAccount] = useState(false);
@@ -53,15 +72,10 @@ export default function ProfilePage() {
   const [processingInvitationId, setProcessingInvitationId] = useState<
     string | null
   >(null);
+  const showingResetPassword =
+    isResettingPassword || searchParams.get("resetPassword") === "true";
 
   useEffect(() => {
-    if (
-      new URLSearchParams(window.location.search).get("resetPassword") ===
-      "true"
-    ) {
-      setIsResettingPassword(true);
-    }
-
     const loadProfile = async () => {
       setLoading(true);
       setErrorMessage("");
@@ -257,7 +271,7 @@ export default function ProfilePage() {
     );
 
     await supabase.auth.signOut();
-    window.history.replaceState({}, "", "/profile");
+    router.replace("/profile");
   };
 
   const handleLogout = async () => {
@@ -327,18 +341,16 @@ export default function ProfilePage() {
     }
 
     const newBookId = data as string;
+    const newBook: Book = {
+      id: newBookId,
+      title: bookTitle.trim(),
+      description: bookDescription || null,
+      owner_id: userId ?? "",
+      role: "owner",
+    };
 
     setBooks((current) =>
-      [
-        ...current,
-        {
-          id: newBookId,
-          title: bookTitle.trim(),
-          description: bookDescription || null,
-          owner_id: userId ?? "",
-          role: "owner",
-        },
-      ].sort((a, b) => a.title.localeCompare(b.title)),
+      [...current, newBook].sort((a, b) => a.title.localeCompare(b.title)),
     );
 
     setBookTitle("");
@@ -367,22 +379,22 @@ export default function ProfilePage() {
     );
 
     const bookId = data as string;
+    const joinedBook: Book = {
+      id: bookId,
+      title: invitation.book_title,
+      description: null,
+      owner_id: "",
+      role: "editor",
+    };
 
     setBooks((current) => {
       if (current.some((book) => book.id === bookId)) {
         return current;
       }
 
-      return [
-        ...current,
-        {
-          id: bookId,
-          title: invitation.book_title,
-          description: null,
-          owner_id: "",
-          role: "editor",
-        },
-      ].sort((a, b) => a.title.localeCompare(b.title));
+      return [...current, joinedBook].sort((a, b) =>
+        a.title.localeCompare(b.title),
+      );
     });
 
     setMessage(`You joined "${invitation.book_title}".`);
@@ -447,7 +459,7 @@ export default function ProfilePage() {
     );
   }
 
-  if (isResettingPassword) {
+  if (showingResetPassword) {
     return (
       <main style={commonStyles.page}>
         <div style={commonStyles.narrowContainer}>
@@ -583,7 +595,7 @@ export default function ProfilePage() {
 
         <div style={commonStyles.profileCard}>
           <div style={commonStyles.accountHeader}>
-            <h2 style={{ margin: 0 }}>Account</h2>
+            <h2 style={commonStyles.sectionTitle}>Account</h2>
 
             <button
               type="button"
@@ -668,7 +680,7 @@ export default function ProfilePage() {
           <section style={commonStyles.section}>
             <h2 style={commonStyles.sectionTitle}>Pending Invitations</h2>
 
-            <div style={commonStyles.invitationList}>
+            <div style={commonStyles.verticalList}>
               {invitations.map((invitation) => (
                 <div key={invitation.id} style={commonStyles.invitationRow}>
                   <div style={commonStyles.invitationInfo}>
@@ -768,12 +780,12 @@ export default function ProfilePage() {
           )}
 
           {books.length === 0 ? (
-            <div style={commonStyles.empty}>
+            <div style={commonStyles.emptyState}>
               <h3>No books yet</h3>
               <p>Create your first recipe book to get started.</p>
             </div>
           ) : (
-            <div style={commonStyles.bookList}>
+            <div style={commonStyles.verticalList}>
               {books.map((book) => (
                 <div key={book.id} style={commonStyles.bookRow}>
                   <Link

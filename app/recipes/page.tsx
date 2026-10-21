@@ -308,7 +308,7 @@ export default function RecipesPage() {
               !bookPickerError &&
               userBooks.length === 0 && (
                 <div style={commonStyles.emptyState}>
-                  <p>You don't have any recipe books yet.</p>
+                  <p>You don&apos;t have any recipe books yet.</p>
                   <Link
                     href="/profile"
                     style={commonStyles.button}
@@ -330,17 +330,19 @@ export default function RecipesPage() {
                       type="button"
                       onClick={() => handleAddToBook(book)}
                       disabled={alreadyAdded || addingToBookId !== null}
-                      style={{
-                        ...commonStyles.pickerButton,
-                        ...(alreadyAdded ? commonStyles.pickerButtonAdded : {}),
-                      }}
+                      style={
+                        alreadyAdded
+                          ? commonStyles.recipePickerButtonAdded
+                          : commonStyles.recipePickerButton
+                      }
                     >
                       <span>{book.title}</span>
                       <span
-                        style={{
-                          ...commonStyles.mutedSmallText,
-                          ...(alreadyAdded ? commonStyles.addedText : {}),
-                        }}
+                        style={
+                          alreadyAdded
+                            ? commonStyles.recipePickerButtonTextAdded
+                            : commonStyles.recipePickerButtonText
+                        }
                       >
                         {alreadyAdded
                           ? "✓ Added"

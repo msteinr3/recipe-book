@@ -96,7 +96,7 @@ export default function RecipePageContent({ recipe }: RecipePageContentProps) {
 
       {showLeaveDialog && (
         <div style={commonStyles.dialogOverlay}>
-          <div style={commonStyles.dialog}>
+          <div style={commonStyles.modal}>
             <h2 style={commonStyles.dialogTitle}>You have unsaved changes</h2>
 
             <p style={commonStyles.dialogText}>

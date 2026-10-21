@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import BookPdfButton from "@/components/BookPdfButton";
+import { commonStyles } from "@/styles/common";
 
 const RECIPE_CATEGORIES = [
   "Appetizers",
@@ -28,8 +29,8 @@ type Recipe = {
   id: string;
   title: string;
   description: string | null;
-  ingredients: any;
-  instructions: any;
+  ingredients: unknown;
+  instructions: unknown;
   prep_minutes: number | null;
   cook_minutes: number | null;
   servings: number | null;
@@ -43,6 +44,11 @@ type Recipe = {
 type BookRecipe = {
   recipe_id: string;
   recipe: Recipe;
+};
+
+type BookRecipeResult = {
+  recipe_id: string;
+  recipe: Recipe | Recipe[] | null;
 };
 
 export default function BookPreviewPage({
@@ -144,12 +150,15 @@ export default function BookPreviewPage({
 
       if (cancelled) return;
 
-      const normalizedRecipes: BookRecipe[] = (bookRecipesData ?? [])
-        .filter((item: any) => item.recipe)
-        .map((item: any) => ({
-          recipe_id: item.recipe_id,
-          recipe: item.recipe,
-        }));
+      const recipeRows = (bookRecipesData ?? []) as BookRecipeResult[];
+      const normalizedRecipes: BookRecipe[] = recipeRows
+        .flatMap((item) => {
+          const recipe = Array.isArray(item.recipe)
+            ? item.recipe[0]
+            : item.recipe;
+
+          return recipe ? [{ recipe_id: item.recipe_id, recipe }] : [];
+        });
 
       setBookRecipes(normalizedRecipes);
       setLoading(false);
@@ -162,7 +171,7 @@ export default function BookPreviewPage({
     };
   }, [params]);
 
-  function normalizeList(value: any): string[] {
+  function normalizeList(value: unknown): string[] {
     if (Array.isArray(value)) {
       return value.map((item) => {
         if (typeof item === "string") {
@@ -170,9 +179,10 @@ export default function BookPreviewPage({
         }
 
         if (item && typeof item === "object") {
-          const quantity = item.quantity ?? "";
-          const unit = item.unit ?? "";
-          const ingredient = item.item ?? "";
+          const ingredientData = item as Record<string, unknown>;
+          const quantity = String(ingredientData.quantity ?? "");
+          const unit = String(ingredientData.unit ?? "");
+          const ingredient = String(ingredientData.item ?? "");
 
           return `${quantity} ${unit} ${ingredient}`.trim();
         }
@@ -193,8 +203,8 @@ export default function BookPreviewPage({
 
   if (loading) {
     return (
-      <main style={styles.page}>
-        <div style={styles.messagePage}>
+      <main style={commonStyles.bookPreview.page}>
+        <div style={commonStyles.bookPreview.messagePage}>
           <p>Loading book...</p>
         </div>
       </main>
@@ -203,15 +213,15 @@ export default function BookPreviewPage({
 
   if (errorMessage || !book || !bookId) {
     return (
-      <main style={styles.page}>
-        <div style={styles.messagePage}>
-          <Link href="/profile" style={styles.backLink}>
+      <main style={commonStyles.bookPreview.page}>
+        <div style={commonStyles.bookPreview.messagePage}>
+          <Link href="/profile" style={commonStyles.bookPreview.backLink}>
             ← Back to Profile
           </Link>
 
-          <h1 style={{ marginTop: "30px" }}>Unable to open book</h1>
+          <h1 style={commonStyles.messageTitle}>Unable to open book</h1>
 
-          <p style={{ marginTop: "12px" }}>
+          <p style={commonStyles.messageText}>
             {errorMessage || "This book could not be loaded."}
           </p>
         </div>
@@ -233,10 +243,13 @@ export default function BookPreviewPage({
   })).filter((section) => section.recipes.length > 0);
 
   return (
-    <main style={styles.page}>
-      <div style={styles.topBar}>
-        <div style={styles.topBarContent}>
-          <Link href={`/books/${bookId}`} style={styles.backLink}>
+    <main style={commonStyles.bookPreview.page}>
+      <div style={commonStyles.bookPreview.topBar}>
+        <div style={commonStyles.bookPreview.topBarContent}>
+          <Link
+            href={`/books/${bookId}`}
+            style={commonStyles.bookPreview.backLink}
+          >
             ← Back to Book
           </Link>
 
@@ -253,19 +266,21 @@ export default function BookPreviewPage({
           />
         </div>
       </div>
-      <div style={styles.book}>
+      <div style={commonStyles.bookPreview.book}>
         {/* COVER */}
-        <section style={styles.cover}>
+        <section style={commonStyles.bookPreview.cover}>
           <div>
-            <p style={styles.coverLabel}>RECIPE BOOK</p>
+            <p style={commonStyles.bookPreview.coverLabel}>RECIPE BOOK</p>
 
-            <h1 style={styles.coverTitle}>{book.title}</h1>
+            <h1 style={commonStyles.bookPreview.coverTitle}>{book.title}</h1>
 
             {book.description && (
-              <p style={styles.coverDescription}>{book.description}</p>
+              <p style={commonStyles.bookPreview.coverDescription}>
+                {book.description}
+              </p>
             )}
 
-            <p style={styles.coverRecipeCount}>
+            <p style={commonStyles.bookPreview.coverRecipeCount}>
               {bookRecipes.length}{" "}
               {bookRecipes.length === 1 ? "recipe" : "recipes"}
             </p>
@@ -273,30 +288,35 @@ export default function BookPreviewPage({
         </section>
 
         {/* TABLE OF CONTENTS */}
-        <section style={styles.pageSection}>
-          <h2 style={styles.pageTitle}>Table of Contents</h2>
+        <section style={commonStyles.bookPreview.pageSection}>
+          <h2 style={commonStyles.bookPreview.pageTitle}>
+            Table of Contents
+          </h2>
 
           {recipesByCategory.length === 0 ? (
             <p>This book does not have any recipes yet.</p>
           ) : (
-            <div style={styles.toc}>
+            <div style={commonStyles.bookPreview.toc}>
               {recipesByCategory.map((section) => (
-                <div key={section.category} style={styles.tocSection}>
+                <div
+                  key={section.category}
+                  style={commonStyles.bookPreview.tocSection}
+                >
                   <a
                     href={`#section-${section.category
                       .toLowerCase()
                       .replace(/[^a-z0-9]+/g, "-")}`}
-                    style={styles.tocSectionLink}
+                    style={commonStyles.bookPreview.tocSectionLink}
                   >
                     {section.category}
                   </a>
 
-                  <div style={styles.tocRecipes}>
+                  <div style={commonStyles.bookPreview.tocRecipes}>
                     {section.recipes.map((bookRecipe) => (
                       <a
                         key={bookRecipe.recipe_id}
                         href={`#recipe-${bookRecipe.recipe_id}`}
-                        style={styles.tocRecipeLink}
+                        style={commonStyles.bookPreview.tocRecipeLink}
                       >
                         {bookRecipe.recipe.title}
                       </a>
@@ -317,13 +337,18 @@ export default function BookPreviewPage({
           return (
             <div key={section.category}>
               {/* SECTION DIVIDER */}
-              <section id={sectionId} style={styles.sectionDivider}>
+              <section
+                id={sectionId}
+                style={commonStyles.bookPreview.sectionDivider}
+              >
                 <div>
-                  <p style={styles.sectionLabel}>SECTION</p>
+                  <p style={commonStyles.bookPreview.sectionLabel}>SECTION</p>
 
-                  <h2 style={styles.sectionTitle}>{section.category}</h2>
+                  <h2 style={commonStyles.bookPreview.sectionTitle}>
+                    {section.category}
+                  </h2>
 
-                  <p style={styles.sectionCount}>
+                  <p style={commonStyles.bookPreview.sectionCount}>
                     {section.recipes.length}{" "}
                     {section.recipes.length === 1 ? "recipe" : "recipes"}
                   </p>
@@ -342,31 +367,35 @@ export default function BookPreviewPage({
                   <section
                     key={recipe.id}
                     id={`recipe-${recipe.id}`}
-                    style={styles.recipePage}
+                    style={commonStyles.bookPreview.recipePage}
                   >
-                    <div style={styles.recipeHeader}>
-                      <div style={{ flex: 1 }}>
-                        <p style={styles.recipeCategory}>
+                    <div style={commonStyles.bookPreview.recipeHeader}>
+                      <div
+                        style={commonStyles.bookPreview.recipeHeaderInfo}
+                      >
+                        <p style={commonStyles.bookPreview.recipeCategory}>
                           {recipe.category ?? "Other"}
                         </p>
 
-                        <h2 style={styles.recipeTitle}>{recipe.title}</h2>
+                        <h2 style={commonStyles.bookPreview.recipeTitle}>
+                          {recipe.title}
+                        </h2>
                       </div>
 
                       <img
                         src={recipe.image_url || "/images/default-food.jpg"}
                         alt={recipe.title}
-                        style={styles.recipeImage}
+                        style={commonStyles.bookPreview.recipeImage}
                       />
                     </div>
 
                     {recipe.description && (
-                      <p style={styles.recipeDescription}>
+                      <p style={commonStyles.bookPreview.recipeDescription}>
                         {recipe.description}
                       </p>
                     )}
 
-                    <div style={styles.meta}>
+                    <div style={commonStyles.bookPreview.meta}>
                       {recipe.prep_minutes !== null && (
                         <span>Prep: {recipe.prep_minutes} min</span>
                       )}
@@ -381,10 +410,12 @@ export default function BookPreviewPage({
                     </div>
 
                     {ingredients.length > 0 && (
-                      <div style={styles.recipeSection}>
-                        <h3 style={styles.recipeSectionTitle}>Ingredients</h3>
+                      <div style={commonStyles.bookPreview.recipeSection}>
+                        <h3 style={commonStyles.bookPreview.recipeSectionTitle}>
+                          Ingredients
+                        </h3>
 
-                        <ul style={styles.ingredientList}>
+                        <ul style={commonStyles.bookPreview.ingredientList}>
                           {ingredients.map((ingredient, index) => (
                             <li key={index}>{ingredient}</li>
                           ))}
@@ -393,10 +424,12 @@ export default function BookPreviewPage({
                     )}
 
                     {instructions.length > 0 && (
-                      <div style={styles.recipeSection}>
-                        <h3 style={styles.recipeSectionTitle}>Instructions</h3>
+                      <div style={commonStyles.bookPreview.recipeSection}>
+                        <h3 style={commonStyles.bookPreview.recipeSectionTitle}>
+                          Instructions
+                        </h3>
 
-                        <ol style={styles.instructionList}>
+                        <ol style={commonStyles.bookPreview.instructionList}>
                           {instructions.map((instruction, index) => (
                             <li key={index}>{instruction}</li>
                           ))}
@@ -405,12 +438,17 @@ export default function BookPreviewPage({
                     )}
 
                     {recipe.tags && recipe.tags.length > 0 && (
-                      <div style={styles.recipeSection}>
-                        <h3 style={styles.recipeSectionTitle}>Tags</h3>
+                      <div style={commonStyles.bookPreview.recipeSection}>
+                        <h3 style={commonStyles.bookPreview.recipeSectionTitle}>
+                          Tags
+                        </h3>
 
-                        <div style={styles.tags}>
+                        <div style={commonStyles.bookPreview.tags}>
                           {recipe.tags.map((tag) => (
-                            <span key={tag} style={styles.tag}>
+                            <span
+                              key={tag}
+                              style={commonStyles.bookPreview.tag}
+                            >
                               {tag}
                             </span>
                           ))}
@@ -419,16 +457,20 @@ export default function BookPreviewPage({
                     )}
 
                     {recipe.source && (
-                      <div style={styles.recipeSection}>
-                        <h3 style={styles.recipeSectionTitle}>Source</h3>
+                      <div style={commonStyles.bookPreview.recipeSection}>
+                        <h3 style={commonStyles.bookPreview.recipeSectionTitle}>
+                          Source
+                        </h3>
 
                         <p>{recipe.source}</p>
                       </div>
                     )}
 
                     {recipe.notes && (
-                      <div style={styles.recipeSection}>
-                        <h3 style={styles.recipeSectionTitle}>Notes</h3>
+                      <div style={commonStyles.bookPreview.recipeSection}>
+                        <h3 style={commonStyles.bookPreview.recipeSectionTitle}>
+                          Notes
+                        </h3>
 
                         <p>{recipe.notes}</p>
                       </div>
@@ -443,232 +485,3 @@ export default function BookPreviewPage({
     </main>
   );
 }
-
-const styles = {
-  page: {
-    minHeight: "100vh",
-    background: "#f3f3f3",
-    paddingBottom: "60px",
-  },
-
-  messagePage: {
-    maxWidth: "900px",
-    margin: "0 auto",
-    padding: "40px 20px",
-  },
-
-  topBar: {
-    maxWidth: "900px",
-    margin: "0 auto",
-    padding: "24px 20px",
-  },
-
-  topBarContent: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: "15px",
-    flexWrap: "wrap" as const,
-  },
-
-  backLink: {
-    color: "#333",
-    textDecoration: "none",
-  },
-
-  book: {
-    width: "100%",
-    maxWidth: "900px",
-    margin: "0 auto",
-    background: "#fff",
-  },
-
-  cover: {
-    minHeight: "650px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    textAlign: "center" as const,
-    padding: "60px 40px",
-    borderBottom: "1px solid #ddd",
-  },
-
-  coverLabel: {
-    fontSize: "14px",
-    letterSpacing: "4px",
-    color: "#777",
-    marginBottom: "24px",
-  },
-
-  coverTitle: {
-    fontSize: "52px",
-    lineHeight: 1.1,
-    margin: 0,
-  },
-
-  coverDescription: {
-    maxWidth: "600px",
-    margin: "30px auto 0",
-    fontSize: "18px",
-    lineHeight: 1.7,
-    color: "#666",
-  },
-
-  coverRecipeCount: {
-    marginTop: "40px",
-    color: "#777",
-  },
-
-  pageSection: {
-    minHeight: "650px",
-    padding: "70px",
-    borderBottom: "1px solid #ddd",
-  },
-
-  pageTitle: {
-    fontSize: "36px",
-    marginBottom: "40px",
-  },
-
-  toc: {
-    display: "flex",
-    flexDirection: "column" as const,
-    gap: "28px",
-  },
-
-  tocSection: {
-    display: "flex",
-    flexDirection: "column" as const,
-    gap: "8px",
-  },
-
-  tocSectionLink: {
-    fontSize: "21px",
-    fontWeight: "700",
-    color: "#222",
-    textDecoration: "none",
-  },
-
-  tocRecipes: {
-    display: "flex",
-    flexDirection: "column" as const,
-    gap: "4px",
-    paddingLeft: "18px",
-  },
-
-  tocRecipeLink: {
-    color: "#666",
-    textDecoration: "none",
-  },
-
-  sectionDivider: {
-    minHeight: "500px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    textAlign: "center" as const,
-    padding: "60px 40px",
-    background: "#fafafa",
-    borderBottom: "1px solid #ddd",
-    scrollMarginTop: "20px",
-    pageBreakBefore: "always" as const,
-  },
-
-  sectionLabel: {
-    fontSize: "14px",
-    letterSpacing: "4px",
-    color: "#777",
-    marginBottom: "18px",
-  },
-
-  sectionTitle: {
-    fontSize: "48px",
-    margin: 0,
-  },
-
-  sectionCount: {
-    marginTop: "20px",
-    color: "#777",
-  },
-
-  recipePage: {
-    minHeight: "650px",
-    padding: "60px 70px",
-    borderBottom: "1px solid #ddd",
-    scrollMarginTop: "20px",
-    pageBreakBefore: "always" as const,
-  },
-
-  recipeHeader: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    gap: "30px",
-  },
-
-  recipeCategory: {
-    margin: 0,
-    color: "#777",
-    fontSize: "14px",
-  },
-
-  recipeTitle: {
-    fontSize: "38px",
-    lineHeight: 1.15,
-    marginTop: "10px",
-  },
-
-  recipeImage: {
-    width: "220px",
-    height: "160px",
-    objectFit: "cover" as const,
-    borderRadius: "10px",
-    flexShrink: 0,
-  },
-
-  recipeDescription: {
-    fontSize: "18px",
-    lineHeight: 1.7,
-    color: "#555",
-    marginTop: "25px",
-  },
-
-  meta: {
-    display: "flex",
-    flexWrap: "wrap" as const,
-    gap: "18px",
-    marginTop: "22px",
-    color: "#666",
-  },
-
-  recipeSection: {
-    marginTop: "38px",
-  },
-
-  recipeSectionTitle: {
-    fontSize: "22px",
-    marginBottom: "14px",
-  },
-
-  ingredientList: {
-    lineHeight: 1.8,
-    paddingLeft: "24px",
-  },
-
-  instructionList: {
-    lineHeight: 1.9,
-    paddingLeft: "24px",
-  },
-
-  tags: {
-    display: "flex",
-    flexWrap: "wrap" as const,
-    gap: "8px",
-  },
-
-  tag: {
-    background: "#f0f0f0",
-    borderRadius: "999px",
-    padding: "5px 10px",
-  },
-};

@@ -38,6 +38,10 @@ type BookRecipe = {
   recipe: Recipe;
 };
 
+type BookRecipeResult = Omit<BookRecipe, "recipe"> & {
+  recipe: Recipe | Recipe[] | null;
+};
+
 type Member = {
   user_id: string;
   email: string;
@@ -164,14 +168,24 @@ export default function BookPage({
 
       if (cancelled) return;
 
-      const normalizedBookRecipes: BookRecipe[] = (bookRecipesData ?? [])
-        .filter((item: any) => item.recipe)
-        .map((item: any) => ({
-          book_id: item.book_id,
-          recipe_id: item.recipe_id,
-          position: item.position,
-          recipe: item.recipe,
-        }));
+      const recipeRows = (bookRecipesData ?? []) as BookRecipeResult[];
+      const normalizedBookRecipes: BookRecipe[] = recipeRows
+        .flatMap((item) => {
+          const recipe = Array.isArray(item.recipe)
+            ? item.recipe[0]
+            : item.recipe;
+
+          return recipe
+            ? [
+                {
+                  book_id: item.book_id,
+                  recipe_id: item.recipe_id,
+                  position: item.position,
+                  recipe,
+                },
+              ]
+            : [];
+        });
 
       setBookRecipes(normalizedBookRecipes);
 
@@ -481,9 +495,9 @@ export default function BookPage({
             ← Back to Profile
           </Link>
 
-          <h1 style={{ marginTop: "30px" }}>Book not found</h1>
+          <h1 style={commonStyles.messageTitle}>Book not found</h1>
 
-          <p style={{ marginTop: "12px" }}>
+          <p style={commonStyles.messageText}>
             {errorMessage ||
               "This book does not exist or you do not have access to it."}
           </p>
@@ -500,7 +514,7 @@ export default function BookPage({
             ← Back to Profile
           </Link>
 
-          <div style={styles.header}>
+          <div style={commonStyles.bookManage.header}>
             <div>
               {isEditingTitle ? (
                 <input
@@ -510,14 +524,15 @@ export default function BookPage({
                   onChange={(event) => setTitleDraft(event.target.value)}
                   onBlur={saveTitle}
                   onKeyDown={handleTitleKeyDown}
-                  style={styles.titleInput}
+                  style={commonStyles.bookManage.titleInput}
                 />
               ) : (
                 <h1
-                  style={{
-                    ...commonStyles.title,
-                    cursor: isOwner ? "text" : "default",
-                  }}
+                  style={
+                    isOwner
+                      ? commonStyles.bookManage.bookTitleOwner
+                      : commonStyles.bookManage.bookTitleReadOnly
+                  }
                   onClick={() => {
                     if (isOwner) {
                       setTitleDraft(book.title);
@@ -547,15 +562,16 @@ export default function BookPage({
                       saveDescription();
                     }
                   }}
-                  style={styles.descriptionInput}
+                  style={commonStyles.bookManage.descriptionInput}
                   placeholder="Add a book description..."
                 />
               ) : (
                 <p
-                  style={{
-                    ...styles.description,
-                    cursor: isOwner ? "text" : "default",
-                  }}
+                  style={
+                    isOwner
+                      ? commonStyles.bookManage.bookDescriptionOwner
+                      : commonStyles.bookManage.bookDescriptionReadOnly
+                  }
                   onClick={() => {
                     if (isOwner) {
                       setDescriptionDraft(book.description ?? "");
@@ -569,14 +585,16 @@ export default function BookPage({
                 </p>
               )}
 
-              <div style={styles.role}>{isOwner ? "Owner" : "Editor"}</div>
+              <div style={commonStyles.bookManage.role}>
+                {isOwner ? "Owner" : "Editor"}
+              </div>
             </div>
           </div>
 
-          <div style={styles.actions}>
+          <div style={commonStyles.buttonRow}>
             <Link
               href={`/books/${book.id}/preview`}
-              style={styles.previewButton}
+              style={commonStyles.bookManage.previewButton}
             >
               Preview Book
             </Link>
@@ -584,43 +602,51 @@ export default function BookPage({
             <button
               type="button"
               onClick={openPicker}
-              style={styles.primaryButton}
+              style={commonStyles.bookManage.primaryButton}
             >
               Add Recipes
             </button>
           </div>
 
           {recipesByCategory.length === 0 ? (
-            <div style={styles.emptyState}>
+            <div style={commonStyles.bookManage.emptyState}>
               <p>This book does not have any recipes yet.</p>
 
               <button
                 type="button"
                 onClick={openPicker}
-                style={styles.primaryButton}
+                style={commonStyles.bookManage.primaryButton}
               >
                 Add Your First Recipe
               </button>
             </div>
           ) : (
-            <div style={styles.sections}>
+            <div style={commonStyles.bookManage.sections}>
               {recipesByCategory.map((section) => (
-                <section key={section.category} style={styles.section}>
-                  <h2 style={styles.sectionTitle}>{section.category}</h2>
+                <section
+                  key={section.category}
+                  style={commonStyles.bookManage.section}
+                >
+                  <h2 style={commonStyles.bookManage.sectionTitle}>
+                    {section.category}
+                  </h2>
 
-                  <div style={styles.recipeList}>
+                  <div style={commonStyles.bookManage.recipeList}>
                     {section.recipes.map((bookRecipe) => (
-                      <div key={bookRecipe.recipe_id} style={styles.recipeRow}>
+                      <div
+                        key={bookRecipe.recipe_id}
+                        style={commonStyles.bookManage.recipeRow}
+                      >
                         <Link
                           href={`/recipes/${bookRecipe.recipe_id}`}
-                          style={styles.recipeLink}
+                          style={commonStyles.bookManage.recipeLink}
                         >
-                          <div style={styles.recipeInfo}>
-                            <h3 style={styles.recipeTitle}>
+                          <div style={commonStyles.bookManage.recipeInfo}>
+                            <h3 style={commonStyles.bookManage.recipeTitle}>
                               {bookRecipe.recipe.title}
                             </h3>
 
-                            <p style={styles.recipeCategory}>
+                            <p style={commonStyles.bookManage.recipeCategory}>
                               {bookRecipe.recipe.category ?? "Other"}
                             </p>
                           </div>
@@ -631,7 +657,7 @@ export default function BookPage({
                               "/images/default-food.jpg"
                             }
                             alt={bookRecipe.recipe.title}
-                            style={styles.recipeImage}
+                            style={commonStyles.bookManage.recipeImage}
                           />
                         </Link>
 
@@ -640,7 +666,7 @@ export default function BookPage({
                           onClick={() =>
                             handleRemoveRecipe(bookRecipe.recipe_id)
                           }
-                          style={styles.removeButton}
+                          style={commonStyles.bookManage.removeButton}
                         >
                           Remove
                         </button>
@@ -653,28 +679,31 @@ export default function BookPage({
           )}
 
           {isOwner && (
-            <section style={styles.collaborators}>
-              <h2 style={styles.collaboratorsTitle}>Collaborators</h2>
+            <section style={commonStyles.bookManage.collaborators}>
+              <h2 style={commonStyles.bookManage.collaboratorsTitle}>
+                Collaborators
+              </h2>
 
-              <div style={styles.memberList}>
+              <div style={commonStyles.bookManage.memberList}>
                 {members.map((member) => (
-                  <div key={member.user_id} style={styles.memberRow}>
+                  <div
+                    key={member.user_id}
+                    style={commonStyles.bookManage.memberRow}
+                  >
                     <div>
                       <strong>{member.email}</strong>
-                      <span style={styles.memberRole}>{member.role}</span>
+                      <span style={commonStyles.bookManage.memberRole}>
+                        {member.role}
+                      </span>
                     </div>
 
                     {member.role === "editor" && (
                       <button
                         type="button"
                         onClick={() => handleRemoveEditor(member)}
-                        style={{
-                          padding: "6px 12px",
-                          border: "1px solid #ccc",
-                          borderRadius: "6px",
-                          background: "white",
-                          cursor: "pointer",
-                        }}
+                        style={
+                          commonStyles.bookManage.collaboratorRemoveButton
+                        }
                       >
                         Remove
                       </button>
@@ -684,45 +713,56 @@ export default function BookPage({
               </div>
 
               {pendingInvitations.length > 0 && (
-                <div style={styles.memberList}>
-                  <h3 style={styles.inviteTitle}>Pending invitations</h3>
+                <div style={commonStyles.bookManage.memberList}>
+                  <h3 style={commonStyles.bookManage.inviteTitle}>
+                    Pending invitations
+                  </h3>
                   {pendingInvitations.map((invitation) => (
-                    <div key={invitation.id} style={styles.memberRow}>
+                    <div
+                      key={invitation.id}
+                      style={commonStyles.bookManage.memberRow}
+                    >
                       <div>
                         <strong>{invitation.invited_email}</strong>
-                        <span style={styles.memberRole}>
+                        <span style={commonStyles.bookManage.memberRole}>
                           Expires{" "}
                           {new Date(invitation.expires_at).toLocaleDateString()}
                         </span>
                       </div>
-                      <span style={styles.memberRole}>Pending</span>
+                      <span style={commonStyles.bookManage.memberRole}>
+                        Pending
+                      </span>
                     </div>
                   ))}
                 </div>
               )}
 
-              <div style={styles.inviteBox}>
-                <h3 style={styles.inviteTitle}>Invite an editor</h3>
+              <div style={commonStyles.bookManage.inviteBox}>
+                <h3 style={commonStyles.bookManage.inviteTitle}>
+                  Invite an editor
+                </h3>
 
-                <div style={styles.inviteRow}>
+                <div style={commonStyles.bookManage.inviteRow}>
                   <input
                     type="email"
                     value={inviteEmail}
                     onChange={(event) => setInviteEmail(event.target.value)}
                     placeholder="Friend's account email"
-                    style={styles.input}
+                    style={commonStyles.bookManage.input}
                   />
 
                   <button
                     type="button"
                     onClick={handleInvite}
-                    style={styles.primaryButton}
+                    style={commonStyles.bookManage.primaryButton}
                   >
                     Invite
                   </button>
                 </div>
 
-                {inviteMessage && <p style={styles.message}>{inviteMessage}</p>}
+                {inviteMessage && (
+                  <p style={commonStyles.bookManage.message}>{inviteMessage}</p>
+                )}
               </div>
             </section>
           )}
@@ -730,15 +770,15 @@ export default function BookPage({
       </main>
 
       {isPickerOpen && (
-        <div style={styles.modalOverlay}>
-          <div style={styles.modal}>
-            <div style={styles.modalHeader}>
-              <h2 style={styles.modalTitle}>Add Recipes</h2>
+        <div style={commonStyles.modalOverlay}>
+          <div style={commonStyles.largeModal}>
+            <div style={commonStyles.modalHeader}>
+              <h2 style={commonStyles.sectionTitle}>Add Recipes</h2>
 
               <button
                 type="button"
                 onClick={closePicker}
-                style={styles.closeButton}
+                style={commonStyles.modalCloseButton}
               >
                 ×
               </button>
@@ -749,35 +789,40 @@ export default function BookPage({
               value={search}
               onChange={(event) => setSearch(event.target.value)}
               placeholder="Search recipes..."
-              style={styles.searchInput}
+              style={commonStyles.searchInput}
             />
 
-            {pickerError && <p style={styles.error}>{pickerError}</p>}
+            {pickerError && (
+              <p style={commonStyles.bookManage.error}>{pickerError}</p>
+            )}
 
             {pickerLoading ? (
               <p>Loading recipes...</p>
             ) : filteredRecipes.length === 0 ? (
               <p>No recipes found.</p>
             ) : (
-              <div style={styles.pickerList}>
+              <div style={commonStyles.verticalList}>
                 {filteredRecipes.map((recipe) => {
                   const alreadyAdded = bookRecipes.some(
                     (bookRecipe) => bookRecipe.recipe_id === recipe.id,
                   );
 
                   return (
-                    <div key={recipe.id} style={styles.pickerRow}>
-                      <div style={styles.pickerRecipeInfo}>
+                    <div
+                      key={recipe.id}
+                      style={commonStyles.bookManage.pickerRow}
+                    >
+                      <div style={commonStyles.bookManage.pickerRecipeInfo}>
                         <img
                           src={recipe.image_url || "/images/default-food.jpg"}
                           alt={recipe.title}
-                          style={styles.pickerImage}
+                          style={commonStyles.bookManage.pickerImage}
                         />
 
                         <div>
                           <strong>{recipe.title}</strong>
 
-                          <div style={styles.pickerCategory}>
+                          <div style={commonStyles.bookManage.pickerCategory}>
                             {recipe.category ?? "Other"}
                           </div>
                         </div>
@@ -788,7 +833,9 @@ export default function BookPage({
                         onClick={() => handleAddRecipe(recipe.id)}
                         disabled={alreadyAdded}
                         style={
-                          alreadyAdded ? styles.addedButton : styles.addButton
+                          alreadyAdded
+                            ? commonStyles.bookManage.addedButton
+                            : commonStyles.bookManage.addButton
                         }
                       >
                         {alreadyAdded ? "✓ Added" : "+ Add"}
@@ -804,333 +851,3 @@ export default function BookPage({
     </>
   );
 }
-
-const styles = {
-  header: {
-    marginTop: "28px",
-  },
-
-  titleInput: {
-    width: "100%",
-    maxWidth: "700px",
-    boxSizing: "border-box" as const,
-    fontSize: "36px",
-    fontWeight: "700",
-    padding: "4px 8px",
-    border: "1px solid #ccc",
-    borderRadius: "8px",
-    outline: "none",
-  },
-
-  description: {
-    fontSize: "17px",
-    lineHeight: 1.6,
-    color: "#666",
-    marginTop: "10px",
-  },
-
-  descriptionInput: {
-    display: "block",
-    width: "100%",
-    maxWidth: "700px",
-    minHeight: "90px",
-    boxSizing: "border-box" as const,
-    fontSize: "17px",
-    lineHeight: 1.6,
-    padding: "8px",
-    border: "1px solid #ccc",
-    borderRadius: "8px",
-    resize: "vertical" as const,
-  },
-
-  role: {
-    display: "inline-block",
-    marginTop: "12px",
-    padding: "5px 10px",
-    borderRadius: "999px",
-    background: "#f0f0f0",
-    color: "#555",
-    fontSize: "14px",
-    fontWeight: "600",
-  },
-
-  actions: {
-    display: "flex",
-    flexWrap: "wrap" as const,
-    gap: "12px",
-    marginTop: "28px",
-  },
-
-  previewButton: {
-    display: "inline-block",
-    padding: "10px 16px",
-    borderRadius: "8px",
-    background: "#222",
-    color: "#fff",
-    textDecoration: "none",
-    fontWeight: "600",
-  },
-
-  primaryButton: {
-    padding: "10px 16px",
-    borderRadius: "8px",
-    border: "none",
-    background: "#222",
-    color: "#fff",
-    cursor: "pointer",
-    fontWeight: "600",
-  },
-
-  error: {
-    marginTop: "20px",
-    color: "#b00020",
-  },
-
-  emptyState: {
-    marginTop: "40px",
-    padding: "30px",
-    borderRadius: "12px",
-    background: "#f7f7f7",
-  },
-
-  sections: {
-    marginTop: "40px",
-  },
-
-  section: {
-    marginBottom: "50px",
-  },
-
-  sectionTitle: {
-    fontSize: "28px",
-    marginBottom: "18px",
-  },
-
-  recipeList: {
-    display: "flex",
-    flexDirection: "column" as const,
-    gap: "12px",
-  },
-
-  recipeRow: {
-    display: "flex",
-    alignItems: "center",
-    gap: "12px",
-    padding: "12px",
-    border: "1px solid #ddd",
-    borderRadius: "10px",
-  },
-
-  recipeLink: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: "20px",
-    flex: 1,
-    textDecoration: "none",
-    color: "inherit",
-  },
-
-  recipeInfo: {
-    minWidth: 0,
-  },
-
-  recipeTitle: {
-    margin: 0,
-    fontSize: "19px",
-  },
-
-  recipeCategory: {
-    margin: "5px 0 0",
-    color: "#777",
-    fontSize: "14px",
-  },
-
-  recipeImage: {
-    width: "90px",
-    height: "70px",
-    objectFit: "cover" as const,
-    borderRadius: "8px",
-    flexShrink: 0,
-  },
-
-  removeButton: {
-    padding: "8px 12px",
-    borderRadius: "7px",
-    border: "1px solid #ccc",
-    background: "#fff",
-    cursor: "pointer",
-  },
-
-  collaborators: {
-    marginTop: "60px",
-    paddingTop: "35px",
-    borderTop: "1px solid #ddd",
-  },
-
-  collaboratorsTitle: {
-    fontSize: "26px",
-    marginBottom: "20px",
-  },
-
-  memberList: {
-    display: "flex",
-    flexDirection: "column" as const,
-    gap: "10px",
-  },
-
-  memberRow: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: "20px",
-    padding: "12px 14px",
-    border: "1px solid #ddd",
-    borderRadius: "8px",
-  },
-
-  memberRole: {
-    marginLeft: "10px",
-    color: "#777",
-    fontSize: "14px",
-  },
-
-  editorLabel: {
-    color: "#666",
-    fontSize: "14px",
-  },
-
-  inviteBox: {
-    marginTop: "28px",
-  },
-
-  inviteTitle: {
-    fontSize: "20px",
-    marginBottom: "12px",
-  },
-
-  inviteRow: {
-    display: "flex",
-    gap: "10px",
-    flexWrap: "wrap" as const,
-  },
-
-  input: {
-    flex: 1,
-    minWidth: "250px",
-    padding: "10px 12px",
-    borderRadius: "8px",
-    border: "1px solid #ccc",
-  },
-
-  message: {
-    marginTop: "10px",
-    color: "#555",
-  },
-
-  modalOverlay: {
-    position: "fixed" as const,
-    inset: 0,
-    background: "rgba(0,0,0,0.45)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: "20px",
-    zIndex: 1000,
-  },
-
-  modal: {
-    width: "100%",
-    maxWidth: "700px",
-    maxHeight: "85vh",
-    overflowY: "auto" as const,
-    background: "#fff",
-    borderRadius: "14px",
-    padding: "24px",
-  },
-
-  modalHeader: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: "18px",
-  },
-
-  modalTitle: {
-    margin: 0,
-  },
-
-  closeButton: {
-    border: "none",
-    background: "transparent",
-    fontSize: "30px",
-    cursor: "pointer",
-    lineHeight: 1,
-  },
-
-  searchInput: {
-    width: "100%",
-    boxSizing: "border-box" as const,
-    padding: "10px 12px",
-    borderRadius: "8px",
-    border: "1px solid #ccc",
-    marginBottom: "18px",
-  },
-
-  pickerList: {
-    display: "flex",
-    flexDirection: "column" as const,
-    gap: "10px",
-  },
-
-  pickerRow: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: "15px",
-    padding: "10px",
-    border: "1px solid #ddd",
-    borderRadius: "9px",
-  },
-
-  pickerRecipeInfo: {
-    display: "flex",
-    alignItems: "center",
-    gap: "12px",
-    minWidth: 0,
-  },
-
-  pickerImage: {
-    width: "60px",
-    height: "50px",
-    objectFit: "cover" as const,
-    borderRadius: "7px",
-    flexShrink: 0,
-  },
-
-  pickerCategory: {
-    marginTop: "4px",
-    color: "#777",
-    fontSize: "13px",
-  },
-
-  addButton: {
-    padding: "8px 12px",
-    borderRadius: "7px",
-    border: "none",
-    background: "#222",
-    color: "#fff",
-    cursor: "pointer",
-    whiteSpace: "nowrap" as const,
-  },
-
-  addedButton: {
-    padding: "8px 12px",
-    borderRadius: "7px",
-    border: "1px solid #ccc",
-    background: "#f3f3f3",
-    color: "#777",
-    cursor: "default",
-    whiteSpace: "nowrap" as const,
-  },
-};
