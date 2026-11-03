@@ -7,6 +7,7 @@ import {
   Text,
   View,
 } from "@react-pdf/renderer";
+import { getButtonStyle, type ButtonViewModel } from "@/components/shared/Button";
 import { designTokens } from "@/styles/tokens";
 
 const pdfTokens = {
@@ -60,7 +61,7 @@ const styles = {
     fontSize: pdfTokens.fontSize.body,
     letterSpacing: pdfTokens.spacing.pt4,
     marginBottom: pdfTokens.spacing.pt25,
-    color: designTokens.colors.gray,
+    color: designTokens.colors.text.secondary,
   },
   coverTitle: {
     fontSize: 38,
@@ -70,12 +71,12 @@ const styles = {
     fontSize: 14,
     lineHeight: pdfTokens.lineHeight.body,
     maxWidth: 420,
-    color: designTokens.colors.gray,
+    color: designTokens.colors.text.secondary,
   },
   coverCount: {
     marginTop: pdfTokens.spacing.pt35,
     fontSize: pdfTokens.fontSize.body,
-    color: designTokens.colors.gray,
+    color: designTokens.colors.text.secondary,
   },
   page: {
     ...pdfPageBase,
@@ -95,7 +96,7 @@ const styles = {
   },
   tocRecipe: {
     fontSize: pdfTokens.fontSize.bodySmall,
-    color: designTokens.colors.gray,
+    color: designTokens.colors.text.secondary,
     marginLeft: pdfTokens.spacing.pt15,
     marginBottom: pdfTokens.spacing.pt4,
   },
@@ -110,7 +111,7 @@ const styles = {
   sectionLabel: {
     fontSize: pdfTokens.fontSize.body,
     letterSpacing: pdfTokens.spacing.pt4,
-    color: designTokens.colors.gray,
+    color: designTokens.colors.text.secondary,
     marginBottom: pdfTokens.spacing.pt20,
   },
   sectionTitle: {
@@ -119,11 +120,11 @@ const styles = {
   },
   sectionCount: {
     fontSize: pdfTokens.fontSize.body,
-    color: designTokens.colors.gray,
+    color: designTokens.colors.text.secondary,
   },
   recipeCategory: {
     fontSize: pdfTokens.fontSize.bodySmall,
-    color: designTokens.colors.gray,
+    color: designTokens.colors.text.secondary,
     marginBottom: 8,
   },
   recipeTitle: {
@@ -133,14 +134,14 @@ const styles = {
   description: {
     fontSize: pdfTokens.fontSize.body,
     lineHeight: pdfTokens.lineHeight.body,
-    color: designTokens.colors.gray,
+    color: designTokens.colors.text.secondary,
     marginBottom: 18,
   },
   meta: {
     flexDirection: "row",
     gap: pdfTokens.spacing.pt15,
     fontSize: 10,
-    color: designTokens.colors.gray,
+    color: designTokens.colors.text.secondary,
     marginBottom: pdfTokens.spacing.pt15,
   },
   recipeSection: {
@@ -167,18 +168,8 @@ const styles = {
     right: 0,
     textAlign: "center",
     fontSize: 9,
-    color: designTokens.colors.gray,
+    color: designTokens.colors.text.secondary,
   },
-} as const;
-
-const bookPdfDownloadButtonStyle = {
-  display: "inline-block",
-  padding: `${designTokens.spacing.s} ${designTokens.spacing.m}`,
-  borderRadius: designTokens.radius.control,
-  backgroundColor: designTokens.colors.black,
-  color: designTokens.colors.white,
-  textDecoration: "none",
-  fontWeight: designTokens.typography.weightSemibold,
 } as const;
 
 type Recipe = {
@@ -387,12 +378,16 @@ function BookPdfDocument({ book, sections }: Props) {
 
 export default function BookPdfButton({ book, sections }: Props) {
   const fileName = `${book.title.replace(/[^a-z0-9]+/gi, "-") || "recipe-book"}.pdf`;
+  const viewModel = {
+    size: "small",
+    variant: "primary",
+  } satisfies Pick<ButtonViewModel, "size" | "variant">;
 
   return (
     <PDFDownloadLink
       document={<BookPdfDocument book={book} sections={sections} />}
       fileName={fileName}
-      style={bookPdfDownloadButtonStyle}
+      style={getButtonStyle(viewModel)}
     >
       {({ loading }) => (loading ? "Preparing PDF..." : "Generate PDF")}
     </PDFDownloadLink>

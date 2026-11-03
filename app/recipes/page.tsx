@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import ListRow from "@/components/shared/ListRow";
+import Button, { getButtonStyle } from "@/components/shared/Button";
 import { commonStyles } from "@/styles/common";
 import { designTokens } from "@/styles/tokens";
 import { supabase } from "@/lib/supabase";
@@ -201,7 +202,7 @@ export default function RecipesPage() {
               </p>
             </div>
 
-            <Link href="/submit" style={commonStyles.button}>
+            <Link href="/submit" style={getButtonStyle({})}>
               Add New Recipe
             </Link>
           </div>
@@ -222,7 +223,7 @@ export default function RecipesPage() {
             <div style={commonStyles.emptyState}>
               <h2>No recipes yet</h2>
               <p>Be the first to add a recipe to the collection.</p>
-              <Link href="/submit" style={commonStyles.button}>
+              <Link href="/submit" style={getButtonStyle({})}>
                 Add New Recipe
               </Link>
             </div>
@@ -276,14 +277,15 @@ export default function RecipesPage() {
                 <p style={commonStyles.subtitle}>{selectedRecipe.title}</p>
               </div>
 
-              <button
-                type="button"
-                onClick={closeBookPicker}
-                style={commonStyles.modalCloseButton}
-                aria-label="Close"
-              >
-                ×
-              </button>
+              <Button
+                viewModel={{
+                  type: "button",
+                  onClick: closeBookPicker,
+                  style: commonStyles.modalCloseButton,
+                  "aria-label": "Close",
+                  content: "×",
+                }}
+              />
             </div>
 
             {bookPickerLoading && <p>Loading your books...</p>}
@@ -303,7 +305,7 @@ export default function RecipesPage() {
                   <p>You don&apos;t have any recipe books yet.</p>
                   <Link
                     href="/profile"
-                    style={commonStyles.button}
+                    style={getButtonStyle({})}
                     onClick={closeBookPicker}
                   >
                     Create a Book
@@ -317,32 +319,35 @@ export default function RecipesPage() {
                   const alreadyAdded = addedBookIds.has(book.id);
 
                   return (
-                    <button
-                      key={book.id}
-                      type="button"
-                      onClick={() => handleAddToBook(book)}
-                      disabled={alreadyAdded || addingToBookId !== null}
-                      style={
-                        alreadyAdded
-                          ? styles.recipePickerButtonAdded
-                          : styles.recipePickerButton
-                      }
-                    >
-                      <span>{book.title}</span>
-                      <span
-                        style={
-                          alreadyAdded
-                            ? styles.recipePickerButtonTextAdded
-                            : styles.recipePickerButtonText
-                        }
-                      >
-                        {alreadyAdded
-                          ? "✓ Added"
-                          : addingToBookId === book.id
-                            ? "Adding..."
-                            : "+ Add"}
-                      </span>
-                    </button>
+                  <Button
+                    key={book.id}
+                    viewModel={{
+                      type: "button",
+                      onClick: () => handleAddToBook(book),
+                      disabled: alreadyAdded || addingToBookId !== null,
+                      style: alreadyAdded
+                        ? styles.recipePickerButtonAdded
+                        : styles.recipePickerButton,
+                      content: (
+                        <>
+                          <span>{book.title}</span>
+                          <span
+                            style={
+                              alreadyAdded
+                                ? styles.recipePickerButtonTextAdded
+                                : styles.recipePickerButtonText
+                            }
+                          >
+                            {alreadyAdded
+                              ? "✓ Added"
+                              : addingToBookId === book.id
+                                ? "Adding..."
+                                : "+ Add"}
+                          </span>
+                        </>
+                      ),
+                    }}
+                  />
                   );
                 })}
               </div>
@@ -361,9 +366,9 @@ const recipePickerButtonBase = {
   justifyContent: "space-between",
   width: "100%",
   padding: `${designTokens.spacing.m} ${designTokens.spacing.m}`,
-  border: `1px solid ${designTokens.colors.lightGray}`,
+  border: `1px solid ${designTokens.colors.border.default}`,
   borderRadius: designTokens.radius.sm,
-  color: designTokens.colors.black,
+  color: designTokens.colors.text.primary,
   textAlign: "left" as const,
   fontSize: designTokens.typography.fontSize.s,
 };
@@ -371,21 +376,21 @@ const recipePickerButtonBase = {
 const styles = {
   recipePickerButtonAdded: {
     ...recipePickerButtonBase,
-    background: designTokens.colors.veryLightGray,
+    background: designTokens.colors.surface.subtle,
     cursor: "default",
   },
   recipePickerButton: {
     ...recipePickerButtonBase,
-    background: designTokens.colors.beige,
+    background: designTokens.colors.surface.softBackground,
     cursor: "pointer",
   },
   recipePickerButtonTextAdded: {
-    color: designTokens.colors.black,
+    color: designTokens.colors.text.primary,
     fontSize: designTokens.typography.fontSize.xs,
     fontWeight: designTokens.typography.weightSemibold,
   },
   recipePickerButtonText: {
-    color: designTokens.colors.gray,
+    color: designTokens.colors.text.secondary,
     fontSize: designTokens.typography.fontSize.xs,
   },
 } as const;

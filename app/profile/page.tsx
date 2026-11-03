@@ -4,6 +4,7 @@ import Link from "next/link";
 import ListRow from "@/components/shared/ListRow";
 import { Suspense, type FormEvent, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Button, { getButtonStyle } from "@/components/shared/Button";
 import { commonStyles } from "@/styles/common";
 import { designTokens } from "@/styles/tokens";
 import { supabase } from "@/lib/supabase";
@@ -503,9 +504,12 @@ function ProfilePageContent() {
             {message && <p style={commonStyles.success}>{message}</p>}
             {errorMessage && <p style={commonStyles.error}>{errorMessage}</p>}
 
-            <button type="submit" style={commonStyles.button}>
-              Reset Password
-            </button>
+            <Button
+              viewModel={{
+                type: "submit",
+                content: "Reset Password",
+              }}
+            />
           </form>
         </div>
       </main>
@@ -557,35 +561,41 @@ function ProfilePageContent() {
             {message && <p style={commonStyles.success}>{message}</p>}
 
             {mode === "login" && (
-              <button
-                type="button"
-                onClick={handleForgotPassword}
-                style={styles.forgotPasswordButton}
-              >
-                Forgot password?
-              </button>
+              <Button
+                viewModel={{
+                  type: "button",
+                  onClick: handleForgotPassword,
+                  style: styles.forgotPasswordButton,
+                  content: "Forgot password?",
+                }}
+              />
             )}
 
             {errorMessage && <p style={commonStyles.error}>{errorMessage}</p>}
 
-            <button type="submit" style={commonStyles.button}>
-              {mode === "login" ? "Log In" : "Create Account"}
-            </button>
+            <Button
+              viewModel={{
+                type: "submit",
+                content: mode === "login" ? "Log In" : "Create Account",
+              }}
+            />
           </form>
 
-          <button
-            type="button"
-            onClick={() => {
-              setMode(mode === "login" ? "signup" : "login");
-              setMessage("");
-              setErrorMessage("");
+          <Button
+            viewModel={{
+              type: "button",
+              onClick: () => {
+                setMode(mode === "login" ? "signup" : "login");
+                setMessage("");
+                setErrorMessage("");
+              },
+              variant: "secondary",
+              content:
+                mode === "login"
+                  ? "Create a New Account"
+                  : "Already Have an Account? Log In",
             }}
-            style={commonStyles.secondaryButton}
-          >
-            {mode === "login"
-              ? "Create a New Account"
-              : "Already Have an Account? Log In"}
-          </button>
+          />
         </div>
       </main>
     );
@@ -600,20 +610,21 @@ function ProfilePageContent() {
           <div style={styles.accountHeader}>
             <h2 style={commonStyles.sectionTitle}>Account</h2>
 
-            <button
-              type="button"
-              onClick={() => {
-                setIsEditingAccount((current) => !current);
-                setCurrentPassword("");
-                setNewPassword("");
-                setConfirmNewPassword("");
-                setMessage("");
-                setErrorMessage("");
+            <Button
+              viewModel={{
+                type: "button",
+                onClick: () => {
+                  setIsEditingAccount((current) => !current);
+                  setCurrentPassword("");
+                  setNewPassword("");
+                  setConfirmNewPassword("");
+                  setMessage("");
+                  setErrorMessage("");
+                },
+                style: styles.editButton,
+                content: isEditingAccount ? "Cancel" : "Edit",
               }}
-              style={styles.editButton}
-            >
-              {isEditingAccount ? "Cancel" : "Edit"}
-            </button>
+            />
           </div>
 
           <p>
@@ -664,19 +675,23 @@ function ProfilePageContent() {
                 />
               </label>
 
-              <button type="submit" style={commonStyles.button}>
-                Save Password
-              </button>
+              <Button
+                viewModel={{
+                  type: "submit",
+                  content: "Save Password",
+                }}
+              />
             </form>
           )}
 
-          <button
-            type="button"
-            onClick={handleLogout}
-            style={commonStyles.secondaryButton}
-          >
-            Log Out
-          </button>
+          <Button
+            viewModel={{
+              type: "button",
+              onClick: handleLogout,
+              variant: "secondary",
+              content: "Log Out",
+            }}
+          />
         </div>
 
         {invitations.length > 0 && (
@@ -699,25 +714,26 @@ function ProfilePageContent() {
                   </div>
 
                   <div style={styles.invitationActions}>
-                    <button
-                      type="button"
-                      onClick={() => handleAcceptInvitation(invitation)}
-                      disabled={processingInvitationId !== null}
-                      style={commonStyles.button}
-                    >
-                      {processingInvitationId === invitation.id
-                        ? "..."
-                        : "Accept"}
-                    </button>
+                    <Button
+                      viewModel={{
+                        type: "button",
+                        onClick: () => handleAcceptInvitation(invitation),
+                        disabled: processingInvitationId !== null,
+                        content: processingInvitationId === invitation.id
+                            ? "..."
+                            : "Accept",
+                      }}
+                    />
 
-                    <button
-                      type="button"
-                      onClick={() => handleDeclineInvitation(invitation)}
-                      disabled={processingInvitationId !== null}
-                      style={commonStyles.secondaryButton}
-                    >
-                      Decline
-                    </button>
+                    <Button
+                      viewModel={{
+                        type: "button",
+                        onClick: () => handleDeclineInvitation(invitation),
+                        disabled: processingInvitationId !== null,
+                        variant: "secondary",
+                        content: "Decline",
+                      }}
+                    />
                   </div>
                 </div>
               ))}
@@ -738,17 +754,17 @@ function ProfilePageContent() {
               </p>
             </div>
 
-            <button
-              type="button"
-              onClick={() => {
-                setShowCreateBook((current) => !current);
-                setErrorMessage("");
-                setMessage("");
+            <Button
+              viewModel={{
+                type: "button",
+                onClick: () => {
+                    setShowCreateBook((current) => !current);
+                    setErrorMessage("");
+                    setMessage("");
+                },
+                content: showCreateBook ? "Cancel" : "Create New Book",
               }}
-              style={commonStyles.button}
-            >
-              {showCreateBook ? "Cancel" : "Create New Book"}
-            </button>
+            />
           </div>
 
           {showCreateBook && (
@@ -776,9 +792,12 @@ function ProfilePageContent() {
                 />
               </label>
 
-              <button type="submit" style={commonStyles.button}>
-                Create Book
-              </button>
+              <Button
+                viewModel={{
+                  type: "submit",
+                  content: "Create Book",
+                }}
+              />
             </form>
           )}
 
@@ -821,7 +840,7 @@ function ProfilePageContent() {
             <h2>Admin Tools</h2>
             <p>You have administrator access to the recipe collection.</p>
 
-            <Link href="/admin" style={commonStyles.button}>
+            <Link href="/admin" style={getButtonStyle({})}>
               Manage Recipes
             </Link>
           </section>
@@ -838,7 +857,7 @@ const invitationRowBase = {
   gap: designTokens.spacing.m,
   padding: designTokens.spacing.m,
   borderRadius: designTokens.radius.md,
-  background: designTokens.colors.beige,
+  background: designTokens.colors.surface.softBackground,
 };
 
 const styles = {
@@ -847,7 +866,7 @@ const styles = {
     padding: 0,
     border: "none",
     background: "none",
-    color: designTokens.colors.brown,
+    color: designTokens.colors.text.warmAccent,
     textDecoration: "underline",
     cursor: "pointer",
     fontSize: designTokens.typography.fontSize.xs,
@@ -865,9 +884,9 @@ const styles = {
   },
   editButton: {
     padding: `${designTokens.spacing.xs} ${designTokens.spacing.s}`,
-    border: `1px solid ${designTokens.colors.lightGray}`,
+    border: `1px solid ${designTokens.colors.border.default}`,
     borderRadius: designTokens.radius.sm,
-    background: designTokens.colors.white,
+    background: designTokens.colors.surface.content,
     cursor: "pointer",
     fontSize: designTokens.typography.fontSize.xs,
   },
@@ -892,7 +911,7 @@ const styles = {
   },
   sectionDescription: {
     marginTop: designTokens.spacing.s,
-    color: designTokens.colors.gray,
+    color: designTokens.colors.text.secondary,
   },
   createBookForm: {
     display: "flex",
@@ -900,13 +919,13 @@ const styles = {
     gap: designTokens.spacing.m,
     padding: designTokens.spacing.m,
     marginBottom: designTokens.spacing.l,
-    border: `1px solid ${designTokens.colors.lightGray}`,
+    border: `1px solid ${designTokens.colors.border.default}`,
     borderRadius: designTokens.radius.md,
   },
   adminSection: {
     marginTop: designTokens.spacing.l,
     padding: designTokens.spacing.l,
     borderRadius: designTokens.radius.md,
-    background: designTokens.colors.beige,
+    background: designTokens.colors.surface.softBackground,
   },
 } as const;

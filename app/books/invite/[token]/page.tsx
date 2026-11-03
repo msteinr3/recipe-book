@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Button, { getButtonStyle } from "@/components/shared/Button";
 import { commonStyles } from "@/styles/common";
 import { designTokens } from "@/styles/tokens";
 import { supabase } from "@/lib/supabase";
@@ -80,7 +81,7 @@ export default function BookInvitePage() {
               this invitation.
             </p>
 
-            <Link href="/profile" style={commonStyles.button}>
+            <Link href="/profile" style={getButtonStyle({})}>
               Log In / Create Account
             </Link>
           </>
@@ -94,13 +95,13 @@ export default function BookInvitePage() {
 
             {message && <p style={commonStyles.success}>{message}</p>}
 
-            <button
-              type="button"
-              onClick={handleAccept}
-              style={commonStyles.button}
-            >
-              Accept Invitation
-            </button>
+            <Button
+              viewModel={{
+                type: "button",
+                onClick: handleAccept,
+                content: "Accept Invitation",
+              }}
+            />
           </>
         )}
       </div>

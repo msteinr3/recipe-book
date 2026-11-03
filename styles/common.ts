@@ -5,21 +5,10 @@ const { colors, spacing, sizes, typography, radius, layout } =
 
 const fieldStyle = {
   padding: spacing.m,
-  border: `1px solid ${colors.lightGray}`,
+  border: `1px solid ${colors.border.default}`,
   borderRadius: radius.sm,
   fontSize: typography.fontSize.s,
   boxSizing: "border-box" as const,
-};
-
-const commonButtonBase = {
-  display: "inline-flex",
-  alignItems: "center",
-  justifyContent: "center",
-  gap: spacing.s,
-  padding: `${spacing.s} ${spacing.m}`,
-  borderRadius: radius.sm,
-  cursor: "pointer",
-  fontSize: typography.fontSize.s,
 };
 
 const columnLayoutBase = {
@@ -79,7 +68,7 @@ export const commonStyles = {
   subtitle: {
     marginTop: spacing.s,
     marginBottom: spacing.l,
-    color: colors.gray,
+    color: colors.text.secondary,
   },
 
   bodyDescription: {
@@ -99,11 +88,11 @@ export const commonStyles = {
 
   rowSubtitle: {
     marginTop: spacing.xs,
-    color: colors.gray,
+    color: colors.text.secondary,
   },
 
   rowMediaText: {
-    color: colors.gray,
+    color: colors.text.secondary,
     fontSize: typography.fontSize.xs,
     fontWeight: typography.weightSemibold,
     flexShrink: 0,
@@ -111,7 +100,7 @@ export const commonStyles = {
 
   category: {
     marginTop: spacing.s,
-    color: colors.gray,
+    color: colors.text.secondary,
     fontWeight: typography.weightSemibold,
   },
 
@@ -125,35 +114,7 @@ export const commonStyles = {
 
   link: {
     textDecoration: "none",
-    color: colors.black,
-  },
-
-  // Buttons
-  buttonBase: commonButtonBase,
-
-  button: {
-    ...commonButtonBase,
-    padding: `${spacing.m} ${spacing.l}`,
-    border: "none",
-    background: colors.black,
-    color: colors.white,
-    textDecoration: "none",
-  },
-
-  secondaryButton: {
-    ...commonButtonBase,
-    border: `1px solid ${colors.lightGray}`,
-    background: colors.white,
-    color: colors.black,
-    textDecoration: "none",
-  },
-
-  dangerButton: {
-    ...commonButtonBase,
-    border: `1px solid ${colors.red}`,
-    background: colors.white,
-    color: colors.red,
-    flexShrink: 0,
+    color: colors.text.primary,
   },
 
   buttonRow: {
@@ -169,7 +130,7 @@ export const commonStyles = {
     fontSize: typography.fontSize.m,
     lineHeight: typography.lineHeightTitle,
     cursor: "pointer",
-    color: colors.gray,
+    color: colors.text.secondary,
   },
 
   // Forms
@@ -202,26 +163,26 @@ export const commonStyles = {
   // Feedback and empty states
   error: {
     ...feedbackMessageBase,
-    background: colors.paleRed,
+    background: colors.surface.danger,
   },
 
   success: {
     ...feedbackMessageBase,
-    background: colors.paleGreen,
+    background: colors.surface.success,
   },
 
   emptyState: {
     padding: `${spacing.l} ${spacing.m}`,
     textAlign: "center" as const,
-    border: `1px solid ${colors.lightGray}`,
+    border: `1px solid ${colors.border.default}`,
     borderRadius: radius.md,
   },
 
   // Surfaces
   card: {
-    border: `1px solid ${colors.lightGray}`,
+    border: `1px solid ${colors.border.default}`,
     borderRadius: radius.md,
-    background: colors.white,
+    background: colors.surface.card,
     boxShadow: designTokens.shadows.card,
   },
 
@@ -233,7 +194,7 @@ export const commonStyles = {
     alignItems: "center",
     justifyContent: "center",
     padding: spacing.m,
-    background: colors.blackOverlay,
+    background: colors.surface.overlay,
     zIndex: layout.overlayZIndex,
   },
 
@@ -242,7 +203,7 @@ export const commonStyles = {
     maxWidth: sizes.l,
     padding: spacing.l,
     borderRadius: radius.md,
-    background: colors.white,
+    background: colors.surface.content,
     boxSizing: "border-box" as const,
   },
 

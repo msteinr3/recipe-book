@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import Button from "@/components/shared/Button";
 import { commonStyles } from "@/styles/common";
 import { designTokens } from "@/styles/tokens";
 import ListRow from "@/components/shared/ListRow";
@@ -602,26 +603,28 @@ export default function BookPage({
               Preview Book
             </Link>
 
-            <button
-              type="button"
-              onClick={openPicker}
-              style={styles.bookManage.primaryButton}
-            >
-              Add Recipes
-            </button>
+            <Button
+              viewModel={{
+                type: "button",
+                onClick: openPicker,
+                style: styles.bookManage.primaryButton,
+                content: "Add Recipes",
+              }}
+            />
           </div>
 
           {recipesByCategory.length === 0 ? (
             <div style={styles.bookManage.emptyState}>
               <p>This book does not have any recipes yet.</p>
 
-              <button
-                type="button"
-                onClick={openPicker}
-                style={styles.bookManage.primaryButton}
-              >
-                Add Your First Recipe
-              </button>
+              <Button
+                viewModel={{
+                  type: "button",
+                  onClick: openPicker,
+                  style: styles.bookManage.primaryButton,
+                  content: "Add Your First Recipe",
+                }}
+              />
             </div>
           ) : (
             <div style={styles.bookManage.sections}>
@@ -723,13 +726,14 @@ export default function BookPage({
                     style={styles.bookManage.input}
                   />
 
-                  <button
-                    type="button"
-                    onClick={handleInvite}
-                    style={styles.bookManage.primaryButton}
-                  >
-                    Invite
-                  </button>
+                  <Button
+                    viewModel={{
+                      type: "button",
+                      onClick: handleInvite,
+                      style: styles.bookManage.primaryButton,
+                      content: "Invite",
+                    }}
+                  />
                 </div>
 
                 {inviteMessage && (
@@ -747,13 +751,14 @@ export default function BookPage({
             <div style={commonStyles.modalHeader}>
               <h2 style={commonStyles.sectionTitle}>Add Recipes</h2>
 
-              <button
-                type="button"
-                onClick={closePicker}
-                style={commonStyles.modalCloseButton}
-              >
-                ×
-              </button>
+              <Button
+                viewModel={{
+                  type: "button",
+                  onClick: closePicker,
+                  style: commonStyles.modalCloseButton,
+                  content: "×",
+                }}
+              />
             </div>
 
             <input
@@ -800,18 +805,17 @@ export default function BookPage({
                         </div>
                       </div>
 
-                      <button
-                        type="button"
-                        onClick={() => handleAddRecipe(recipe.id)}
-                        disabled={alreadyAdded}
-                        style={
-                          alreadyAdded
-                            ? styles.bookManage.addedButton
-                            : styles.bookManage.addButton
-                        }
-                      >
-                        {alreadyAdded ? "✓ Added" : "+ Add"}
-                      </button>
+                      <Button
+                        viewModel={{
+                          type: "button",
+                          onClick: () => handleAddRecipe(recipe.id),
+                          disabled: alreadyAdded,
+                          style: alreadyAdded
+                              ? styles.bookManage.addedButton
+                              : styles.bookManage.addButton,
+                          content: alreadyAdded ? "✓ Added" : "+ Add",
+                        }}
+                      />
                     </div>
                   );
                 })}
@@ -830,7 +834,7 @@ const bookDescriptionStyle = {
 };
 
 const lightBorder = {
-  border: `1px solid ${designTokens.colors.lightGray}`,
+  border: `1px solid ${designTokens.colors.border.default}`,
 };
 
 const bookControlBase = {
@@ -847,8 +851,8 @@ const bookActionButtonBase = {
   padding: `${designTokens.spacing.s} ${designTokens.spacing.m}`,
   borderRadius: designTokens.radius.control,
   fontWeight: designTokens.typography.weightSemibold,
-  background: designTokens.colors.black,
-  color: designTokens.colors.white,
+  background: designTokens.colors.surface.emphasis,
+  color: designTokens.colors.text.onEmphasis,
 };
 
 const styles = {
@@ -868,7 +872,7 @@ const styles = {
     },
     description: {
       ...bookDescriptionStyle,
-      color: designTokens.colors.gray,
+      color: designTokens.colors.text.secondary,
       marginTop: designTokens.spacing.s,
     },
     descriptionInput: {
@@ -887,8 +891,8 @@ const styles = {
       marginTop: designTokens.spacing.m,
       padding: `${designTokens.spacing.xs} ${designTokens.spacing.s}`,
       borderRadius: designTokens.radius.pill,
-      background: designTokens.colors.veryLightGray,
-      color: designTokens.colors.gray,
+      background: designTokens.colors.surface.subtle,
+      color: designTokens.colors.text.secondary,
       fontSize: designTokens.typography.fontSize.xs,
       fontWeight: designTokens.typography.weightSemibold,
     },
@@ -906,7 +910,7 @@ const styles = {
       marginTop: designTokens.spacing.l,
       padding: designTokens.spacing.l,
       borderRadius: designTokens.radius.lg,
-      background: designTokens.colors.veryLightGray,
+      background: designTokens.colors.surface.subtle,
     },
     sections: {
       marginTop: designTokens.spacing.l,
@@ -920,13 +924,13 @@ const styles = {
     },
     recipeCategory: {
       margin: `${designTokens.spacing.xs} 0 0`,
-      color: designTokens.colors.gray,
+      color: designTokens.colors.text.secondary,
       fontSize: designTokens.typography.fontSize.xs,
     },
     collaborators: {
       marginTop: designTokens.spacing.xl,
       paddingTop: designTokens.spacing.l,
-      borderTop: `1px solid ${designTokens.colors.lightGray}`,
+      borderTop: `1px solid ${designTokens.colors.border.default}`,
     },
     collaboratorsTitle: {
       fontSize: designTokens.typography.fontSize.m,
@@ -957,11 +961,11 @@ const styles = {
     },
     message: {
       marginTop: designTokens.spacing.s,
-      color: designTokens.colors.gray,
+      color: designTokens.colors.text.secondary,
     },
     error: {
       marginTop: designTokens.spacing.m,
-      color: designTokens.colors.red,
+      color: designTokens.colors.text.danger,
     },
     pickerRow: {
       display: "flex",
@@ -986,22 +990,22 @@ const styles = {
     },
     pickerCategory: {
       marginTop: designTokens.spacing.xs,
-      color: designTokens.colors.gray,
+      color: designTokens.colors.text.secondary,
       fontSize: designTokens.typography.fontSize.xs,
     },
     addButton: {
       ...bookPickerActionBase,
       borderRadius: designTokens.radius.control,
       border: "none",
-      background: designTokens.colors.black,
-      color: designTokens.colors.white,
+      background: designTokens.colors.surface.emphasis,
+      color: designTokens.colors.text.onEmphasis,
       cursor: "pointer",
     },
     addedButton: {
       ...bookPickerActionBase,
       ...bookControlBase,
-      background: designTokens.colors.veryLightGray,
-      color: designTokens.colors.gray,
+      background: designTokens.colors.surface.subtle,
+      color: designTokens.colors.text.secondary,
       cursor: "default",
     },
     bookTitleOwner: {
@@ -1014,13 +1018,13 @@ const styles = {
     },
     bookDescriptionOwner: {
       ...bookDescriptionStyle,
-      color: designTokens.colors.gray,
+      color: designTokens.colors.text.secondary,
       marginTop: designTokens.spacing.s,
       cursor: "text",
     },
     bookDescriptionReadOnly: {
       ...bookDescriptionStyle,
-      color: designTokens.colors.gray,
+      color: designTokens.colors.text.secondary,
       marginTop: designTokens.spacing.s,
       cursor: "default",
     },
@@ -1030,7 +1034,7 @@ const styles = {
     maxWidth: designTokens.sizes.xl,
     padding: designTokens.spacing.l,
     borderRadius: designTokens.radius.md,
-    background: designTokens.colors.white,
+    background: designTokens.colors.surface.content,
     boxSizing: "border-box",
     maxHeight: "85vh",
     overflowY: "auto",

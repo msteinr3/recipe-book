@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { getButtonStyle } from "@/components/shared/Button";
 import { commonStyles } from "@/styles/common";
 import { designTokens } from "@/styles/tokens";
 import { supabase } from "@/lib/supabase";
@@ -44,7 +45,7 @@ export default function HomePage() {
             A collection of recipes shared, preserved, and enjoyed together.
           </p>
 
-          <Link href="/recipes" style={commonStyles.button}>
+          <Link href="/recipes" style={getButtonStyle({})}>
             Browse Recipes
           </Link>
         </div>
@@ -71,7 +72,7 @@ export default function HomePage() {
             <h3>No recipes yet</h3>
             <p>Be the first to contribute a recipe to the collection.</p>
 
-            <Link href="/submit" style={commonStyles.button}>
+            <Link href="/submit" style={getButtonStyle({})}>
               Add New Recipe
             </Link>
           </div>
@@ -119,7 +120,7 @@ export default function HomePage() {
             Help grow the collection by submitting a recipe of your own.
           </p>
 
-          <Link href="/submit" style={commonStyles.button}>
+          <Link href="/submit" style={getButtonStyle({})}>
             Add New Recipe
           </Link>
         </div>
@@ -131,7 +132,7 @@ export default function HomePage() {
 const styles = {
   hero: {
     padding: `${designTokens.spacing.xl} ${designTokens.spacing.m}`,
-    background: designTokens.colors.beige,
+    background: designTokens.colors.surface.homeHero,
   },
   heroContent: {
     maxWidth: designTokens.sizes.xl,
@@ -147,7 +148,7 @@ const styles = {
     margin: `${designTokens.spacing.l} auto ${designTokens.spacing.l}`,
     fontSize: designTokens.typography.fontSize.m,
     lineHeight: designTokens.typography.lineHeightRelaxed,
-    color: designTokens.colors.gray,
+    color: designTokens.colors.text.secondary,
   },
   grid: {
     display: "grid",
@@ -176,10 +177,10 @@ const styles = {
   contributeSection: {
     marginTop: designTokens.spacing.l,
     padding: `${designTokens.spacing.l} ${designTokens.spacing.m}`,
-    background: designTokens.colors.beige,
+    background: designTokens.colors.surface.softBackground,
   },
   contributeText: {
     margin: `${designTokens.spacing.m} 0 ${designTokens.spacing.l}`,
-    color: designTokens.colors.gray,
+    color: designTokens.colors.text.secondary,
   },
 } as const;

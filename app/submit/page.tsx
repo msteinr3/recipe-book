@@ -2,6 +2,7 @@
 
 import { type FormEvent, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import Button from "@/components/shared/Button";
 import { commonStyles } from "@/styles/common";
 
 const RECIPE_CATEGORIES = [
@@ -157,23 +158,25 @@ export default function SubmitRecipePage() {
                   style={commonStyles.input}
                 />
 
-                <button
-                  type="button"
-                  onClick={() => removeIngredient(index)}
-                  style={commonStyles.secondaryButton}
-                >
-                  Remove
-                </button>
+                <Button
+                  viewModel={{
+                    type: "button",
+                    onClick: () => removeIngredient(index),
+                    variant: "secondary",
+                    content: "Remove",
+                  }}
+                />
               </div>
             ))}
 
-            <button
-              type="button"
-              onClick={addIngredient}
-              style={commonStyles.secondaryButton}
-            >
-              + Add Ingredient
-            </button>
+            <Button
+              viewModel={{
+                type: "button",
+                onClick: addIngredient,
+                variant: "secondary",
+                content: "+ Add Ingredient",
+              }}
+            />
           </section>
 
           <section style={commonStyles.section}>
@@ -192,23 +195,25 @@ export default function SubmitRecipePage() {
                   style={commonStyles.textarea}
                 />
 
-                <button
-                  type="button"
-                  onClick={() => removeInstruction(index)}
-                  style={commonStyles.secondaryButton}
-                >
-                  Remove
-                </button>
+                <Button
+                  viewModel={{
+                    type: "button",
+                    onClick: () => removeInstruction(index),
+                    variant: "secondary",
+                    content: "Remove",
+                  }}
+                />
               </div>
             ))}
 
-            <button
-              type="button"
-              onClick={addInstruction}
-              style={commonStyles.secondaryButton}
-            >
-              + Add Step
-            </button>
+            <Button
+              viewModel={{
+                type: "button",
+                onClick: addInstruction,
+                variant: "secondary",
+                content: "+ Add Step",
+              }}
+            />
           </section>
 
           <div style={commonStyles.twoColumns}>
@@ -291,9 +296,12 @@ export default function SubmitRecipePage() {
             <textarea name="notes" rows={5} style={commonStyles.textarea} />
           </label>
 
-          <button type="submit" style={commonStyles.button}>
-            Submit Recipe
-          </button>
+          <Button
+            viewModel={{
+              type: "submit",
+              content: "Submit Recipe",
+            }}
+          />
         </form>
 
         {submitted && (

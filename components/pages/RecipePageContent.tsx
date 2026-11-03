@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import RecipeEditor from "@/components/pages/RecipeEditor";
+import Button, { getButtonStyle } from "@/components/shared/Button";
 import { commonStyles } from "@/styles/common";
 import { designTokens } from "@/styles/tokens";
 
@@ -106,29 +107,32 @@ export default function RecipePageContent({ recipe }: RecipePageContentProps) {
             </p>
 
             <div style={commonStyles.verticalList}>
-              <button
-                type="button"
-                onClick={() => setShowLeaveDialog(false)}
-                style={commonStyles.secondaryButton}
-              >
-                Stay
-              </button>
+              <Button
+                viewModel={{
+                  type: "button",
+                  onClick: () => setShowLeaveDialog(false),
+                  variant: "secondary",
+                  content: "Stay",
+                }}
+              />
 
-              <button
-                type="button"
-                onClick={leaveWithoutSubmitting}
-                style={styles.destructiveButton}
-              >
-                Leave Without Submitting
-              </button>
+              <Button
+                viewModel={{
+                  type: "button",
+                  onClick: leaveWithoutSubmitting,
+                  style: styles.destructiveButton,
+                  content: "Leave Without Submitting",
+                }}
+              />
 
-              <button
-                type="button"
-                onClick={submitChanges}
-                style={styles.primaryButton}
-              >
-                Submit Changes
-              </button>
+              <Button
+                viewModel={{
+                  type: "button",
+                  onClick: submitChanges,
+                  style: styles.primaryButton,
+                  content: "Submit Changes",
+                }}
+              />
             </div>
           </div>
         </div>
@@ -146,16 +150,13 @@ const styles = {
     marginBottom: designTokens.spacing.m,
   },
   destructiveButton: {
-    ...commonStyles.buttonBase,
-    background: designTokens.colors.white,
-    color: designTokens.colors.red,
-    border: `1px solid ${designTokens.colors.red}`,
+    ...getButtonStyle({
+      variant: "danger",
+    }),
   },
   primaryButton: {
-    ...commonStyles.buttonBase,
-    border: "none",
-    background: designTokens.colors.green,
-    color: designTokens.colors.white,
+    ...getButtonStyle({ size: "small" }),
+    background: designTokens.colors.surface.positiveAction,
     fontWeight: designTokens.typography.weightSemibold,
   },
 } as const;

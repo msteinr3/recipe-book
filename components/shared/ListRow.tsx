@@ -1,6 +1,8 @@
 import Link from "next/link";
+import Button from "@/components/shared/Button";
 import { commonStyles } from "@/styles/common";
 import { designTokens } from "@/styles/tokens";
+import type { ButtonViewModel } from "@/components/shared/Button";
 
 export type ListRowViewModel = {
   title: string;
@@ -13,8 +15,10 @@ export type ListRowViewModel = {
   action?: {
     label: string;
     onClick: () => void;
-    variant?: "primary" | "secondary" | "danger";
-  };
+  } & Pick<
+    ButtonViewModel,
+    "size" | "variant"
+  >;
 };
 
 type ListRowProps = {
@@ -48,13 +52,6 @@ export default function ListRow({ viewModel }: ListRowProps) {
     </>
   );
 
-  const actionStyle =
-    action?.variant === "primary"
-      ? commonStyles.button
-      : action?.variant === "danger"
-        ? commonStyles.dangerButton
-        : commonStyles.secondaryButton;
-
   return (
     <div style={styles.row}>
       {href ? (
@@ -66,13 +63,15 @@ export default function ListRow({ viewModel }: ListRowProps) {
       )}
 
       {action && (
-        <button
-          type="button"
-          onClick={action.onClick}
-          style={actionStyle}
-        >
-          {action.label}
-        </button>
+        <Button
+          viewModel={{
+            type: "button",
+            onClick: action.onClick,
+            size: action.size ?? "small",
+            variant: action.variant ?? "secondary",
+            content: action.label,
+          }}
+        />
       )}
     </div>
   );
@@ -85,7 +84,7 @@ const styles = {
     gap: designTokens.spacing.m,
     padding: `${designTokens.spacing.s} ${designTokens.spacing.m}`,
     borderRadius: designTokens.radius.sm,
-    background: designTokens.colors.beige,
+    background: designTokens.colors.surface.softBackground,
   },
   link: {
     display: "flex",
@@ -105,7 +104,7 @@ const styles = {
     height: "40px",
     objectFit: "contain",
     borderRadius: designTokens.radius.sm,
-    background: designTokens.colors.white,
+    background: designTokens.colors.surface.content,
     flexShrink: 0,
   },
 } as const;

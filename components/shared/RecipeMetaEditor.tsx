@@ -293,7 +293,7 @@ export default function RecipeMetaEditor({
 
 const metaInputBase = {
   padding: designTokens.spacing.xs,
-  border: `1px solid ${designTokens.colors.lightGray}`,
+  border: `1px solid ${designTokens.colors.border.default}`,
   borderRadius: designTokens.radius.sm,
   fontSize: designTokens.typography.fontSize.s,
   boxSizing: "border-box" as const,
@@ -305,7 +305,7 @@ const styles = {
     flexWrap: "wrap",
     gap: designTokens.spacing.m,
     marginTop: designTokens.spacing.m,
-    color: designTokens.colors.gray,
+    color: designTokens.colors.text.secondary,
   },
   metaItem: {
     whiteSpace: "nowrap",

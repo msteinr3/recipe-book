@@ -1,17 +1,29 @@
 export const designTokens = {
   colors: {
-    black: "#222",
-    gray: "#666",
-    lightGray: "#ddd",
-    veryLightGray: "#f3f3f3",
-    white: "#fff",
-    beige: "#f7f3ed",
-    brown: "#5b5147",
-    green: "#008000",
-    paleGreen: "#e8f5e9",
-    red: "#b42318",
-    paleRed: "#ffebee",
-    blackOverlay: "rgba(0, 0, 0, 0.45)",
+    text: {
+      primary: "#222",
+      secondary: "#666",
+      onEmphasis: "#fff",
+      warmAccent: "#5b5147",
+      danger: "#b42318",
+    },
+    surface: {
+      navigation: "#aabfd1",
+      homeHero: "#afcaca",
+      card: "#70a3b8",
+      content: "#fff",
+      subtle: "#f3f3f3",
+      softBackground: "#afcaca",
+      emphasis: "#222",
+      positiveAction: "#008000",
+      success: "#e8f5e9",
+      danger: "#ffebee",
+      overlay: "rgba(0, 0, 0, 0.45)",
+    },
+    border: {
+      default: "#dddddd",
+      danger: "#b42318",
+    },
   },
 
   spacing: {

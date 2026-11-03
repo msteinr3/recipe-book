@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Button from "@/components/shared/Button";
 import { commonStyles } from "@/styles/common";
 import { designTokens } from "@/styles/tokens";
 
@@ -181,26 +182,28 @@ export default function RecipeListEditor(props: RecipeListEditorProps) {
                 placeholder="Ingredient"
                 style={styles.itemInput}
               />
-              <button
-                type="button"
-                onClick={() => removeItem(index)}
-                style={styles.removeButton}
-                aria-label="Remove ingredient"
-              >
-                ×
-              </button>
+              <Button
+                viewModel={{
+                  type: "button",
+                  onClick: () => removeItem(index),
+                  style: styles.removeButton,
+                  "aria-label": "Remove ingredient",
+                  content: "×",
+                }}
+              />
             </div>
           ))}
         </div>
 
         <div style={styles.editorButtons}>
-          <button
-            type="button"
-            onClick={addItem}
-            style={styles.editorButton}
-          >
-            Add ingredient
-          </button>
+          <Button
+            viewModel={{
+              type: "button",
+              onClick: addItem,
+              style: styles.editorButton,
+              content: "Add ingredient",
+            }}
+          />
         </div>
       </div>
     );
@@ -222,26 +225,28 @@ export default function RecipeListEditor(props: RecipeListEditorProps) {
                 style={styles.instructionInput}
                 rows={2}
               />
-              <button
-                type="button"
-                onClick={() => removeItem(index)}
-                style={styles.removeButton}
-                aria-label="Remove instruction"
-              >
-                ×
-              </button>
+              <Button
+                viewModel={{
+                  type: "button",
+                  onClick: () => removeItem(index),
+                  style: styles.removeButton,
+                  "aria-label": "Remove instruction",
+                  content: "×",
+                }}
+              />
             </div>
           ))}
         </div>
 
         <div style={styles.editorButtons}>
-          <button
-            type="button"
-            onClick={addItem}
-            style={styles.editorButton}
-          >
-            Add step
-          </button>
+          <Button
+            viewModel={{
+              type: "button",
+              onClick: addItem,
+              style: styles.editorButton,
+              content: "Add step",
+            }}
+          />
         </div>
       </div>
     );
@@ -261,26 +266,28 @@ export default function RecipeListEditor(props: RecipeListEditorProps) {
               placeholder="Tag"
               style={styles.tagsInput}
             />
-            <button
-              type="button"
-              onClick={() => removeItem(index)}
-              style={styles.removeButton}
-              aria-label="Remove tag"
-            >
-              ×
-            </button>
+            <Button
+              viewModel={{
+                type: "button",
+                onClick: () => removeItem(index),
+                style: styles.removeButton,
+                "aria-label": "Remove tag",
+                content: "×",
+              }}
+            />
           </div>
         ))}
       </div>
 
       <div style={styles.editorButtons}>
-        <button
-          type="button"
-          onClick={addItem}
-          style={styles.editorButton}
-        >
-          Add tag
-        </button>
+        <Button
+          viewModel={{
+            type: "button",
+            onClick: addItem,
+            style: styles.editorButton,
+            content: "Add tag",
+          }}
+        />
       </div>
     </div>
   );
@@ -356,7 +363,7 @@ const styles = {
   },
   tag: {
     borderRadius: designTokens.radius.pill,
-    background: designTokens.colors.veryLightGray,
+    background: designTokens.colors.surface.subtle,
     padding: `${designTokens.spacing.xs} ${designTokens.spacing.m}`,
   },
   tagsInput: {

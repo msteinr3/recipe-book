@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState, type FormEvent } from "react"
 import RecipeFieldEditor from "@/components/shared/RecipeFieldEditor";
 import RecipeMetaEditor from "@/components/shared/RecipeMetaEditor";
 import RecipeListEditor from "@/components/shared/RecipeListEditor";
+import Button from "@/components/shared/Button";
 import { commonStyles } from "@/styles/common";
 import { designTokens } from "@/styles/tokens";
 
@@ -141,17 +142,22 @@ export default function RecipeEditor({
         onSubmit={handleSubmit}
         style={styles.hiddenSubmitForm}
       >
-        <button type="submit" />
+        <Button
+          viewModel={{
+            type: "submit",
+          }}
+        />
       </form>
 
       {showSubmitButton && (
-        <button
-          type="button"
-          onClick={() => submitFormRef.current?.requestSubmit()}
-          style={styles.fullWidthSubmitButton}
-        >
-          Submit Suggested Changes
-        </button>
+        <Button
+          viewModel={{
+            type: "button",
+            onClick: () => submitFormRef.current?.requestSubmit(),
+            style: styles.fullWidthSubmitButton,
+            content: "Submit Suggested Changes",
+          }}
+        />
       )}
 
       <h1 style={commonStyles.title}>
@@ -283,8 +289,8 @@ const styles = {
     width: "100%",
     padding: designTokens.spacing.m,
     marginBottom: designTokens.spacing.l,
-    background: designTokens.colors.green,
-    color: designTokens.colors.white,
+    background: designTokens.colors.surface.positiveAction,
+    color: designTokens.colors.text.onEmphasis,
     border: "none",
     borderRadius: designTokens.radius.md,
     fontSize: designTokens.typography.fontSize.m,

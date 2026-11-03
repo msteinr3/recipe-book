@@ -495,7 +495,7 @@ const columnBase = {
 
 const bookPageBase = {
   minHeight: designTokens.sizes.l,
-  borderBottom: `1px solid ${designTokens.colors.lightGray}`,
+  borderBottom: `1px solid ${designTokens.colors.border.default}`,
 };
 
 const centeredBookSectionBase = {
@@ -515,7 +515,7 @@ const styles = {
   bookPreview: {
     page: {
       minHeight: "100vh",
-      background: designTokens.colors.veryLightGray,
+      background: designTokens.colors.surface.subtle,
       paddingBottom: designTokens.spacing.xl,
     },
     messagePage: {
@@ -534,13 +534,13 @@ const styles = {
       flexWrap: "wrap",
     },
     backLink: {
-      color: designTokens.colors.black,
+      color: designTokens.colors.text.primary,
       textDecoration: "none",
     },
     book: {
       width: "100%",
       ...centeredBookContentBase,
-      background: designTokens.colors.white,
+      background: designTokens.colors.surface.content,
     },
     cover: {
       ...bookPageBase,
@@ -549,7 +549,7 @@ const styles = {
     coverLabel: {
       fontSize: designTokens.typography.fontSize.xs,
       letterSpacing: designTokens.spacing.xs,
-      color: designTokens.colors.gray,
+      color: designTokens.colors.text.secondary,
       marginBottom: designTokens.spacing.l,
     },
     coverTitle: {
@@ -561,11 +561,11 @@ const styles = {
       maxWidth: designTokens.sizes.l,
       margin: `${designTokens.spacing.l} auto 0`,
       ...commonStyles.bodyDescription,
-      color: designTokens.colors.gray,
+      color: designTokens.colors.text.secondary,
     },
     coverRecipeCount: {
       marginTop: designTokens.spacing.l,
-      color: designTokens.colors.gray,
+      color: designTokens.colors.text.secondary,
     },
     pageSection: {
       ...bookPageBase,
@@ -586,7 +586,7 @@ const styles = {
     tocSectionLink: {
       fontSize: designTokens.typography.fontSize.m,
       fontWeight: designTokens.typography.weightBold,
-      color: designTokens.colors.black,
+      color: designTokens.colors.text.primary,
       textDecoration: "none",
     },
     tocRecipes: {
@@ -595,21 +595,21 @@ const styles = {
       paddingLeft: designTokens.spacing.m,
     },
     tocRecipeLink: {
-      color: designTokens.colors.gray,
+      color: designTokens.colors.text.secondary,
       textDecoration: "none",
     },
     sectionDivider: {
       minHeight: designTokens.sizes.l,
       ...centeredBookSectionBase,
-      background: designTokens.colors.veryLightGray,
-      borderBottom: `1px solid ${designTokens.colors.lightGray}`,
+      background: designTokens.colors.surface.subtle,
+      borderBottom: `1px solid ${designTokens.colors.border.default}`,
       scrollMarginTop: designTokens.spacing.m,
       pageBreakBefore: "always",
     },
     sectionLabel: {
       fontSize: designTokens.typography.fontSize.xs,
       letterSpacing: designTokens.spacing.xs,
-      color: designTokens.colors.gray,
+      color: designTokens.colors.text.secondary,
       marginBottom: designTokens.spacing.m,
     },
     sectionTitle: {
@@ -618,7 +618,7 @@ const styles = {
     },
     sectionCount: {
       marginTop: designTokens.spacing.m,
-      color: designTokens.colors.gray,
+      color: designTokens.colors.text.secondary,
     },
     recipePage: {
       ...bookPageBase,
@@ -637,7 +637,7 @@ const styles = {
     },
     recipeCategory: {
       margin: 0,
-      color: designTokens.colors.gray,
+      color: designTokens.colors.text.secondary,
       fontSize: designTokens.typography.fontSize.xs,
     },
     recipeTitle: {
@@ -654,7 +654,7 @@ const styles = {
     },
     recipeDescription: {
       ...commonStyles.bodyDescription,
-      color: designTokens.colors.gray,
+      color: designTokens.colors.text.secondary,
       marginTop: designTokens.spacing.l,
     },
     meta: {
@@ -662,7 +662,7 @@ const styles = {
       flexWrap: "wrap",
       gap: designTokens.spacing.m,
       marginTop: designTokens.spacing.m,
-      color: designTokens.colors.gray,
+      color: designTokens.colors.text.secondary,
     },
     recipeSection: {
       marginTop: designTokens.spacing.l,
@@ -686,7 +686,7 @@ const styles = {
     },
     tag: {
       borderRadius: designTokens.radius.pill,
-      background: designTokens.colors.veryLightGray,
+      background: designTokens.colors.surface.subtle,
       padding: `${designTokens.spacing.xs} ${designTokens.spacing.s}`,
     },
   },
