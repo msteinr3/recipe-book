@@ -7,10 +7,154 @@ import {
   Text,
   View,
 } from "@react-pdf/renderer";
-import {
-  bookPdfDownloadButtonStyle,
-  bookPdfStyles as styles,
-} from "@/styles/common";
+import { designTokens } from "@/styles/tokens";
+
+const styles = {
+  coverPage: {
+    position: "relative",
+    fontFamily: "Helvetica",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    textAlign: "center",
+    padding: 60,
+  },
+  coverContent: {
+    width: "100%",
+    alignItems: "center",
+  },
+  coverLabel: {
+    fontSize: 12,
+    letterSpacing: 4,
+    marginBottom: 25,
+    color: designTokens.colors.gray,
+  },
+  coverTitle: {
+    fontSize: 38,
+    marginBottom: 25,
+  },
+  coverDescription: {
+    fontSize: 14,
+    lineHeight: 1.5,
+    maxWidth: 420,
+    color: designTokens.colors.gray,
+  },
+  coverCount: {
+    marginTop: 35,
+    fontSize: 12,
+    color: designTokens.colors.gray,
+  },
+  page: {
+    position: "relative",
+    paddingTop: 55,
+    paddingBottom: 55,
+    paddingLeft: 55,
+    paddingRight: 55,
+    fontFamily: "Helvetica",
+  },
+  pageTitle: {
+    fontSize: 28,
+    marginBottom: 35,
+  },
+  tocSection: {
+    marginBottom: 22,
+  },
+  tocCategory: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 7,
+  },
+  tocRecipe: {
+    fontSize: 11,
+    color: designTokens.colors.gray,
+    marginLeft: 15,
+    marginBottom: 4,
+  },
+  sectionPage: {
+    position: "relative",
+    fontFamily: "Helvetica",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    textAlign: "center",
+    padding: 55,
+  },
+  sectionContent: {
+    alignItems: "center",
+  },
+  sectionLabel: {
+    fontSize: 12,
+    letterSpacing: 4,
+    color: designTokens.colors.gray,
+    marginBottom: 20,
+  },
+  sectionTitle: {
+    fontSize: 34,
+    marginBottom: 15,
+  },
+  sectionCount: {
+    fontSize: 12,
+    color: designTokens.colors.gray,
+  },
+  recipeCategory: {
+    fontSize: 11,
+    color: designTokens.colors.gray,
+    marginBottom: 8,
+  },
+  recipeTitle: {
+    fontSize: 28,
+    marginBottom: 20,
+  },
+  description: {
+    fontSize: 12,
+    lineHeight: 1.5,
+    color: designTokens.colors.gray,
+    marginBottom: 18,
+  },
+  meta: {
+    flexDirection: "row",
+    gap: 15,
+    fontSize: 10,
+    color: designTokens.colors.gray,
+    marginBottom: 15,
+  },
+  recipeSection: {
+    marginTop: 24,
+  },
+  recipeSectionTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  listItem: {
+    fontSize: 11,
+    lineHeight: 1.6,
+    marginBottom: 5,
+  },
+  bodyText: {
+    fontSize: 11,
+    lineHeight: 1.6,
+  },
+  footer: {
+    position: "absolute",
+    bottom: 25,
+    left: 0,
+    right: 0,
+    textAlign: "center",
+    fontSize: 9,
+    color: designTokens.colors.gray,
+  },
+} as const;
+
+const bookPdfDownloadButtonStyle = {
+  display: "inline-block",
+  padding: `${designTokens.spacing.compact} ${designTokens.spacing.lg}`,
+  borderRadius: "8px",
+  backgroundColor: designTokens.colors.black,
+  color: designTokens.colors.white,
+  textDecoration: "none",
+  fontWeight: designTokens.typography.weightSemibold,
+} as const;
 
 type Recipe = {
   id: string;

@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import RecipeEditor from "@/components/RecipeEditor";
 import { commonStyles } from "@/styles/common";
+import { designTokens } from "@/styles/tokens";
+
 
 type Ingredient = {
   quantity: string;
@@ -95,15 +97,15 @@ export default function RecipePageContent({ recipe }: RecipePageContentProps) {
       />
 
       {showLeaveDialog && (
-        <div style={commonStyles.dialogOverlay}>
+        <div style={styles.dialogOverlay}>
           <div style={commonStyles.modal}>
-            <h2 style={commonStyles.dialogTitle}>You have unsaved changes</h2>
+            <h2 style={styles.dialogTitle}>You have unsaved changes</h2>
 
-            <p style={commonStyles.dialogText}>
+            <p style={styles.dialogText}>
               What would you like to do with your changes?
             </p>
 
-            <div style={commonStyles.dialogActions}>
+            <div style={styles.dialogActions}>
               <button
                 type="button"
                 onClick={() => setShowLeaveDialog(false)}
@@ -115,7 +117,7 @@ export default function RecipePageContent({ recipe }: RecipePageContentProps) {
               <button
                 type="button"
                 onClick={leaveWithoutSubmitting}
-                style={commonStyles.destructiveButton}
+                style={styles.destructiveButton}
               >
                 Leave Without Submitting
               </button>
@@ -123,7 +125,7 @@ export default function RecipePageContent({ recipe }: RecipePageContentProps) {
               <button
                 type="button"
                 onClick={submitChanges}
-                style={commonStyles.primaryButton}
+                style={styles.primaryButton}
               >
                 Submit Changes
               </button>
@@ -134,3 +136,55 @@ export default function RecipePageContent({ recipe }: RecipePageContentProps) {
     </>
   );
 }
+
+const styles = {
+  dialogOverlay: {
+    position: "fixed",
+    inset: 0,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: designTokens.spacing.lg,
+    background: designTokens.colors.blackOverlay,
+    zIndex: 1000,
+  },
+  dialogTitle: {
+    marginTop: 0,
+    marginBottom: designTokens.spacing.sm,
+  },
+  dialogText: {
+    marginBottom: designTokens.spacing.lg,
+  },
+  dialogActions: {
+    display: "flex",
+    flexDirection: "column",
+    gap: designTokens.spacing.sm,
+  },
+  destructiveButton: {
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: designTokens.spacing.sm,
+    padding: `${designTokens.spacing.sm} ${designTokens.spacing.md}`,
+    borderRadius: "6px",
+    cursor: "pointer",
+    fontSize: designTokens.typography.body,
+    background: designTokens.colors.white,
+    color: designTokens.colors.red,
+    border: `1px solid ${designTokens.colors.red}`,
+  },
+  primaryButton: {
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: designTokens.spacing.sm,
+    padding: `${designTokens.spacing.sm} ${designTokens.spacing.md}`,
+    borderRadius: "6px",
+    cursor: "pointer",
+    fontSize: designTokens.typography.body,
+    border: "none",
+    background: designTokens.colors.green,
+    color: designTokens.colors.white,
+    fontWeight: designTokens.typography.weightSemibold,
+  },
+} as const;

@@ -4,7 +4,9 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { commonStyles } from "@/styles/common";
+import { designTokens } from "@/styles/tokens";
 import { supabase } from "@/lib/supabase";
+
 
 export default function BookInvitePage() {
   const params = useParams();
@@ -69,11 +71,11 @@ export default function BookInvitePage() {
 
         {!loggedIn ? (
           <>
-            <p style={commonStyles.invitationMessage}>
+            <p style={styles.invitationMessage}>
               You&apos;ve been invited to collaborate on a recipe book.
             </p>
 
-            <p style={commonStyles.invitationMessage}>
+            <p style={styles.invitationMessage}>
               Log in or create an account using the email address that received
               this invitation.
             </p>
@@ -84,7 +86,7 @@ export default function BookInvitePage() {
           </>
         ) : (
           <>
-            <p style={commonStyles.invitationMessage}>
+            <p style={styles.invitationMessage}>
               You&apos;ve been invited to collaborate on a recipe book.
             </p>
 
@@ -105,3 +107,10 @@ export default function BookInvitePage() {
     </main>
   );
 }
+
+const styles = {
+  invitationMessage: {
+    marginTop: designTokens.spacing.xl,
+    lineHeight: designTokens.typography.lineHeightRelaxed,
+  },
+} as const;

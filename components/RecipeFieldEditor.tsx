@@ -8,6 +8,8 @@ import {
   type ReactNode,
 } from "react";
 import { commonStyles } from "@/styles/common";
+import { designTokens } from "@/styles/tokens";
+
 
 type RecipeFieldEditorProps = {
   recipeId: string;
@@ -124,7 +126,7 @@ export default function RecipeFieldEditor({
               save(newValue, false);
             }}
             autoFocus
-            style={commonStyles.recipeFieldSelect}
+            style={styles.recipeFieldSelect}
           >
             <option value="">Select category</option>
 
@@ -139,14 +141,14 @@ export default function RecipeFieldEditor({
             value={editValue}
             onChange={(e) => setEditValue(e.target.value)}
             autoFocus
-            style={commonStyles.recipeFieldTextarea}
+            style={styles.recipeFieldTextarea}
           />
         ) : (
           <input
             value={editValue}
             onChange={(e) => setEditValue(e.target.value)}
             autoFocus
-            style={commonStyles.recipeFieldInput}
+            style={styles.recipeFieldInput}
           />
         )}
       </span>
@@ -165,3 +167,26 @@ export default function RecipeFieldEditor({
     </span>
   );
 }
+
+const styles = {
+  recipeFieldSelect: {
+    padding: designTokens.spacing.xs,
+    fontSize: "inherit",
+  },
+  recipeFieldTextarea: {
+    padding: designTokens.spacing.xs,
+    fontSize: "inherit",
+    width: "500px",
+    maxWidth: "100%",
+    minHeight: "100px",
+    boxSizing: "border-box",
+    fontFamily: "inherit",
+  },
+  recipeFieldInput: {
+    padding: designTokens.spacing.xs,
+    fontSize: "inherit",
+    width: "auto",
+    minWidth: "200px",
+    boxSizing: "border-box",
+  },
+} as const;

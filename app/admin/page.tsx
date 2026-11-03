@@ -3,6 +3,8 @@
 import { FormEvent, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { commonStyles } from "@/styles/common";
+import { designTokens } from "@/styles/tokens";
+
 
 const RECIPE_CATEGORIES = [
   "Appetizers",
@@ -297,7 +299,7 @@ export default function AdminPage() {
         />
       </label>
 
-      <div style={commonStyles.formSection}>
+      <div style={styles.formSection}>
         <h3 style={commonStyles.sectionTitle}>Ingredients</h3>
 
         {(editData.ingredients ?? []).map((ingredient, index) => (
@@ -339,7 +341,7 @@ export default function AdminPage() {
         </button>
       </div>
 
-      <div style={commonStyles.formSection}>
+      <div style={styles.formSection}>
         <h3 style={commonStyles.sectionTitle}>Instructions</h3>
 
         {(editData.instructions ?? []).map((instruction, index) => (
@@ -539,7 +541,7 @@ export default function AdminPage() {
   return (
     <main style={commonStyles.page}>
       <div style={commonStyles.container}>
-        <div style={commonStyles.admin.header}>
+        <div style={styles.admin.header}>
           <h1 style={commonStyles.title}>Admin</h1>
 
           <button
@@ -554,20 +556,20 @@ export default function AdminPage() {
         {errorMessage && <p style={commonStyles.error}>{errorMessage}</p>}
 
         <section>
-          <h2 style={commonStyles.admin.sectionHeading}>Pending Recipes</h2>
+          <h2 style={styles.admin.sectionHeading}>Pending Recipes</h2>
 
           {submissions.length === 0 ? (
             <p>No pending recipe submissions.</p>
           ) : (
             <div style={commonStyles.verticalList}>
               {submissions.map((submission) => (
-                <details key={submission.id} style={commonStyles.admin.item}>
-                  <summary style={commonStyles.admin.summary}>
+                <details key={submission.id} style={styles.admin.item}>
+                  <summary style={styles.admin.summary}>
                     {submission.data.recipeId ? "Suggested Edit — " : ""}
                     {submission.data.title || "Untitled Recipe"}
                   </summary>
 
-                  <div style={commonStyles.admin.details}>
+                  <div style={styles.admin.details}>
                     {editingSubmissionId === submission.id ? (
                       renderEditForm("Save Changes", () =>
                         handleSavePendingEdit(submission.id),
@@ -605,7 +607,7 @@ export default function AdminPage() {
                           <button
                             type="button"
                             onClick={() => handleReject(submission.id)}
-                            style={commonStyles.admin.rejectButton}
+                            style={styles.admin.rejectButton}
                           >
                             Reject
                           </button>
@@ -622,3 +624,50 @@ export default function AdminPage() {
     </main>
   );
 }
+
+const styles = {
+  formSection: {
+    display: "flex",
+    flexDirection: "column",
+    gap: designTokens.spacing.md,
+  },
+  admin: {
+    header: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      gap: designTokens.spacing.xl,
+      marginBottom: designTokens.spacing.section,
+    },
+    sectionHeading: {
+      fontSize: designTokens.typography.headingSmall,
+      marginBottom: designTokens.spacing.xl,
+    },
+    item: {
+      border: `1px solid ${designTokens.colors.lightGray}`,
+      borderRadius: "6px",
+      padding: designTokens.spacing.lg,
+    },
+    summary: {
+      cursor: "pointer",
+      fontWeight: designTokens.typography.weightSemibold,
+    },
+    details: {
+      marginTop: designTokens.spacing.lg,
+    },
+    rejectButton: {
+      display: "inline-flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: designTokens.spacing.sm,
+      padding: `${designTokens.spacing.sm} ${designTokens.spacing.md}`,
+      borderRadius: "6px",
+      cursor: "pointer",
+      fontSize: designTokens.typography.body,
+      background: designTokens.colors.white,
+      color: designTokens.colors.red,
+      border: `1px solid ${designTokens.colors.red}`,
+      textDecoration: "none",
+    },
+  },
+} as const;

@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { commonStyles } from "@/styles/common";
+import { designTokens } from "@/styles/tokens";
+
 
 const RECIPE_CATEGORIES = [
   "Appetizers",
@@ -514,7 +516,7 @@ export default function BookPage({
             ← Back to Profile
           </Link>
 
-          <div style={commonStyles.bookManage.header}>
+          <div style={styles.bookManage.header}>
             <div>
               {isEditingTitle ? (
                 <input
@@ -524,14 +526,14 @@ export default function BookPage({
                   onChange={(event) => setTitleDraft(event.target.value)}
                   onBlur={saveTitle}
                   onKeyDown={handleTitleKeyDown}
-                  style={commonStyles.bookManage.titleInput}
+                  style={styles.bookManage.titleInput}
                 />
               ) : (
                 <h1
                   style={
                     isOwner
-                      ? commonStyles.bookManage.bookTitleOwner
-                      : commonStyles.bookManage.bookTitleReadOnly
+                      ? styles.bookManage.bookTitleOwner
+                      : styles.bookManage.bookTitleReadOnly
                   }
                   onClick={() => {
                     if (isOwner) {
@@ -562,15 +564,15 @@ export default function BookPage({
                       saveDescription();
                     }
                   }}
-                  style={commonStyles.bookManage.descriptionInput}
+                  style={styles.bookManage.descriptionInput}
                   placeholder="Add a book description..."
                 />
               ) : (
                 <p
                   style={
                     isOwner
-                      ? commonStyles.bookManage.bookDescriptionOwner
-                      : commonStyles.bookManage.bookDescriptionReadOnly
+                      ? styles.bookManage.bookDescriptionOwner
+                      : styles.bookManage.bookDescriptionReadOnly
                   }
                   onClick={() => {
                     if (isOwner) {
@@ -585,7 +587,7 @@ export default function BookPage({
                 </p>
               )}
 
-              <div style={commonStyles.bookManage.role}>
+              <div style={styles.bookManage.role}>
                 {isOwner ? "Owner" : "Editor"}
               </div>
             </div>
@@ -594,7 +596,7 @@ export default function BookPage({
           <div style={commonStyles.buttonRow}>
             <Link
               href={`/books/${book.id}/preview`}
-              style={commonStyles.bookManage.previewButton}
+              style={styles.bookManage.previewButton}
             >
               Preview Book
             </Link>
@@ -602,51 +604,51 @@ export default function BookPage({
             <button
               type="button"
               onClick={openPicker}
-              style={commonStyles.bookManage.primaryButton}
+              style={styles.bookManage.primaryButton}
             >
               Add Recipes
             </button>
           </div>
 
           {recipesByCategory.length === 0 ? (
-            <div style={commonStyles.bookManage.emptyState}>
+            <div style={styles.bookManage.emptyState}>
               <p>This book does not have any recipes yet.</p>
 
               <button
                 type="button"
                 onClick={openPicker}
-                style={commonStyles.bookManage.primaryButton}
+                style={styles.bookManage.primaryButton}
               >
                 Add Your First Recipe
               </button>
             </div>
           ) : (
-            <div style={commonStyles.bookManage.sections}>
+            <div style={styles.bookManage.sections}>
               {recipesByCategory.map((section) => (
                 <section
                   key={section.category}
-                  style={commonStyles.bookManage.section}
+                  style={styles.bookManage.section}
                 >
-                  <h2 style={commonStyles.bookManage.sectionTitle}>
+                  <h2 style={styles.bookManage.sectionTitle}>
                     {section.category}
                   </h2>
 
-                  <div style={commonStyles.bookManage.recipeList}>
+                  <div style={styles.bookManage.recipeList}>
                     {section.recipes.map((bookRecipe) => (
                       <div
                         key={bookRecipe.recipe_id}
-                        style={commonStyles.bookManage.recipeRow}
+                        style={styles.bookManage.recipeRow}
                       >
                         <Link
                           href={`/recipes/${bookRecipe.recipe_id}`}
-                          style={commonStyles.bookManage.recipeLink}
+                          style={styles.bookManage.recipeLink}
                         >
-                          <div style={commonStyles.bookManage.recipeInfo}>
-                            <h3 style={commonStyles.bookManage.recipeTitle}>
+                          <div style={styles.bookManage.recipeInfo}>
+                            <h3 style={styles.bookManage.recipeTitle}>
                               {bookRecipe.recipe.title}
                             </h3>
 
-                            <p style={commonStyles.bookManage.recipeCategory}>
+                            <p style={styles.bookManage.recipeCategory}>
                               {bookRecipe.recipe.category ?? "Other"}
                             </p>
                           </div>
@@ -657,7 +659,7 @@ export default function BookPage({
                               "/images/default-food.jpg"
                             }
                             alt={bookRecipe.recipe.title}
-                            style={commonStyles.bookManage.recipeImage}
+                            style={styles.bookManage.recipeImage}
                           />
                         </Link>
 
@@ -666,7 +668,7 @@ export default function BookPage({
                           onClick={() =>
                             handleRemoveRecipe(bookRecipe.recipe_id)
                           }
-                          style={commonStyles.bookManage.removeButton}
+                          style={styles.bookManage.removeButton}
                         >
                           Remove
                         </button>
@@ -679,20 +681,20 @@ export default function BookPage({
           )}
 
           {isOwner && (
-            <section style={commonStyles.bookManage.collaborators}>
-              <h2 style={commonStyles.bookManage.collaboratorsTitle}>
+            <section style={styles.bookManage.collaborators}>
+              <h2 style={styles.bookManage.collaboratorsTitle}>
                 Collaborators
               </h2>
 
-              <div style={commonStyles.bookManage.memberList}>
+              <div style={styles.bookManage.memberList}>
                 {members.map((member) => (
                   <div
                     key={member.user_id}
-                    style={commonStyles.bookManage.memberRow}
+                    style={styles.bookManage.memberRow}
                   >
                     <div>
                       <strong>{member.email}</strong>
-                      <span style={commonStyles.bookManage.memberRole}>
+                      <span style={styles.bookManage.memberRole}>
                         {member.role}
                       </span>
                     </div>
@@ -702,7 +704,7 @@ export default function BookPage({
                         type="button"
                         onClick={() => handleRemoveEditor(member)}
                         style={
-                          commonStyles.bookManage.collaboratorRemoveButton
+                          styles.bookManage.collaboratorRemoveButton
                         }
                       >
                         Remove
@@ -713,23 +715,23 @@ export default function BookPage({
               </div>
 
               {pendingInvitations.length > 0 && (
-                <div style={commonStyles.bookManage.memberList}>
-                  <h3 style={commonStyles.bookManage.inviteTitle}>
+                <div style={styles.bookManage.memberList}>
+                  <h3 style={styles.bookManage.inviteTitle}>
                     Pending invitations
                   </h3>
                   {pendingInvitations.map((invitation) => (
                     <div
                       key={invitation.id}
-                      style={commonStyles.bookManage.memberRow}
+                      style={styles.bookManage.memberRow}
                     >
                       <div>
                         <strong>{invitation.invited_email}</strong>
-                        <span style={commonStyles.bookManage.memberRole}>
+                        <span style={styles.bookManage.memberRole}>
                           Expires{" "}
                           {new Date(invitation.expires_at).toLocaleDateString()}
                         </span>
                       </div>
-                      <span style={commonStyles.bookManage.memberRole}>
+                      <span style={styles.bookManage.memberRole}>
                         Pending
                       </span>
                     </div>
@@ -737,31 +739,31 @@ export default function BookPage({
                 </div>
               )}
 
-              <div style={commonStyles.bookManage.inviteBox}>
-                <h3 style={commonStyles.bookManage.inviteTitle}>
+              <div style={styles.bookManage.inviteBox}>
+                <h3 style={styles.bookManage.inviteTitle}>
                   Invite an editor
                 </h3>
 
-                <div style={commonStyles.bookManage.inviteRow}>
+                <div style={styles.bookManage.inviteRow}>
                   <input
                     type="email"
                     value={inviteEmail}
                     onChange={(event) => setInviteEmail(event.target.value)}
                     placeholder="Friend's account email"
-                    style={commonStyles.bookManage.input}
+                    style={styles.bookManage.input}
                   />
 
                   <button
                     type="button"
                     onClick={handleInvite}
-                    style={commonStyles.bookManage.primaryButton}
+                    style={styles.bookManage.primaryButton}
                   >
                     Invite
                   </button>
                 </div>
 
                 {inviteMessage && (
-                  <p style={commonStyles.bookManage.message}>{inviteMessage}</p>
+                  <p style={styles.bookManage.message}>{inviteMessage}</p>
                 )}
               </div>
             </section>
@@ -771,7 +773,7 @@ export default function BookPage({
 
       {isPickerOpen && (
         <div style={commonStyles.modalOverlay}>
-          <div style={commonStyles.largeModal}>
+          <div style={styles.largeModal}>
             <div style={commonStyles.modalHeader}>
               <h2 style={commonStyles.sectionTitle}>Add Recipes</h2>
 
@@ -793,7 +795,7 @@ export default function BookPage({
             />
 
             {pickerError && (
-              <p style={commonStyles.bookManage.error}>{pickerError}</p>
+              <p style={styles.bookManage.error}>{pickerError}</p>
             )}
 
             {pickerLoading ? (
@@ -810,19 +812,19 @@ export default function BookPage({
                   return (
                     <div
                       key={recipe.id}
-                      style={commonStyles.bookManage.pickerRow}
+                      style={styles.bookManage.pickerRow}
                     >
-                      <div style={commonStyles.bookManage.pickerRecipeInfo}>
+                      <div style={styles.bookManage.pickerRecipeInfo}>
                         <img
                           src={recipe.image_url || "/images/default-food.jpg"}
                           alt={recipe.title}
-                          style={commonStyles.bookManage.pickerImage}
+                          style={styles.bookManage.pickerImage}
                         />
 
                         <div>
                           <strong>{recipe.title}</strong>
 
-                          <div style={commonStyles.bookManage.pickerCategory}>
+                          <div style={styles.bookManage.pickerCategory}>
                             {recipe.category ?? "Other"}
                           </div>
                         </div>
@@ -834,8 +836,8 @@ export default function BookPage({
                         disabled={alreadyAdded}
                         style={
                           alreadyAdded
-                            ? commonStyles.bookManage.addedButton
-                            : commonStyles.bookManage.addButton
+                            ? styles.bookManage.addedButton
+                            : styles.bookManage.addButton
                         }
                       >
                         {alreadyAdded ? "✓ Added" : "+ Add"}
@@ -851,3 +853,273 @@ export default function BookPage({
     </>
   );
 }
+
+const bookDescriptionStyle = {
+  fontSize: designTokens.typography.body,
+  lineHeight: designTokens.typography.lineHeightRelaxed,
+};
+
+const styles = {
+  bookManage: {
+    header: {
+      marginTop: designTokens.spacing.px28,
+    },
+    titleInput: {
+      width: "100%",
+      maxWidth: "700px",
+      boxSizing: "border-box",
+      fontSize: designTokens.typography.headingMedium,
+      fontWeight: designTokens.typography.weightBold,
+      padding: `${designTokens.spacing.xs} ${designTokens.spacing.sm}`,
+      border: `1px solid ${designTokens.colors.lightGray}`,
+      borderRadius: "8px",
+      outline: "none",
+    },
+    description: {
+      ...bookDescriptionStyle,
+      color: designTokens.colors.gray,
+      marginTop: designTokens.spacing.compact,
+    },
+    descriptionInput: {
+      display: "block",
+      width: "100%",
+      maxWidth: "700px",
+      minHeight: "90px",
+      boxSizing: "border-box",
+      ...bookDescriptionStyle,
+      padding: designTokens.spacing.sm,
+      border: `1px solid ${designTokens.colors.lightGray}`,
+      borderRadius: "8px",
+      resize: "vertical",
+    },
+    role: {
+      display: "inline-block",
+      marginTop: designTokens.spacing.md,
+      padding: `5px ${designTokens.spacing.compact}`,
+      borderRadius: "999px",
+      background: designTokens.colors.veryLightGray,
+      color: designTokens.colors.gray,
+      fontSize: designTokens.typography.caption,
+      fontWeight: designTokens.typography.weightSemibold,
+    },
+    previewButton: {
+      display: "inline-block",
+      padding: `${designTokens.spacing.compact} ${designTokens.spacing.lg}`,
+      borderRadius: "8px",
+      fontWeight: designTokens.typography.weightSemibold,
+      background: designTokens.colors.black,
+      color: designTokens.colors.white,
+      textDecoration: "none",
+    },
+    primaryButton: {
+      padding: `${designTokens.spacing.compact} ${designTokens.spacing.lg}`,
+      borderRadius: "8px",
+      fontWeight: designTokens.typography.weightSemibold,
+      border: "none",
+      background: designTokens.colors.black,
+      color: designTokens.colors.white,
+      cursor: "pointer",
+    },
+    emptyState: {
+      marginTop: designTokens.spacing.section,
+      padding: designTokens.spacing.wide,
+      borderRadius: "12px",
+      background: designTokens.colors.veryLightGray,
+    },
+    sections: {
+      marginTop: designTokens.spacing.section,
+    },
+    section: {
+      marginBottom: designTokens.spacing.sectionLarge,
+    },
+    sectionTitle: {
+      fontSize: designTokens.typography.headingSmall,
+      marginBottom: designTokens.spacing.lgPlus,
+    },
+    recipeList: {
+      display: "flex",
+      flexDirection: "column",
+      gap: designTokens.spacing.md,
+    },
+    recipeRow: {
+      display: "flex",
+      alignItems: "center",
+      gap: designTokens.spacing.md,
+      padding: designTokens.spacing.md,
+      border: `1px solid ${designTokens.colors.lightGray}`,
+      borderRadius: "10px",
+    },
+    recipeLink: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: designTokens.spacing.roomy,
+      flex: 1,
+      textDecoration: "none",
+      color: "inherit",
+    },
+    recipeInfo: {
+      minWidth: 0,
+    },
+    recipeTitle: {
+      margin: 0,
+      fontSize: designTokens.typography.lead,
+    },
+    recipeCategory: {
+      margin: `${designTokens.spacing.px5} 0 0`,
+      color: designTokens.colors.gray,
+      fontSize: designTokens.typography.caption,
+    },
+    recipeImage: {
+      width: "90px",
+      height: "70px",
+      objectFit: "cover",
+      flexShrink: 0,
+      borderRadius: "8px",
+    },
+    removeButton: {
+      padding: `${designTokens.spacing.sm} ${designTokens.spacing.md}`,
+      borderRadius: "8px",
+      border: `1px solid ${designTokens.colors.lightGray}`,
+      background: designTokens.colors.white,
+      cursor: "pointer",
+    },
+    collaborators: {
+      marginTop: designTokens.spacing.xxxl,
+      paddingTop: designTokens.spacing.px35,
+      borderTop: `1px solid ${designTokens.colors.lightGray}`,
+    },
+    collaboratorsTitle: {
+      fontSize: designTokens.typography.headingSmall,
+      marginBottom: designTokens.spacing.roomy,
+    },
+    memberList: {
+      display: "flex",
+      flexDirection: "column",
+      gap: designTokens.spacing.compact,
+    },
+    memberRow: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: designTokens.spacing.roomy,
+      padding: `${designTokens.spacing.md} 14px`,
+      border: `1px solid ${designTokens.colors.lightGray}`,
+      borderRadius: "8px",
+    },
+    memberRole: {
+      marginLeft: designTokens.spacing.compact,
+      color: designTokens.colors.gray,
+      fontSize: designTokens.typography.caption,
+    },
+    inviteBox: {
+      marginTop: designTokens.spacing.xxl,
+    },
+    inviteTitle: {
+      fontSize: designTokens.typography.lead,
+      marginBottom: designTokens.spacing.md,
+    },
+    inviteRow: {
+      display: "flex",
+      gap: designTokens.spacing.compact,
+      flexWrap: "wrap",
+    },
+    input: {
+      flex: 1,
+      minWidth: "250px",
+      padding: `${designTokens.spacing.compact} ${designTokens.spacing.md}`,
+      borderRadius: "8px",
+      border: `1px solid ${designTokens.colors.lightGray}`,
+    },
+    message: {
+      marginTop: designTokens.spacing.compact,
+      color: designTokens.colors.gray,
+    },
+    error: {
+      marginTop: designTokens.spacing.roomy,
+      color: designTokens.colors.red,
+    },
+    pickerRow: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: designTokens.spacing.mdPlus,
+      padding: designTokens.spacing.compact,
+      border: `1px solid ${designTokens.colors.lightGray}`,
+      borderRadius: "8px",
+    },
+    pickerRecipeInfo: {
+      display: "flex",
+      alignItems: "center",
+      gap: designTokens.spacing.md,
+      minWidth: 0,
+    },
+    pickerImage: {
+      width: "60px",
+      height: "50px",
+      objectFit: "cover",
+      flexShrink: 0,
+      borderRadius: "8px",
+    },
+    pickerCategory: {
+      marginTop: designTokens.spacing.xs,
+      color: designTokens.colors.gray,
+      fontSize: designTokens.typography.caption,
+    },
+    addButton: {
+      padding: `${designTokens.spacing.sm} ${designTokens.spacing.md}`,
+      borderRadius: "8px",
+      border: "none",
+      background: designTokens.colors.black,
+      color: designTokens.colors.white,
+      cursor: "pointer",
+      whiteSpace: "nowrap",
+    },
+    addedButton: {
+      padding: `${designTokens.spacing.sm} ${designTokens.spacing.md}`,
+      borderRadius: "8px",
+      border: `1px solid ${designTokens.colors.lightGray}`,
+      background: designTokens.colors.veryLightGray,
+      color: designTokens.colors.gray,
+      cursor: "default",
+      whiteSpace: "nowrap",
+    },
+    collaboratorRemoveButton: {
+      padding: `6px ${designTokens.spacing.md}`,
+      border: `1px solid ${designTokens.colors.lightGray}`,
+      borderRadius: "6px",
+      background: designTokens.colors.white,
+      cursor: "pointer",
+    },
+    bookTitleOwner: {
+      ...commonStyles.title,
+      cursor: "text",
+    },
+    bookTitleReadOnly: {
+      ...commonStyles.title,
+      cursor: "default",
+    },
+    bookDescriptionOwner: {
+      ...bookDescriptionStyle,
+      color: designTokens.colors.gray,
+      marginTop: designTokens.spacing.compact,
+      cursor: "text",
+    },
+    bookDescriptionReadOnly: {
+      ...bookDescriptionStyle,
+      color: designTokens.colors.gray,
+      marginTop: designTokens.spacing.compact,
+      cursor: "default",
+    },
+  },
+  largeModal: {
+    width: "100%",
+    maxWidth: "700px",
+    padding: designTokens.spacing.xl,
+    borderRadius: "10px",
+    background: designTokens.colors.white,
+    boxSizing: "border-box",
+    maxHeight: "85vh",
+    overflowY: "auto",
+  },
+} as const;

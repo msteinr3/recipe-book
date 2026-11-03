@@ -13,15 +13,15 @@
 
 ### Design Foundation
 
-- [ ] Clean up and consolidate `styles/common.ts`
-- [ ] Establish shared color system
-- [ ] Establish shared typography
-- [ ] Establish shared spacing
-- [ ] Establish shared border-radius and shadows
-- [ ] Establish shared button styles
-- [ ] Establish shared card/container styles
-- [ ] Establish shared link styles
-- [ ] Establish shared input/form styles
+- [x] Clean up and consolidate `styles/common.ts`
+- [x] Establish shared color system
+- [x] Establish shared typography
+- [x] Establish shared spacing
+- [x] Establish shared border-radius and shadows
+- [x] Establish shared button styles
+- [x] Establish shared card/container styles
+- [x] Establish shared link styles
+- [x] Establish shared input/form styles
 
 ### Cookbook Design
 

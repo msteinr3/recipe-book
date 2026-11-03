@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { commonStyles } from "@/styles/common";
+import { designTokens } from "@/styles/tokens";
+
 
 type Ingredient = {
   quantity: string;
@@ -158,9 +160,9 @@ export default function RecipeListEditor(props: RecipeListEditorProps) {
 
     return (
       <div ref={containerRef} style={commonStyles.editable}>
-        <div style={commonStyles.ingredients}>
+        <div style={styles.ingredients}>
           {ingredients.map((ingredient, index) => (
-            <div key={index} style={commonStyles.ingredientEditorRow}>
+            <div key={index} style={styles.ingredientEditorRow}>
               <input
                 type="text"
                 value={ingredient.quantity}
@@ -168,7 +170,7 @@ export default function RecipeListEditor(props: RecipeListEditorProps) {
                   updateIngredient(index, "quantity", event.target.value)
                 }
                 placeholder="Quantity"
-                style={commonStyles.quantityInput}
+                style={styles.quantityInput}
               />
               <input
                 type="text"
@@ -177,12 +179,12 @@ export default function RecipeListEditor(props: RecipeListEditorProps) {
                   updateIngredient(index, "item", event.target.value)
                 }
                 placeholder="Ingredient"
-                style={commonStyles.itemInput}
+                style={styles.itemInput}
               />
               <button
                 type="button"
                 onClick={() => removeItem(index)}
-                style={commonStyles.removeButton}
+                style={styles.removeButton}
                 aria-label="Remove ingredient"
               >
                 ×
@@ -191,11 +193,11 @@ export default function RecipeListEditor(props: RecipeListEditorProps) {
           ))}
         </div>
 
-        <div style={commonStyles.editorButtons}>
+        <div style={styles.editorButtons}>
           <button
             type="button"
             onClick={addItem}
-            style={commonStyles.editorButton}
+            style={styles.editorButton}
           >
             Add ingredient
           </button>
@@ -209,21 +211,21 @@ export default function RecipeListEditor(props: RecipeListEditorProps) {
 
     return (
       <div ref={containerRef} style={commonStyles.editable}>
-        <div style={commonStyles.instructions}>
+        <div style={styles.instructions}>
           {instructions.map((instruction, index) => (
-            <div key={index} style={commonStyles.instructionEditorRow}>
+            <div key={index} style={styles.instructionEditorRow}>
               <span>{index + 1}.</span>
               <textarea
                 value={instruction}
                 onChange={(event) => updateItem(index, event.target.value)}
                 placeholder="Enter instruction"
-                style={commonStyles.instructionInput}
+                style={styles.instructionInput}
                 rows={2}
               />
               <button
                 type="button"
                 onClick={() => removeItem(index)}
-                style={commonStyles.removeButton}
+                style={styles.removeButton}
                 aria-label="Remove instruction"
               >
                 ×
@@ -232,11 +234,11 @@ export default function RecipeListEditor(props: RecipeListEditorProps) {
           ))}
         </div>
 
-        <div style={commonStyles.editorButtons}>
+        <div style={styles.editorButtons}>
           <button
             type="button"
             onClick={addItem}
-            style={commonStyles.editorButton}
+            style={styles.editorButton}
           >
             Add step
           </button>
@@ -249,20 +251,20 @@ export default function RecipeListEditor(props: RecipeListEditorProps) {
 
   return (
     <div ref={containerRef} style={commonStyles.editable}>
-      <div style={commonStyles.tags}>
+      <div style={styles.tags}>
         {tags.map((tag, index) => (
-          <div key={index} style={commonStyles.tag}>
+          <div key={index} style={styles.tag}>
             <input
               type="text"
               value={tag}
               onChange={(event) => updateItem(index, event.target.value)}
               placeholder="Tag"
-              style={commonStyles.tagsInput}
+              style={styles.tagsInput}
             />
             <button
               type="button"
               onClick={() => removeItem(index)}
-              style={commonStyles.removeButton}
+              style={styles.removeButton}
               aria-label="Remove tag"
             >
               ×
@@ -271,11 +273,11 @@ export default function RecipeListEditor(props: RecipeListEditorProps) {
         ))}
       </div>
 
-      <div style={commonStyles.editorButtons}>
+      <div style={styles.editorButtons}>
         <button
           type="button"
           onClick={addItem}
-          style={commonStyles.editorButton}
+          style={styles.editorButton}
         >
           Add tag
         </button>
@@ -283,3 +285,79 @@ export default function RecipeListEditor(props: RecipeListEditorProps) {
     </div>
   );
 }
+
+const styles = {
+  ingredients: {
+    lineHeight: designTokens.typography.lineHeightList,
+    paddingLeft: designTokens.spacing.xl,
+  },
+  ingredientEditorRow: {
+    display: "flex",
+    gap: designTokens.spacing.sm,
+    marginBottom: designTokens.spacing.sm,
+    alignItems: "center",
+  },
+  quantityInput: {
+    width: "70px",
+    padding: designTokens.spacing.xs,
+    boxSizing: "border-box",
+  },
+  itemInput: {
+    width: "35%",
+    padding: designTokens.spacing.xs,
+    boxSizing: "border-box",
+  },
+  removeButton: {
+    padding: `${designTokens.spacing.xs} ${designTokens.spacing.sm}`,
+    cursor: "pointer",
+  },
+  editorButtons: {
+    display: "flex",
+    gap: designTokens.spacing.sm,
+    marginTop: designTokens.spacing.md,
+  },
+  editorButton: {
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: designTokens.spacing.sm,
+    padding: `${designTokens.spacing.xs} ${designTokens.spacing.sm}`,
+    borderRadius: "6px",
+    cursor: "pointer",
+    fontSize: designTokens.typography.body,
+  },
+  instructions: {
+    lineHeight: designTokens.typography.lineHeightList,
+    paddingLeft: designTokens.spacing.xl,
+  },
+  instructionEditorRow: {
+    display: "flex",
+    gap: designTokens.spacing.sm,
+    marginBottom: designTokens.spacing.sm,
+    alignItems: "flex-start",
+  },
+  instructionInput: {
+    width: "50%",
+    minHeight: "40px",
+    padding: designTokens.spacing.px6,
+    boxSizing: "border-box",
+    fontFamily: "inherit",
+    fontSize: "inherit",
+  },
+  tags: {
+    display: "flex",
+    flexWrap: "wrap",
+    gap: designTokens.spacing.sm,
+  },
+  tag: {
+    borderRadius: "999px",
+    background: designTokens.colors.veryLightGray,
+    padding: `${designTokens.spacing.xs} ${designTokens.spacing.md}`,
+  },
+  tagsInput: {
+    width: "100%",
+    padding: designTokens.spacing.xs,
+    boxSizing: "border-box",
+    fontSize: "inherit",
+  },
+} as const;

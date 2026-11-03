@@ -3,7 +3,9 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { commonStyles } from "@/styles/common";
+import { designTokens } from "@/styles/tokens";
 import { supabase } from "@/lib/supabase";
+
 
 type Recipe = {
   id: string;
@@ -34,11 +36,11 @@ export default function HomePage() {
 
   return (
     <main style={commonStyles.page}>
-      <section style={commonStyles.hero}>
-        <div style={commonStyles.heroContent}>
-          <h1 style={commonStyles.heroTitle}>Recipe Book</h1>
+      <section style={styles.hero}>
+        <div style={styles.heroContent}>
+          <h1 style={styles.heroTitle}>Recipe Book</h1>
 
-          <p style={commonStyles.heroText}>
+          <p style={styles.heroText}>
             A collection of recipes shared, preserved, and enjoyed together.
           </p>
 
@@ -74,18 +76,18 @@ export default function HomePage() {
             </Link>
           </div>
         ) : (
-          <div style={commonStyles.grid}>
+          <div style={styles.grid}>
             {recipes.map((recipe) => (
-              <article key={recipe.id} style={commonStyles.card}>
+              <article key={recipe.id} style={styles.card}>
                 {recipe.image_url && (
                   <img
                     src={recipe.image_url}
                     alt={recipe.title}
-                    style={commonStyles.image}
+                    style={styles.image}
                   />
                 )}
 
-                <div style={commonStyles.cardContent}>
+                <div style={styles.cardContent}>
                   <h3 style={commonStyles.cardTitle}>{recipe.title}</h3>
 
                   {recipe.category && (
@@ -93,7 +95,7 @@ export default function HomePage() {
                   )}
 
                   {recipe.description && (
-                    <p style={commonStyles.description}>{recipe.description}</p>
+                    <p style={styles.description}>{recipe.description}</p>
                   )}
 
                   <Link
@@ -109,11 +111,11 @@ export default function HomePage() {
         )}
       </section>
 
-      <section style={commonStyles.contributeSection}>
+      <section style={styles.contributeSection}>
         <div style={commonStyles.container}>
           <h2 style={commonStyles.sectionTitle}>Have a recipe to share?</h2>
 
-          <p style={commonStyles.contributeText}>
+          <p style={styles.contributeText}>
             Help grow the collection by submitting a recipe of your own.
           </p>
 
@@ -125,3 +127,62 @@ export default function HomePage() {
     </main>
   );
 }
+
+const styles = {
+  hero: {
+    padding: `${designTokens.spacing.hero} ${designTokens.spacing.lg}`,
+    background: designTokens.colors.beige,
+  },
+  heroContent: {
+    maxWidth: "900px",
+    margin: "0 auto",
+    textAlign: "center",
+  },
+  heroTitle: {
+    fontSize: designTokens.typography.display,
+    margin: 0,
+  },
+  heroText: {
+    maxWidth: "650px",
+    margin: `${designTokens.spacing.xl} auto ${designTokens.spacing.xxl}`,
+    fontSize: designTokens.typography.lead,
+    lineHeight: designTokens.typography.lineHeightRelaxed,
+    color: designTokens.colors.gray,
+  },
+  grid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+    gap: designTokens.spacing.xl,
+  },
+  card: {
+    border: `1px solid ${designTokens.colors.lightGray}`,
+    borderRadius: "10px",
+    background: designTokens.colors.white,
+    boxShadow: designTokens.shadows.card,
+    overflow: "hidden",
+  },
+  image: {
+    display: "block",
+    width: "auto",
+    height: "auto",
+    maxWidth: "100%",
+    maxHeight: "200px",
+    objectFit: "contain",
+  },
+  cardContent: {
+    padding: designTokens.spacing.lg,
+  },
+  description: {
+    lineHeight: designTokens.typography.lineHeightBody,
+    marginBottom: designTokens.spacing.lg,
+  },
+  contributeSection: {
+    marginTop: designTokens.spacing.section,
+    padding: `${designTokens.spacing.section} ${designTokens.spacing.lg}`,
+    background: designTokens.colors.beige,
+  },
+  contributeText: {
+    margin: `${designTokens.spacing.md} 0 ${designTokens.spacing.xl}`,
+    color: designTokens.colors.gray,
+  },
+} as const;

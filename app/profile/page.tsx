@@ -4,7 +4,9 @@ import Link from "next/link";
 import { Suspense, type FormEvent, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { commonStyles } from "@/styles/common";
+import { designTokens } from "@/styles/tokens";
 import { supabase } from "@/lib/supabase";
+
 
 type AuthMode = "login" | "signup";
 
@@ -557,7 +559,7 @@ function ProfilePageContent() {
               <button
                 type="button"
                 onClick={handleForgotPassword}
-                style={commonStyles.forgotPasswordButton}
+                style={styles.forgotPasswordButton}
               >
                 Forgot password?
               </button>
@@ -593,8 +595,8 @@ function ProfilePageContent() {
       <div style={commonStyles.narrowContainer}>
         <h1 style={commonStyles.title}>Profile</h1>
 
-        <div style={commonStyles.profileCard}>
-          <div style={commonStyles.accountHeader}>
+        <div style={styles.profileCard}>
+          <div style={styles.accountHeader}>
             <h2 style={commonStyles.sectionTitle}>Account</h2>
 
             <button
@@ -607,7 +609,7 @@ function ProfilePageContent() {
                 setMessage("");
                 setErrorMessage("");
               }}
-              style={commonStyles.editButton}
+              style={styles.editButton}
             >
               {isEditingAccount ? "Cancel" : "Edit"}
             </button>
@@ -682,20 +684,20 @@ function ProfilePageContent() {
 
             <div style={commonStyles.verticalList}>
               {invitations.map((invitation) => (
-                <div key={invitation.id} style={commonStyles.invitationRow}>
-                  <div style={commonStyles.invitationInfo}>
-                    <h3 style={commonStyles.bookTitle}>
+                <div key={invitation.id} style={styles.invitationRow}>
+                  <div style={styles.invitationInfo}>
+                    <h3 style={styles.bookTitle}>
                       {invitation.book_title}
                     </h3>
 
-                    <p style={commonStyles.bookDescription}>
+                    <p style={styles.bookDescription}>
                       {invitation.invited_by_email
                         ? `Invited by ${invitation.invited_by_email}`
                         : "You've been invited to collaborate on this book."}
                     </p>
                   </div>
 
-                  <div style={commonStyles.invitationActions}>
+                  <div style={styles.invitationActions}>
                     <button
                       type="button"
                       onClick={() => handleAcceptInvitation(invitation)}
@@ -730,7 +732,7 @@ function ProfilePageContent() {
             <div>
               <h2 style={commonStyles.sectionTitle}>My Recipe Books</h2>
 
-              <p style={commonStyles.sectionDescription}>
+              <p style={styles.sectionDescription}>
                 Books you own or collaborate on.
               </p>
             </div>
@@ -751,7 +753,7 @@ function ProfilePageContent() {
           {showCreateBook && (
             <form
               onSubmit={handleCreateBook}
-              style={commonStyles.createBookForm}
+              style={styles.createBookForm}
             >
               <label style={commonStyles.label}>
                 Book Title
@@ -787,22 +789,22 @@ function ProfilePageContent() {
           ) : (
             <div style={commonStyles.verticalList}>
               {books.map((book) => (
-                <div key={book.id} style={commonStyles.bookRow}>
+                <div key={book.id} style={styles.bookRow}>
                   <Link
                     href={`/books/${book.id}`}
-                    style={commonStyles.bookLink}
+                    style={styles.bookLink}
                   >
                     <div>
-                      <h3 style={commonStyles.bookTitle}>{book.title}</h3>
+                      <h3 style={styles.bookTitle}>{book.title}</h3>
 
                       {book.description && (
-                        <p style={commonStyles.bookDescription}>
+                        <p style={styles.bookDescription}>
                           {book.description}
                         </p>
                       )}
                     </div>
 
-                    <span style={commonStyles.role}>
+                    <span style={styles.role}>
                       {book.role === "owner" ? "Owner" : "Editor"}
                     </span>
                   </Link>
@@ -811,7 +813,7 @@ function ProfilePageContent() {
                     <button
                       type="button"
                       onClick={() => handleDeleteBook(book)}
-                      style={commonStyles.deleteButton}
+                      style={styles.deleteButton}
                     >
                       Delete
                     </button>
@@ -823,7 +825,7 @@ function ProfilePageContent() {
         </section>
 
         {isAdmin && (
-          <section style={commonStyles.adminSection}>
+          <section style={styles.adminSection}>
             <h2>Admin Tools</h2>
             <p>You have administrator access to the recipe collection.</p>
 
@@ -836,3 +838,122 @@ function ProfilePageContent() {
     </main>
   );
 }
+
+const styles = {
+  forgotPasswordButton: {
+    alignSelf: "flex-start",
+    padding: 0,
+    border: "none",
+    background: "none",
+    color: designTokens.colors.brown,
+    textDecoration: "underline",
+    cursor: "pointer",
+    fontSize: designTokens.typography.caption,
+  },
+  profileCard: {
+    border: `1px solid ${designTokens.colors.lightGray}`,
+    borderRadius: "10px",
+    background: designTokens.colors.white,
+    boxShadow: designTokens.shadows.card,
+    marginTop: designTokens.spacing.xxl,
+    padding: designTokens.spacing.xl,
+  },
+  accountHeader: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: designTokens.spacing.md,
+  },
+  editButton: {
+    padding: `${designTokens.spacing.xs} ${designTokens.spacing.sm}`,
+    border: `1px solid ${designTokens.colors.lightGray}`,
+    borderRadius: "6px",
+    background: designTokens.colors.white,
+    cursor: "pointer",
+    fontSize: designTokens.typography.caption,
+  },
+  invitationRow: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: designTokens.spacing.xl,
+    padding: designTokens.spacing.lg,
+    borderRadius: "10px",
+    background: designTokens.colors.beige,
+  },
+  invitationInfo: {
+    flex: 1,
+    minWidth: 0,
+  },
+  bookTitle: {
+    margin: 0,
+    fontSize: designTokens.typography.lead,
+  },
+  bookDescription: {
+    margin: `${designTokens.spacing.xs} 0 0`,
+    color: designTokens.colors.gray,
+  },
+  invitationActions: {
+    display: "flex",
+    gap: designTokens.spacing.sm,
+    flexShrink: 0,
+  },
+  sectionDescription: {
+    marginTop: designTokens.spacing.sm,
+    color: designTokens.colors.gray,
+  },
+  createBookForm: {
+    display: "flex",
+    flexDirection: "column",
+    gap: designTokens.spacing.lg,
+    padding: designTokens.spacing.lg,
+    marginBottom: designTokens.spacing.xl,
+    border: `1px solid ${designTokens.colors.lightGray}`,
+    borderRadius: "10px",
+  },
+  bookRow: {
+    display: "flex",
+    alignItems: "center",
+    gap: designTokens.spacing.md,
+    justifyContent: "space-between",
+    padding: designTokens.spacing.lg,
+    borderRadius: "10px",
+    background: designTokens.colors.beige,
+  },
+  bookLink: {
+    display: "flex",
+    alignItems: "center",
+    gap: designTokens.spacing.md,
+    justifyContent: "space-between",
+    flex: 1,
+    minWidth: 0,
+    textDecoration: "none",
+    color: "inherit",
+  },
+  role: {
+    fontSize: designTokens.typography.caption,
+    fontWeight: designTokens.typography.weightSemibold,
+    color: designTokens.colors.gray,
+    flexShrink: 0,
+  },
+  deleteButton: {
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: designTokens.spacing.sm,
+    padding: `${designTokens.spacing.sm} ${designTokens.spacing.md}`,
+    borderRadius: "6px",
+    cursor: "pointer",
+    fontSize: designTokens.typography.body,
+    border: `1px solid ${designTokens.colors.red}`,
+    background: designTokens.colors.white,
+    color: designTokens.colors.red,
+    flexShrink: 0,
+  },
+  adminSection: {
+    marginTop: designTokens.spacing.xxl,
+    padding: designTokens.spacing.xl,
+    borderRadius: "10px",
+    background: designTokens.colors.beige,
+  },
+} as const;

@@ -3,6 +3,7 @@ import { supabase } from "@/lib/supabase";
 import RecipePageContent from "@/components/RecipePageContent";
 import { commonStyles } from "@/styles/common";
 
+
 export const dynamic = "force-dynamic";
 
 type Ingredient = {
@@ -47,9 +48,17 @@ export default async function RecipePage({
 
   return (
     <main style={commonStyles.page}>
-      <div style={commonStyles.recipeDetailsContainer}>
+      <div style={styles.recipeDetailsContainer}>
         <RecipePageContent recipe={recipe} />
       </div>
     </main>
   );
 }
+
+const styles = {
+  recipeDetailsContainer: {
+    maxWidth: "800px",
+    margin: "0 auto",
+    position: "relative",
+  },
+} as const;

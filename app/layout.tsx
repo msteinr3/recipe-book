@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { commonStyles } from "@/styles/common";
+import { designTokens } from "@/styles/tokens";
+
 
 export const metadata: Metadata = {
   title: "Recipe Book",
@@ -14,13 +16,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body style={commonStyles.body}>
-        <nav style={commonStyles.nav}>
-          <Link href="/" style={commonStyles.logo}>
+      <body style={styles.body}>
+        <nav style={styles.nav}>
+          <Link href="/" style={styles.logo}>
             Recipe Book
           </Link>
 
-          <div style={commonStyles.links}>
+          <div style={styles.links}>
             <Link href="/" style={commonStyles.link}>
               Home
             </Link>
@@ -41,3 +43,28 @@ export default function RootLayout({
     </html>
   );
 }
+
+const styles = {
+  body: {
+    margin: 0,
+    fontFamily: "Arial, sans-serif",
+    color: designTokens.colors.black,
+  },
+  nav: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: `${designTokens.spacing.lg} ${designTokens.spacing.xxl}`,
+    borderBottom: `1px solid ${designTokens.colors.lightGray}`,
+  },
+  logo: {
+    fontSize: designTokens.typography.headingSmall,
+    fontWeight: designTokens.typography.weightBold,
+    textDecoration: "none",
+    color: designTokens.colors.black,
+  },
+  links: {
+    display: "flex",
+    gap: designTokens.spacing.xl,
+  },
+} as const;

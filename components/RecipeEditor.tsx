@@ -5,6 +5,8 @@ import RecipeFieldEditor from "@/components/RecipeFieldEditor";
 import RecipeMetaEditor from "@/components/RecipeMetaEditor";
 import RecipeListEditor from "@/components/RecipeListEditor";
 import { commonStyles } from "@/styles/common";
+import { designTokens } from "@/styles/tokens";
+
 
 type Ingredient = {
   quantity: string;
@@ -137,7 +139,7 @@ export default function RecipeEditor({
       <form
         ref={submitFormRef}
         onSubmit={handleSubmit}
-        style={commonStyles.hiddenSubmitForm}
+        style={styles.hiddenSubmitForm}
       >
         <button type="submit" />
       </form>
@@ -146,7 +148,7 @@ export default function RecipeEditor({
         <button
           type="button"
           onClick={() => submitFormRef.current?.requestSubmit()}
-          style={commonStyles.fullWidthSubmitButton}
+          style={styles.fullWidthSubmitButton}
         >
           Submit Suggested Changes
         </button>
@@ -172,15 +174,15 @@ export default function RecipeEditor({
         </p>
       )}
 
-      <div style={commonStyles.recipeImageLayer}>
+      <div style={styles.recipeImageLayer}>
         <img
           src={recipe.image_url || "/images/default-food.jpg"}
           alt={recipe.title}
-          style={commonStyles.recipeDetailImage}
+          style={styles.recipeDetailImage}
         />
       </div>
 
-      <div style={commonStyles.recipeDescription}>
+      <div style={styles.recipeDescription}>
         <RecipeFieldEditor
           recipeId={recipe.id}
           field="description"
@@ -271,3 +273,43 @@ export default function RecipeEditor({
     </div>
   );
 }
+
+const styles = {
+  hiddenSubmitForm: {
+    display: "none",
+  },
+  fullWidthSubmitButton: {
+    display: "block",
+    width: "100%",
+    padding: designTokens.spacing.lg,
+    marginBottom: designTokens.spacing.xxl,
+    background: designTokens.colors.green,
+    color: designTokens.colors.white,
+    border: "none",
+    borderRadius: "10px",
+    fontSize: designTokens.typography.lead,
+    fontWeight: designTokens.typography.weightBold,
+    cursor: "pointer",
+  },
+  recipeImageLayer: {
+    position: "absolute",
+    right: 0,
+    top: designTokens.layout.recipeImageTop,
+    maxWidth: "100%",
+    maxHeight: "400px",
+    overflow: "hidden",
+  },
+  recipeDetailImage: {
+    display: "block",
+    width: "auto",
+    height: "auto",
+    maxWidth: "280px",
+    maxHeight: "280px",
+    borderRadius: "10px",
+  },
+  recipeDescription: {
+    width: "calc(100% - 320px)",
+    marginTop: designTokens.spacing.xxl,
+    ...commonStyles.bodyDescription,
+  },
+} as const;
