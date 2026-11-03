@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import ListRow from "@/components/shared/ListRow";
 import { Suspense, type FormEvent, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Button, { getButtonStyle } from "@/components/shared/Button";
 import { commonStyles } from "@/styles/common";
 import { designTokens } from "@/styles/tokens";
 import { supabase } from "@/lib/supabase";
@@ -32,7 +34,7 @@ export default function ProfilePage() {
     <Suspense
       fallback={
         <main style={commonStyles.page}>
-          <div style={commonStyles.narrowContainer}>
+          <div style={commonStyles.container}>
             <p>Loading...</p>
           </div>
         </main>
@@ -454,7 +456,7 @@ function ProfilePageContent() {
   if (loading) {
     return (
       <main style={commonStyles.page}>
-        <div style={commonStyles.narrowContainer}>
+        <div style={commonStyles.container}>
           <p>Loading...</p>
         </div>
       </main>
@@ -464,7 +466,7 @@ function ProfilePageContent() {
   if (showingResetPassword) {
     return (
       <main style={commonStyles.page}>
-        <div style={commonStyles.narrowContainer}>
+        <div style={commonStyles.container}>
           <h1 style={commonStyles.title}>Reset Password</h1>
           <p style={commonStyles.subtitle}>
             Choose a new password for your account.
@@ -502,9 +504,12 @@ function ProfilePageContent() {
             {message && <p style={commonStyles.success}>{message}</p>}
             {errorMessage && <p style={commonStyles.error}>{errorMessage}</p>}
 
-            <button type="submit" style={commonStyles.button}>
-              Reset Password
-            </button>
+            <Button
+              viewModel={{
+                type: "submit",
+                content: "Reset Password",
+              }}
+            />
           </form>
         </div>
       </main>
@@ -514,7 +519,7 @@ function ProfilePageContent() {
   if (!userEmail) {
     return (
       <main style={commonStyles.page}>
-        <div style={commonStyles.narrowContainer}>
+        <div style={commonStyles.container}>
           <h1 style={commonStyles.title}>
             {mode === "login" ? "Log In" : "Create an Account"}
           </h1>
@@ -556,35 +561,41 @@ function ProfilePageContent() {
             {message && <p style={commonStyles.success}>{message}</p>}
 
             {mode === "login" && (
-              <button
-                type="button"
-                onClick={handleForgotPassword}
-                style={styles.forgotPasswordButton}
-              >
-                Forgot password?
-              </button>
+              <Button
+                viewModel={{
+                  type: "button",
+                  onClick: handleForgotPassword,
+                  style: styles.forgotPasswordButton,
+                  content: "Forgot password?",
+                }}
+              />
             )}
 
             {errorMessage && <p style={commonStyles.error}>{errorMessage}</p>}
 
-            <button type="submit" style={commonStyles.button}>
-              {mode === "login" ? "Log In" : "Create Account"}
-            </button>
+            <Button
+              viewModel={{
+                type: "submit",
+                content: mode === "login" ? "Log In" : "Create Account",
+              }}
+            />
           </form>
 
-          <button
-            type="button"
-            onClick={() => {
-              setMode(mode === "login" ? "signup" : "login");
-              setMessage("");
-              setErrorMessage("");
+          <Button
+            viewModel={{
+              type: "button",
+              onClick: () => {
+                setMode(mode === "login" ? "signup" : "login");
+                setMessage("");
+                setErrorMessage("");
+              },
+              variant: "secondary",
+              content:
+                mode === "login"
+                  ? "Create a New Account"
+                  : "Already Have an Account? Log In",
             }}
-            style={commonStyles.secondaryButton}
-          >
-            {mode === "login"
-              ? "Create a New Account"
-              : "Already Have an Account? Log In"}
-          </button>
+          />
         </div>
       </main>
     );
@@ -592,27 +603,28 @@ function ProfilePageContent() {
 
   return (
     <main style={commonStyles.page}>
-      <div style={commonStyles.narrowContainer}>
+      <div style={commonStyles.container}>
         <h1 style={commonStyles.title}>Profile</h1>
 
         <div style={styles.profileCard}>
           <div style={styles.accountHeader}>
             <h2 style={commonStyles.sectionTitle}>Account</h2>
 
-            <button
-              type="button"
-              onClick={() => {
-                setIsEditingAccount((current) => !current);
-                setCurrentPassword("");
-                setNewPassword("");
-                setConfirmNewPassword("");
-                setMessage("");
-                setErrorMessage("");
+            <Button
+              viewModel={{
+                type: "button",
+                onClick: () => {
+                  setIsEditingAccount((current) => !current);
+                  setCurrentPassword("");
+                  setNewPassword("");
+                  setConfirmNewPassword("");
+                  setMessage("");
+                  setErrorMessage("");
+                },
+                style: styles.editButton,
+                content: isEditingAccount ? "Cancel" : "Edit",
               }}
-              style={styles.editButton}
-            >
-              {isEditingAccount ? "Cancel" : "Edit"}
-            </button>
+            />
           </div>
 
           <p>
@@ -663,19 +675,23 @@ function ProfilePageContent() {
                 />
               </label>
 
-              <button type="submit" style={commonStyles.button}>
-                Save Password
-              </button>
+              <Button
+                viewModel={{
+                  type: "submit",
+                  content: "Save Password",
+                }}
+              />
             </form>
           )}
 
-          <button
-            type="button"
-            onClick={handleLogout}
-            style={commonStyles.secondaryButton}
-          >
-            Log Out
-          </button>
+          <Button
+            viewModel={{
+              type: "button",
+              onClick: handleLogout,
+              variant: "secondary",
+              content: "Log Out",
+            }}
+          />
         </div>
 
         {invitations.length > 0 && (
@@ -698,25 +714,26 @@ function ProfilePageContent() {
                   </div>
 
                   <div style={styles.invitationActions}>
-                    <button
-                      type="button"
-                      onClick={() => handleAcceptInvitation(invitation)}
-                      disabled={processingInvitationId !== null}
-                      style={commonStyles.button}
-                    >
-                      {processingInvitationId === invitation.id
-                        ? "..."
-                        : "Accept"}
-                    </button>
+                    <Button
+                      viewModel={{
+                        type: "button",
+                        onClick: () => handleAcceptInvitation(invitation),
+                        disabled: processingInvitationId !== null,
+                        content: processingInvitationId === invitation.id
+                            ? "..."
+                            : "Accept",
+                      }}
+                    />
 
-                    <button
-                      type="button"
-                      onClick={() => handleDeclineInvitation(invitation)}
-                      disabled={processingInvitationId !== null}
-                      style={commonStyles.secondaryButton}
-                    >
-                      Decline
-                    </button>
+                    <Button
+                      viewModel={{
+                        type: "button",
+                        onClick: () => handleDeclineInvitation(invitation),
+                        disabled: processingInvitationId !== null,
+                        variant: "secondary",
+                        content: "Decline",
+                      }}
+                    />
                   </div>
                 </div>
               ))}
@@ -737,17 +754,17 @@ function ProfilePageContent() {
               </p>
             </div>
 
-            <button
-              type="button"
-              onClick={() => {
-                setShowCreateBook((current) => !current);
-                setErrorMessage("");
-                setMessage("");
+            <Button
+              viewModel={{
+                type: "button",
+                onClick: () => {
+                    setShowCreateBook((current) => !current);
+                    setErrorMessage("");
+                    setMessage("");
+                },
+                content: showCreateBook ? "Cancel" : "Create New Book",
               }}
-              style={commonStyles.button}
-            >
-              {showCreateBook ? "Cancel" : "Create New Book"}
-            </button>
+            />
           </div>
 
           {showCreateBook && (
@@ -775,9 +792,12 @@ function ProfilePageContent() {
                 />
               </label>
 
-              <button type="submit" style={commonStyles.button}>
-                Create Book
-              </button>
+              <Button
+                viewModel={{
+                  type: "submit",
+                  content: "Create Book",
+                }}
+              />
             </form>
           )}
 
@@ -789,36 +809,27 @@ function ProfilePageContent() {
           ) : (
             <div style={commonStyles.verticalList}>
               {books.map((book) => (
-                <div key={book.id} style={styles.bookRow}>
-                  <Link
-                    href={`/books/${book.id}`}
-                    style={styles.bookLink}
-                  >
-                    <div>
-                      <h3 style={styles.bookTitle}>{book.title}</h3>
-
-                      {book.description && (
-                        <p style={styles.bookDescription}>
-                          {book.description}
-                        </p>
-                      )}
-                    </div>
-
-                    <span style={styles.role}>
-                      {book.role === "owner" ? "Owner" : "Editor"}
-                    </span>
-                  </Link>
-
-                  {book.role === "owner" && (
-                    <button
-                      type="button"
-                      onClick={() => handleDeleteBook(book)}
-                      style={styles.deleteButton}
-                    >
-                      Delete
-                    </button>
-                  )}
-                </div>
+                <ListRow
+                  key={book.id}
+                  viewModel={{
+                    title: book.title,
+                    titleLevel: 3,
+                    subtitle: book.description ?? undefined,
+                    href: `/books/${book.id}`,
+                    media: {
+                      type: "text",
+                      content: book.role === "owner" ? "Owner" : "Editor",
+                    },
+                    action:
+                      book.role === "owner"
+                        ? {
+                            label: "Delete",
+                            onClick: () => handleDeleteBook(book),
+                            variant: "danger",
+                          }
+                        : undefined,
+                  }}
+                />
               ))}
             </div>
           )}
@@ -829,7 +840,7 @@ function ProfilePageContent() {
             <h2>Admin Tools</h2>
             <p>You have administrator access to the recipe collection.</p>
 
-            <Link href="/admin" style={commonStyles.button}>
+            <Link href="/admin" style={getButtonStyle({})}>
               Manage Recipes
             </Link>
           </section>
@@ -839,121 +850,82 @@ function ProfilePageContent() {
   );
 }
 
+const invitationRowBase = {
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  gap: designTokens.spacing.m,
+  padding: designTokens.spacing.m,
+  borderRadius: designTokens.radius.md,
+  background: designTokens.colors.surface.softBackground,
+};
+
 const styles = {
   forgotPasswordButton: {
     alignSelf: "flex-start",
     padding: 0,
     border: "none",
     background: "none",
-    color: designTokens.colors.brown,
+    color: designTokens.colors.text.warmAccent,
     textDecoration: "underline",
     cursor: "pointer",
-    fontSize: designTokens.typography.caption,
+    fontSize: designTokens.typography.fontSize.xs,
   },
   profileCard: {
-    border: `1px solid ${designTokens.colors.lightGray}`,
-    borderRadius: "10px",
-    background: designTokens.colors.white,
-    boxShadow: designTokens.shadows.card,
-    marginTop: designTokens.spacing.xxl,
-    padding: designTokens.spacing.xl,
+    ...commonStyles.card,
+    marginTop: designTokens.spacing.l,
+    padding: designTokens.spacing.l,
   },
   accountHeader: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    gap: designTokens.spacing.md,
+    gap: designTokens.spacing.m,
   },
   editButton: {
-    padding: `${designTokens.spacing.xs} ${designTokens.spacing.sm}`,
-    border: `1px solid ${designTokens.colors.lightGray}`,
-    borderRadius: "6px",
-    background: designTokens.colors.white,
+    padding: `${designTokens.spacing.xs} ${designTokens.spacing.s}`,
+    border: `1px solid ${designTokens.colors.border.default}`,
+    borderRadius: designTokens.radius.sm,
+    background: designTokens.colors.surface.content,
     cursor: "pointer",
-    fontSize: designTokens.typography.caption,
+    fontSize: designTokens.typography.fontSize.xs,
   },
   invitationRow: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: designTokens.spacing.xl,
-    padding: designTokens.spacing.lg,
-    borderRadius: "10px",
-    background: designTokens.colors.beige,
+    ...invitationRowBase,
+    gap: designTokens.spacing.l,
   },
   invitationInfo: {
     flex: 1,
     minWidth: 0,
   },
   bookTitle: {
-    margin: 0,
-    fontSize: designTokens.typography.lead,
+    ...commonStyles.itemTitle,
   },
   bookDescription: {
-    margin: `${designTokens.spacing.xs} 0 0`,
-    color: designTokens.colors.gray,
+    ...commonStyles.rowSubtitle,
   },
   invitationActions: {
     display: "flex",
-    gap: designTokens.spacing.sm,
+    gap: designTokens.spacing.s,
     flexShrink: 0,
   },
   sectionDescription: {
-    marginTop: designTokens.spacing.sm,
-    color: designTokens.colors.gray,
+    marginTop: designTokens.spacing.s,
+    color: designTokens.colors.text.secondary,
   },
   createBookForm: {
     display: "flex",
     flexDirection: "column",
-    gap: designTokens.spacing.lg,
-    padding: designTokens.spacing.lg,
-    marginBottom: designTokens.spacing.xl,
-    border: `1px solid ${designTokens.colors.lightGray}`,
-    borderRadius: "10px",
-  },
-  bookRow: {
-    display: "flex",
-    alignItems: "center",
-    gap: designTokens.spacing.md,
-    justifyContent: "space-between",
-    padding: designTokens.spacing.lg,
-    borderRadius: "10px",
-    background: designTokens.colors.beige,
-  },
-  bookLink: {
-    display: "flex",
-    alignItems: "center",
-    gap: designTokens.spacing.md,
-    justifyContent: "space-between",
-    flex: 1,
-    minWidth: 0,
-    textDecoration: "none",
-    color: "inherit",
-  },
-  role: {
-    fontSize: designTokens.typography.caption,
-    fontWeight: designTokens.typography.weightSemibold,
-    color: designTokens.colors.gray,
-    flexShrink: 0,
-  },
-  deleteButton: {
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: designTokens.spacing.sm,
-    padding: `${designTokens.spacing.sm} ${designTokens.spacing.md}`,
-    borderRadius: "6px",
-    cursor: "pointer",
-    fontSize: designTokens.typography.body,
-    border: `1px solid ${designTokens.colors.red}`,
-    background: designTokens.colors.white,
-    color: designTokens.colors.red,
-    flexShrink: 0,
+    gap: designTokens.spacing.m,
+    padding: designTokens.spacing.m,
+    marginBottom: designTokens.spacing.l,
+    border: `1px solid ${designTokens.colors.border.default}`,
+    borderRadius: designTokens.radius.md,
   },
   adminSection: {
-    marginTop: designTokens.spacing.xxl,
-    padding: designTokens.spacing.xl,
-    borderRadius: "10px",
-    background: designTokens.colors.beige,
+    marginTop: designTokens.spacing.l,
+    padding: designTokens.spacing.l,
+    borderRadius: designTokens.radius.md,
+    background: designTokens.colors.surface.softBackground,
   },
 } as const;

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import "./globals.css";
 import { commonStyles } from "@/styles/common";
 import { designTokens } from "@/styles/tokens";
 
@@ -48,23 +49,24 @@ const styles = {
   body: {
     margin: 0,
     fontFamily: "Arial, sans-serif",
-    color: designTokens.colors.black,
+    color: designTokens.colors.text.primary,
   },
   nav: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: `${designTokens.spacing.lg} ${designTokens.spacing.xxl}`,
-    borderBottom: `1px solid ${designTokens.colors.lightGray}`,
+    padding: `${designTokens.spacing.m} ${designTokens.spacing.l}`,
+    background: designTokens.colors.surface.navigation,
+    borderBottom: `1px solid ${designTokens.colors.border.default}`,
   },
   logo: {
-    fontSize: designTokens.typography.headingSmall,
+    fontSize: designTokens.typography.fontSize.m,
     fontWeight: designTokens.typography.weightBold,
     textDecoration: "none",
-    color: designTokens.colors.black,
+    color: designTokens.colors.text.primary,
   },
   links: {
     display: "flex",
-    gap: designTokens.spacing.xl,
+    gap: designTokens.spacing.l,
   },
 } as const;

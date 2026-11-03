@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Button from "@/components/shared/Button";
 import { commonStyles } from "@/styles/common";
 import { designTokens } from "@/styles/tokens";
 
@@ -181,26 +182,28 @@ export default function RecipeListEditor(props: RecipeListEditorProps) {
                 placeholder="Ingredient"
                 style={styles.itemInput}
               />
-              <button
-                type="button"
-                onClick={() => removeItem(index)}
-                style={styles.removeButton}
-                aria-label="Remove ingredient"
-              >
-                ×
-              </button>
+              <Button
+                viewModel={{
+                  type: "button",
+                  onClick: () => removeItem(index),
+                  style: styles.removeButton,
+                  "aria-label": "Remove ingredient",
+                  content: "×",
+                }}
+              />
             </div>
           ))}
         </div>
 
         <div style={styles.editorButtons}>
-          <button
-            type="button"
-            onClick={addItem}
-            style={styles.editorButton}
-          >
-            Add ingredient
-          </button>
+          <Button
+            viewModel={{
+              type: "button",
+              onClick: addItem,
+              style: styles.editorButton,
+              content: "Add ingredient",
+            }}
+          />
         </div>
       </div>
     );
@@ -222,26 +225,28 @@ export default function RecipeListEditor(props: RecipeListEditorProps) {
                 style={styles.instructionInput}
                 rows={2}
               />
-              <button
-                type="button"
-                onClick={() => removeItem(index)}
-                style={styles.removeButton}
-                aria-label="Remove instruction"
-              >
-                ×
-              </button>
+              <Button
+                viewModel={{
+                  type: "button",
+                  onClick: () => removeItem(index),
+                  style: styles.removeButton,
+                  "aria-label": "Remove instruction",
+                  content: "×",
+                }}
+              />
             </div>
           ))}
         </div>
 
         <div style={styles.editorButtons}>
-          <button
-            type="button"
-            onClick={addItem}
-            style={styles.editorButton}
-          >
-            Add step
-          </button>
+          <Button
+            viewModel={{
+              type: "button",
+              onClick: addItem,
+              style: styles.editorButton,
+              content: "Add step",
+            }}
+          />
         </div>
       </div>
     );
@@ -261,44 +266,54 @@ export default function RecipeListEditor(props: RecipeListEditorProps) {
               placeholder="Tag"
               style={styles.tagsInput}
             />
-            <button
-              type="button"
-              onClick={() => removeItem(index)}
-              style={styles.removeButton}
-              aria-label="Remove tag"
-            >
-              ×
-            </button>
+            <Button
+              viewModel={{
+                type: "button",
+                onClick: () => removeItem(index),
+                style: styles.removeButton,
+                "aria-label": "Remove tag",
+                content: "×",
+              }}
+            />
           </div>
         ))}
       </div>
 
       <div style={styles.editorButtons}>
-        <button
-          type="button"
-          onClick={addItem}
-          style={styles.editorButton}
-        >
-          Add tag
-        </button>
+        <Button
+          viewModel={{
+            type: "button",
+            onClick: addItem,
+            style: styles.editorButton,
+            content: "Add tag",
+          }}
+        />
       </div>
     </div>
   );
 }
 
+const recipeListStyle = {
+  lineHeight: designTokens.typography.lineHeightList,
+  paddingLeft: designTokens.spacing.l,
+};
+
+const editorRowBase = {
+  display: "flex",
+  gap: designTokens.spacing.s,
+  marginBottom: designTokens.spacing.s,
+};
+
 const styles = {
   ingredients: {
-    lineHeight: designTokens.typography.lineHeightList,
-    paddingLeft: designTokens.spacing.xl,
+    ...recipeListStyle,
   },
   ingredientEditorRow: {
-    display: "flex",
-    gap: designTokens.spacing.sm,
-    marginBottom: designTokens.spacing.sm,
+    ...editorRowBase,
     alignItems: "center",
   },
   quantityInput: {
-    width: "70px",
+    width: designTokens.sizes.s,
     padding: designTokens.spacing.xs,
     boxSizing: "border-box",
   },
@@ -308,38 +323,35 @@ const styles = {
     boxSizing: "border-box",
   },
   removeButton: {
-    padding: `${designTokens.spacing.xs} ${designTokens.spacing.sm}`,
+    padding: `${designTokens.spacing.xs} ${designTokens.spacing.s}`,
     cursor: "pointer",
   },
   editorButtons: {
     display: "flex",
-    gap: designTokens.spacing.sm,
-    marginTop: designTokens.spacing.md,
+    gap: designTokens.spacing.s,
+    marginTop: designTokens.spacing.m,
   },
   editorButton: {
     display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
-    gap: designTokens.spacing.sm,
-    padding: `${designTokens.spacing.xs} ${designTokens.spacing.sm}`,
-    borderRadius: "6px",
+    gap: designTokens.spacing.s,
+    padding: `${designTokens.spacing.xs} ${designTokens.spacing.s}`,
+    borderRadius: designTokens.radius.sm,
     cursor: "pointer",
-    fontSize: designTokens.typography.body,
+    fontSize: designTokens.typography.fontSize.s,
   },
   instructions: {
-    lineHeight: designTokens.typography.lineHeightList,
-    paddingLeft: designTokens.spacing.xl,
+    ...recipeListStyle,
   },
   instructionEditorRow: {
-    display: "flex",
-    gap: designTokens.spacing.sm,
-    marginBottom: designTokens.spacing.sm,
+    ...editorRowBase,
     alignItems: "flex-start",
   },
   instructionInput: {
     width: "50%",
-    minHeight: "40px",
-    padding: designTokens.spacing.px6,
+    minHeight: designTokens.sizes.xs,
+    padding: designTokens.spacing.xs,
     boxSizing: "border-box",
     fontFamily: "inherit",
     fontSize: "inherit",
@@ -347,12 +359,12 @@ const styles = {
   tags: {
     display: "flex",
     flexWrap: "wrap",
-    gap: designTokens.spacing.sm,
+    gap: designTokens.spacing.s,
   },
   tag: {
-    borderRadius: "999px",
-    background: designTokens.colors.veryLightGray,
-    padding: `${designTokens.spacing.xs} ${designTokens.spacing.md}`,
+    borderRadius: designTokens.radius.pill,
+    background: designTokens.colors.surface.subtle,
+    padding: `${designTokens.spacing.xs} ${designTokens.spacing.m}`,
   },
   tagsInput: {
     width: "100%",

@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
+import Button from "@/components/shared/Button";
 import { supabase } from "@/lib/supabase";
 import { commonStyles } from "@/styles/common";
 import { designTokens } from "@/styles/tokens";
@@ -322,23 +323,25 @@ export default function AdminPage() {
               style={commonStyles.input}
             />
 
-            <button
-              type="button"
-              onClick={() => removeIngredient(index)}
-              style={commonStyles.secondaryButton}
-            >
-              Remove
-            </button>
+            <Button
+              viewModel={{
+                type: "button",
+                onClick: () => removeIngredient(index),
+                variant: "secondary",
+                content: "Remove",
+              }}
+            />
           </div>
         ))}
 
-        <button
-          type="button"
-          onClick={addIngredient}
-          style={commonStyles.secondaryButton}
-        >
-          + Add Ingredient
-        </button>
+        <Button
+          viewModel={{
+            type: "button",
+            onClick: addIngredient,
+            variant: "secondary",
+            content: "+ Add Ingredient",
+          }}
+        />
       </div>
 
       <div style={styles.formSection}>
@@ -355,23 +358,25 @@ export default function AdminPage() {
               style={commonStyles.textarea}
             />
 
-            <button
-              type="button"
-              onClick={() => removeInstruction(index)}
-              style={commonStyles.secondaryButton}
-            >
-              Remove
-            </button>
+            <Button
+              viewModel={{
+                type: "button",
+                onClick: () => removeInstruction(index),
+                variant: "secondary",
+                content: "Remove",
+              }}
+            />
           </div>
         ))}
 
-        <button
-          type="button"
-          onClick={addInstruction}
-          style={commonStyles.secondaryButton}
-        >
-          + Add Step
-        </button>
+        <Button
+          viewModel={{
+            type: "button",
+            onClick: addInstruction,
+            variant: "secondary",
+            content: "+ Add Step",
+          }}
+        />
       </div>
 
       <div style={commonStyles.twoColumns}>
@@ -473,17 +478,22 @@ export default function AdminPage() {
       </label>
 
       <div style={commonStyles.buttonRow}>
-        <button
-          type="button"
-          onClick={cancelEditing}
-          style={commonStyles.secondaryButton}
-        >
-          Cancel
-        </button>
+        <Button
+          viewModel={{
+            type: "button",
+            onClick: cancelEditing,
+            variant: "secondary",
+            content: "Cancel",
+          }}
+        />
 
-        <button type="button" onClick={onSave} style={commonStyles.button}>
-          {saveLabel}
-        </button>
+        <Button
+          viewModel={{
+            type: "button",
+            onClick: onSave,
+            content: saveLabel,
+          }}
+        />
       </div>
     </div>
   );
@@ -491,7 +501,7 @@ export default function AdminPage() {
   if (loading) {
     return (
       <main style={commonStyles.page}>
-        <div style={commonStyles.narrowContainer}>
+        <div style={commonStyles.container}>
           <p>Loading...</p>
         </div>
       </main>
@@ -501,7 +511,7 @@ export default function AdminPage() {
   if (!loggedIn) {
     return (
       <main style={commonStyles.page}>
-        <div style={commonStyles.narrowContainer}>
+        <div style={commonStyles.container}>
           <h1 style={commonStyles.title}>Admin Login</h1>
 
           <form onSubmit={handleLogin} style={commonStyles.form}>
@@ -529,9 +539,12 @@ export default function AdminPage() {
 
             {errorMessage && <p style={commonStyles.error}>{errorMessage}</p>}
 
-            <button type="submit" style={commonStyles.button}>
-              Log In
-            </button>
+            <Button
+              viewModel={{
+                type: "submit",
+                content: "Log In",
+              }}
+            />
           </form>
         </div>
       </main>
@@ -544,13 +557,14 @@ export default function AdminPage() {
         <div style={styles.admin.header}>
           <h1 style={commonStyles.title}>Admin</h1>
 
-          <button
-            type="button"
-            onClick={handleLogout}
-            style={commonStyles.secondaryButton}
-          >
-            Log Out
-          </button>
+          <Button
+            viewModel={{
+              type: "button",
+              onClick: handleLogout,
+              variant: "secondary",
+              content: "Log Out",
+            }}
+          />
         </div>
 
         {errorMessage && <p style={commonStyles.error}>{errorMessage}</p>}
@@ -588,29 +602,31 @@ export default function AdminPage() {
                         )}
 
                         <div style={commonStyles.buttonRow}>
-                          <button
-                            type="button"
-                            onClick={() => startEditingSubmission(submission)}
-                            style={commonStyles.secondaryButton}
-                          >
-                            Edit
-                          </button>
+                          <Button
+                            viewModel={{
+                              type: "button",
+                              onClick: () => startEditingSubmission(submission),
+                              variant: "secondary",
+                              content: "Edit",
+                            }}
+                          />
 
-                          <button
-                            type="button"
-                            onClick={() => handleApprove(submission.id)}
-                            style={commonStyles.button}
-                          >
-                            Approve
-                          </button>
+                          <Button
+                            viewModel={{
+                              type: "button",
+                              onClick: () => handleApprove(submission.id),
+                              content: "Approve",
+                            }}
+                          />
 
-                          <button
-                            type="button"
-                            onClick={() => handleReject(submission.id)}
-                            style={styles.admin.rejectButton}
-                          >
-                            Reject
-                          </button>
+                          <Button
+                            viewModel={{
+                              type: "button",
+                              onClick: () => handleReject(submission.id),
+                              variant: "danger",
+                              content: "Reject",
+                            }}
+                          />
                         </div>
                       </>
                     )}
@@ -629,45 +645,31 @@ const styles = {
   formSection: {
     display: "flex",
     flexDirection: "column",
-    gap: designTokens.spacing.md,
+    gap: designTokens.spacing.m,
   },
   admin: {
     header: {
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
-      gap: designTokens.spacing.xl,
-      marginBottom: designTokens.spacing.section,
+      gap: designTokens.spacing.l,
+      marginBottom: designTokens.spacing.l,
     },
     sectionHeading: {
-      fontSize: designTokens.typography.headingSmall,
-      marginBottom: designTokens.spacing.xl,
+      fontSize: designTokens.typography.fontSize.m,
+      marginBottom: designTokens.spacing.l,
     },
     item: {
-      border: `1px solid ${designTokens.colors.lightGray}`,
-      borderRadius: "6px",
-      padding: designTokens.spacing.lg,
+      border: `1px solid ${designTokens.colors.border.default}`,
+      borderRadius: designTokens.radius.sm,
+      padding: designTokens.spacing.m,
     },
     summary: {
       cursor: "pointer",
       fontWeight: designTokens.typography.weightSemibold,
     },
     details: {
-      marginTop: designTokens.spacing.lg,
-    },
-    rejectButton: {
-      display: "inline-flex",
-      alignItems: "center",
-      justifyContent: "center",
-      gap: designTokens.spacing.sm,
-      padding: `${designTokens.spacing.sm} ${designTokens.spacing.md}`,
-      borderRadius: "6px",
-      cursor: "pointer",
-      fontSize: designTokens.typography.body,
-      background: designTokens.colors.white,
-      color: designTokens.colors.red,
-      border: `1px solid ${designTokens.colors.red}`,
-      textDecoration: "none",
+      marginTop: designTokens.spacing.m,
     },
   },
 } as const;

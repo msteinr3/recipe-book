@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { getButtonStyle } from "@/components/shared/Button";
 import { commonStyles } from "@/styles/common";
 import { designTokens } from "@/styles/tokens";
 import { supabase } from "@/lib/supabase";
@@ -44,7 +45,7 @@ export default function HomePage() {
             A collection of recipes shared, preserved, and enjoyed together.
           </p>
 
-          <Link href="/recipes" style={commonStyles.button}>
+          <Link href="/recipes" style={getButtonStyle({})}>
             Browse Recipes
           </Link>
         </div>
@@ -71,7 +72,7 @@ export default function HomePage() {
             <h3>No recipes yet</h3>
             <p>Be the first to contribute a recipe to the collection.</p>
 
-            <Link href="/submit" style={commonStyles.button}>
+            <Link href="/submit" style={getButtonStyle({})}>
               Add New Recipe
             </Link>
           </div>
@@ -88,7 +89,7 @@ export default function HomePage() {
                 )}
 
                 <div style={styles.cardContent}>
-                  <h3 style={commonStyles.cardTitle}>{recipe.title}</h3>
+                  <h3 style={commonStyles.sectionTitle}>{recipe.title}</h3>
 
                   {recipe.category && (
                     <p style={commonStyles.category}>{recipe.category}</p>
@@ -119,7 +120,7 @@ export default function HomePage() {
             Help grow the collection by submitting a recipe of your own.
           </p>
 
-          <Link href="/submit" style={commonStyles.button}>
+          <Link href="/submit" style={getButtonStyle({})}>
             Add New Recipe
           </Link>
         </div>
@@ -130,35 +131,32 @@ export default function HomePage() {
 
 const styles = {
   hero: {
-    padding: `${designTokens.spacing.hero} ${designTokens.spacing.lg}`,
-    background: designTokens.colors.beige,
+    padding: `${designTokens.spacing.xl} ${designTokens.spacing.m}`,
+    background: designTokens.colors.surface.homeHero,
   },
   heroContent: {
-    maxWidth: "900px",
+    maxWidth: designTokens.sizes.xl,
     margin: "0 auto",
     textAlign: "center",
   },
   heroTitle: {
-    fontSize: designTokens.typography.display,
+    fontSize: designTokens.typography.fontSize.xl,
     margin: 0,
   },
   heroText: {
-    maxWidth: "650px",
-    margin: `${designTokens.spacing.xl} auto ${designTokens.spacing.xxl}`,
-    fontSize: designTokens.typography.lead,
+    maxWidth: designTokens.sizes.l,
+    margin: `${designTokens.spacing.l} auto ${designTokens.spacing.l}`,
+    fontSize: designTokens.typography.fontSize.m,
     lineHeight: designTokens.typography.lineHeightRelaxed,
-    color: designTokens.colors.gray,
+    color: designTokens.colors.text.secondary,
   },
   grid: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-    gap: designTokens.spacing.xl,
+    gridTemplateColumns: `repeat(auto-fill, minmax(${designTokens.sizes.m}, 1fr))`,
+    gap: designTokens.spacing.l,
   },
   card: {
-    border: `1px solid ${designTokens.colors.lightGray}`,
-    borderRadius: "10px",
-    background: designTokens.colors.white,
-    boxShadow: designTokens.shadows.card,
+    ...commonStyles.card,
     overflow: "hidden",
   },
   image: {
@@ -166,23 +164,23 @@ const styles = {
     width: "auto",
     height: "auto",
     maxWidth: "100%",
-    maxHeight: "200px",
+    maxHeight: designTokens.sizes.m,
     objectFit: "contain",
   },
   cardContent: {
-    padding: designTokens.spacing.lg,
+    padding: designTokens.spacing.m,
   },
   description: {
     lineHeight: designTokens.typography.lineHeightBody,
-    marginBottom: designTokens.spacing.lg,
+    marginBottom: designTokens.spacing.m,
   },
   contributeSection: {
-    marginTop: designTokens.spacing.section,
-    padding: `${designTokens.spacing.section} ${designTokens.spacing.lg}`,
-    background: designTokens.colors.beige,
+    marginTop: designTokens.spacing.l,
+    padding: `${designTokens.spacing.l} ${designTokens.spacing.m}`,
+    background: designTokens.colors.surface.softBackground,
   },
   contributeText: {
-    margin: `${designTokens.spacing.md} 0 ${designTokens.spacing.xl}`,
-    color: designTokens.colors.gray,
+    margin: `${designTokens.spacing.m} 0 ${designTokens.spacing.l}`,
+    color: designTokens.colors.text.secondary,
   },
 } as const;

@@ -7,153 +7,169 @@ import {
   Text,
   View,
 } from "@react-pdf/renderer";
+import { getButtonStyle, type ButtonViewModel } from "@/components/shared/Button";
 import { designTokens } from "@/styles/tokens";
+
+const pdfTokens = {
+  fontSize: {
+    body: 12,
+    bodySmall: 11,
+    headingSmall: 16,
+    headingMedium: 28,
+  },
+  spacing: {
+    pt4: 4,
+    pt15: 15,
+    pt20: 20,
+    pt25: 25,
+    pt35: 35,
+    pt55: 55,
+  },
+  lineHeight: {
+    body: 1.5,
+    relaxed: 1.6,
+  },
+};
+
+const pdfPageBase = {
+  position: "relative" as const,
+  fontFamily: "Helvetica",
+};
+
+const centeredPdfPageBase = {
+  display: "flex" as const,
+  justifyContent: "center" as const,
+  alignItems: "center" as const,
+  textAlign: "center" as const,
+};
+
+const centeredPdfContentBase = {
+  alignItems: "center" as const,
+};
 
 const styles = {
   coverPage: {
-    position: "relative",
-    fontFamily: "Helvetica",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    textAlign: "center",
+    ...pdfPageBase,
+    ...centeredPdfPageBase,
     padding: 60,
   },
   coverContent: {
     width: "100%",
-    alignItems: "center",
+    ...centeredPdfContentBase,
   },
   coverLabel: {
-    fontSize: 12,
-    letterSpacing: 4,
-    marginBottom: 25,
-    color: designTokens.colors.gray,
+    fontSize: pdfTokens.fontSize.body,
+    letterSpacing: pdfTokens.spacing.pt4,
+    marginBottom: pdfTokens.spacing.pt25,
+    color: designTokens.colors.text.secondary,
   },
   coverTitle: {
     fontSize: 38,
-    marginBottom: 25,
+    marginBottom: pdfTokens.spacing.pt25,
   },
   coverDescription: {
     fontSize: 14,
-    lineHeight: 1.5,
+    lineHeight: pdfTokens.lineHeight.body,
     maxWidth: 420,
-    color: designTokens.colors.gray,
+    color: designTokens.colors.text.secondary,
   },
   coverCount: {
-    marginTop: 35,
-    fontSize: 12,
-    color: designTokens.colors.gray,
+    marginTop: pdfTokens.spacing.pt35,
+    fontSize: pdfTokens.fontSize.body,
+    color: designTokens.colors.text.secondary,
   },
   page: {
-    position: "relative",
-    paddingTop: 55,
-    paddingBottom: 55,
-    paddingLeft: 55,
-    paddingRight: 55,
-    fontFamily: "Helvetica",
+    ...pdfPageBase,
+    padding: pdfTokens.spacing.pt55,
   },
   pageTitle: {
-    fontSize: 28,
-    marginBottom: 35,
+    fontSize: pdfTokens.fontSize.headingMedium,
+    marginBottom: pdfTokens.spacing.pt35,
   },
   tocSection: {
     marginBottom: 22,
   },
   tocCategory: {
-    fontSize: 16,
+    fontSize: pdfTokens.fontSize.headingSmall,
     fontWeight: "bold",
     marginBottom: 7,
   },
   tocRecipe: {
-    fontSize: 11,
-    color: designTokens.colors.gray,
-    marginLeft: 15,
-    marginBottom: 4,
+    fontSize: pdfTokens.fontSize.bodySmall,
+    color: designTokens.colors.text.secondary,
+    marginLeft: pdfTokens.spacing.pt15,
+    marginBottom: pdfTokens.spacing.pt4,
   },
   sectionPage: {
-    position: "relative",
-    fontFamily: "Helvetica",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    textAlign: "center",
-    padding: 55,
+    ...pdfPageBase,
+    ...centeredPdfPageBase,
+    padding: pdfTokens.spacing.pt55,
   },
   sectionContent: {
-    alignItems: "center",
+    ...centeredPdfContentBase,
   },
   sectionLabel: {
-    fontSize: 12,
-    letterSpacing: 4,
-    color: designTokens.colors.gray,
-    marginBottom: 20,
+    fontSize: pdfTokens.fontSize.body,
+    letterSpacing: pdfTokens.spacing.pt4,
+    color: designTokens.colors.text.secondary,
+    marginBottom: pdfTokens.spacing.pt20,
   },
   sectionTitle: {
     fontSize: 34,
-    marginBottom: 15,
+    marginBottom: pdfTokens.spacing.pt15,
   },
   sectionCount: {
-    fontSize: 12,
-    color: designTokens.colors.gray,
+    fontSize: pdfTokens.fontSize.body,
+    color: designTokens.colors.text.secondary,
   },
   recipeCategory: {
-    fontSize: 11,
-    color: designTokens.colors.gray,
+    fontSize: pdfTokens.fontSize.bodySmall,
+    color: designTokens.colors.text.secondary,
     marginBottom: 8,
   },
   recipeTitle: {
-    fontSize: 28,
-    marginBottom: 20,
+    fontSize: pdfTokens.fontSize.headingMedium,
+    marginBottom: pdfTokens.spacing.pt20,
   },
   description: {
-    fontSize: 12,
-    lineHeight: 1.5,
-    color: designTokens.colors.gray,
+    fontSize: pdfTokens.fontSize.body,
+    lineHeight: pdfTokens.lineHeight.body,
+    color: designTokens.colors.text.secondary,
     marginBottom: 18,
   },
   meta: {
     flexDirection: "row",
-    gap: 15,
+    gap: pdfTokens.spacing.pt15,
     fontSize: 10,
-    color: designTokens.colors.gray,
-    marginBottom: 15,
+    color: designTokens.colors.text.secondary,
+    marginBottom: pdfTokens.spacing.pt15,
   },
   recipeSection: {
     marginTop: 24,
   },
   recipeSectionTitle: {
-    fontSize: 16,
+    fontSize: pdfTokens.fontSize.headingSmall,
     fontWeight: "bold",
     marginBottom: 10,
   },
   listItem: {
-    fontSize: 11,
-    lineHeight: 1.6,
+    fontSize: pdfTokens.fontSize.bodySmall,
+    lineHeight: pdfTokens.lineHeight.relaxed,
     marginBottom: 5,
   },
   bodyText: {
-    fontSize: 11,
-    lineHeight: 1.6,
+    fontSize: pdfTokens.fontSize.bodySmall,
+    lineHeight: pdfTokens.lineHeight.relaxed,
   },
   footer: {
     position: "absolute",
-    bottom: 25,
+    bottom: pdfTokens.spacing.pt25,
     left: 0,
     right: 0,
     textAlign: "center",
     fontSize: 9,
-    color: designTokens.colors.gray,
+    color: designTokens.colors.text.secondary,
   },
-} as const;
-
-const bookPdfDownloadButtonStyle = {
-  display: "inline-block",
-  padding: `${designTokens.spacing.compact} ${designTokens.spacing.lg}`,
-  borderRadius: "8px",
-  backgroundColor: designTokens.colors.black,
-  color: designTokens.colors.white,
-  textDecoration: "none",
-  fontWeight: designTokens.typography.weightSemibold,
 } as const;
 
 type Recipe = {
@@ -362,12 +378,16 @@ function BookPdfDocument({ book, sections }: Props) {
 
 export default function BookPdfButton({ book, sections }: Props) {
   const fileName = `${book.title.replace(/[^a-z0-9]+/gi, "-") || "recipe-book"}.pdf`;
+  const viewModel = {
+    size: "small",
+    variant: "primary",
+  } satisfies Pick<ButtonViewModel, "size" | "variant">;
 
   return (
     <PDFDownloadLink
       document={<BookPdfDocument book={book} sections={sections} />}
       fileName={fileName}
-      style={bookPdfDownloadButtonStyle}
+      style={getButtonStyle(viewModel)}
     >
       {({ loading }) => (loading ? "Preparing PDF..." : "Generate PDF")}
     </PDFDownloadLink>

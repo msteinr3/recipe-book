@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import ListRow from "@/components/shared/ListRow";
+import Button, { getButtonStyle } from "@/components/shared/Button";
 import { commonStyles } from "@/styles/common";
 import { designTokens } from "@/styles/tokens";
 import { supabase } from "@/lib/supabase";
-
 
 type Recipe = {
   id: string;
@@ -201,7 +202,7 @@ export default function RecipesPage() {
               </p>
             </div>
 
-            <Link href="/submit" style={commonStyles.button}>
+            <Link href="/submit" style={getButtonStyle({})}>
               Add New Recipe
             </Link>
           </div>
@@ -222,7 +223,7 @@ export default function RecipesPage() {
             <div style={commonStyles.emptyState}>
               <h2>No recipes yet</h2>
               <p>Be the first to add a recipe to the collection.</p>
-              <Link href="/submit" style={commonStyles.button}>
+              <Link href="/submit" style={getButtonStyle({})}>
                 Add New Recipe
               </Link>
             </div>
@@ -241,33 +242,23 @@ export default function RecipesPage() {
           {!loading && !errorMessage && filteredRecipes.length > 0 && (
             <div style={commonStyles.verticalList}>
               {filteredRecipes.map((recipe) => (
-                <div key={recipe.id} style={styles.listRow}>
-                  <Link
-                    href={`/recipes/${recipe.id}`}
-                    style={styles.horizontalLink}
-                  >
-                    <div style={styles.flexFill}>
-                      <h2 style={commonStyles.cardTitle}>{recipe.title}</h2>
-                      {recipe.category && (
-                        <p style={commonStyles.category}>{recipe.category}</p>
-                      )}
-                    </div>
-
-                    <img
-                      src={recipe.image_url || "/images/default-food.jpg"}
-                      alt={recipe.title}
-                      style={styles.thumbnail}
-                    />
-                  </Link>
-
-                  <button
-                    type="button"
-                    onClick={() => handleAddClick(recipe)}
-                    style={commonStyles.secondaryButton}
-                  >
-                    + Add
-                  </button>
-                </div>
+                <ListRow
+                  key={recipe.id}
+                  viewModel={{
+                    title: recipe.title,
+                    subtitle: recipe.category ?? undefined,
+                    href: `/recipes/${recipe.id}`,
+                    media: {
+                      type: "image",
+                      src: recipe.image_url || "/images/default-food.jpg",
+                      alt: recipe.title,
+                    },
+                    action: {
+                      label: "+ Add",
+                      onClick: () => handleAddClick(recipe),
+                    },
+                  }}
+                />
               ))}
             </div>
           )}
@@ -282,18 +273,19 @@ export default function RecipesPage() {
           >
             <div style={commonStyles.modalHeader}>
               <div>
-                <h2 style={commonStyles.cardTitle}>Add to a Book</h2>
+                <h2 style={commonStyles.sectionTitle}>Add to a Book</h2>
                 <p style={commonStyles.subtitle}>{selectedRecipe.title}</p>
               </div>
 
-              <button
-                type="button"
-                onClick={closeBookPicker}
-                style={commonStyles.modalCloseButton}
-                aria-label="Close"
-              >
-                ×
-              </button>
+              <Button
+                viewModel={{
+                  type: "button",
+                  onClick: closeBookPicker,
+                  style: commonStyles.modalCloseButton,
+                  "aria-label": "Close",
+                  content: "×",
+                }}
+              />
             </div>
 
             {bookPickerLoading && <p>Loading your books...</p>}
@@ -313,7 +305,7 @@ export default function RecipesPage() {
                   <p>You don&apos;t have any recipe books yet.</p>
                   <Link
                     href="/profile"
-                    style={commonStyles.button}
+                    style={getButtonStyle({})}
                     onClick={closeBookPicker}
                   >
                     Create a Book
@@ -327,32 +319,35 @@ export default function RecipesPage() {
                   const alreadyAdded = addedBookIds.has(book.id);
 
                   return (
-                    <button
-                      key={book.id}
-                      type="button"
-                      onClick={() => handleAddToBook(book)}
-                      disabled={alreadyAdded || addingToBookId !== null}
-                      style={
-                        alreadyAdded
-                          ? styles.recipePickerButtonAdded
-                          : styles.recipePickerButton
-                      }
-                    >
-                      <span>{book.title}</span>
-                      <span
-                        style={
-                          alreadyAdded
-                            ? styles.recipePickerButtonTextAdded
-                            : styles.recipePickerButtonText
-                        }
-                      >
-                        {alreadyAdded
-                          ? "✓ Added"
-                          : addingToBookId === book.id
-                            ? "Adding..."
-                            : "+ Add"}
-                      </span>
-                    </button>
+                  <Button
+                    key={book.id}
+                    viewModel={{
+                      type: "button",
+                      onClick: () => handleAddToBook(book),
+                      disabled: alreadyAdded || addingToBookId !== null,
+                      style: alreadyAdded
+                        ? styles.recipePickerButtonAdded
+                        : styles.recipePickerButton,
+                      content: (
+                        <>
+                          <span>{book.title}</span>
+                          <span
+                            style={
+                              alreadyAdded
+                                ? styles.recipePickerButtonTextAdded
+                                : styles.recipePickerButtonText
+                            }
+                          >
+                            {alreadyAdded
+                              ? "✓ Added"
+                              : addingToBookId === book.id
+                                ? "Adding..."
+                                : "+ Add"}
+                          </span>
+                        </>
+                      ),
+                    }}
+                  />
                   );
                 })}
               </div>
@@ -364,73 +359,38 @@ export default function RecipesPage() {
   );
 }
 
+const recipePickerButtonBase = {
+  display: "flex",
+  alignItems: "center",
+  gap: designTokens.spacing.m,
+  justifyContent: "space-between",
+  width: "100%",
+  padding: `${designTokens.spacing.m} ${designTokens.spacing.m}`,
+  border: `1px solid ${designTokens.colors.border.default}`,
+  borderRadius: designTokens.radius.sm,
+  color: designTokens.colors.text.primary,
+  textAlign: "left" as const,
+  fontSize: designTokens.typography.fontSize.s,
+};
+
 const styles = {
-  listRow: {
-    display: "flex",
-    alignItems: "center",
-    gap: designTokens.spacing.md,
-    padding: `${designTokens.spacing.sm} ${designTokens.spacing.md}`,
-    borderRadius: "6px",
-    background: designTokens.colors.beige,
-  },
-  horizontalLink: {
-    display: "flex",
-    alignItems: "center",
-    gap: designTokens.spacing.md,
-    flex: 1,
-    minWidth: 0,
-    textDecoration: "none",
-    color: "inherit",
-  },
-  flexFill: {
-    flex: 1,
-    minWidth: 0,
-  },
-  thumbnail: {
-    width: "70px",
-    height: "52px",
-    objectFit: "contain",
-    borderRadius: "6px",
-    background: designTokens.colors.white,
-    flexShrink: 0,
-  },
   recipePickerButtonAdded: {
-    display: "flex",
-    alignItems: "center",
-    gap: designTokens.spacing.md,
-    justifyContent: "space-between",
-    width: "100%",
-    padding: `${designTokens.spacing.md} ${designTokens.spacing.lg}`,
-    border: `1px solid ${designTokens.colors.lightGray}`,
-    borderRadius: "6px",
-    background: designTokens.colors.veryLightGray,
-    color: designTokens.colors.black,
+    ...recipePickerButtonBase,
+    background: designTokens.colors.surface.subtle,
     cursor: "default",
-    textAlign: "left",
-    fontSize: designTokens.typography.body,
   },
   recipePickerButton: {
-    display: "flex",
-    alignItems: "center",
-    gap: designTokens.spacing.md,
-    justifyContent: "space-between",
-    width: "100%",
-    padding: `${designTokens.spacing.md} ${designTokens.spacing.lg}`,
-    border: `1px solid ${designTokens.colors.lightGray}`,
-    borderRadius: "6px",
-    background: designTokens.colors.beige,
-    color: designTokens.colors.black,
+    ...recipePickerButtonBase,
+    background: designTokens.colors.surface.softBackground,
     cursor: "pointer",
-    textAlign: "left",
-    fontSize: designTokens.typography.body,
   },
   recipePickerButtonTextAdded: {
-    color: designTokens.colors.black,
-    fontSize: designTokens.typography.caption,
+    color: designTokens.colors.text.primary,
+    fontSize: designTokens.typography.fontSize.xs,
     fontWeight: designTokens.typography.weightSemibold,
   },
   recipePickerButtonText: {
-    color: designTokens.colors.gray,
-    fontSize: designTokens.typography.caption,
+    color: designTokens.colors.text.secondary,
+    fontSize: designTokens.typography.fontSize.xs,
   },
 } as const;

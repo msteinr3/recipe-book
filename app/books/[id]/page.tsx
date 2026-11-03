@@ -3,8 +3,10 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import Button from "@/components/shared/Button";
 import { commonStyles } from "@/styles/common";
 import { designTokens } from "@/styles/tokens";
+import ListRow from "@/components/shared/ListRow";
 
 
 const RECIPE_CATEGORIES = [
@@ -601,26 +603,28 @@ export default function BookPage({
               Preview Book
             </Link>
 
-            <button
-              type="button"
-              onClick={openPicker}
-              style={styles.bookManage.primaryButton}
-            >
-              Add Recipes
-            </button>
+            <Button
+              viewModel={{
+                type: "button",
+                onClick: openPicker,
+                style: styles.bookManage.primaryButton,
+                content: "Add Recipes",
+              }}
+            />
           </div>
 
           {recipesByCategory.length === 0 ? (
             <div style={styles.bookManage.emptyState}>
               <p>This book does not have any recipes yet.</p>
 
-              <button
-                type="button"
-                onClick={openPicker}
-                style={styles.bookManage.primaryButton}
-              >
-                Add Your First Recipe
-              </button>
+              <Button
+                viewModel={{
+                  type: "button",
+                  onClick: openPicker,
+                  style: styles.bookManage.primaryButton,
+                  content: "Add Your First Recipe",
+                }}
+              />
             </div>
           ) : (
             <div style={styles.bookManage.sections}>
@@ -633,46 +637,29 @@ export default function BookPage({
                     {section.category}
                   </h2>
 
-                  <div style={styles.bookManage.recipeList}>
+                  <div style={commonStyles.verticalList}>
                     {section.recipes.map((bookRecipe) => (
-                      <div
+                      <ListRow
                         key={bookRecipe.recipe_id}
-                        style={styles.bookManage.recipeRow}
-                      >
-                        <Link
-                          href={`/recipes/${bookRecipe.recipe_id}`}
-                          style={styles.bookManage.recipeLink}
-                        >
-                          <div style={styles.bookManage.recipeInfo}>
-                            <h3 style={styles.bookManage.recipeTitle}>
-                              {bookRecipe.recipe.title}
-                            </h3>
-
-                            <p style={styles.bookManage.recipeCategory}>
-                              {bookRecipe.recipe.category ?? "Other"}
-                            </p>
-                          </div>
-
-                          <img
-                            src={
+                        viewModel={{
+                          title: bookRecipe.recipe.title,
+                          titleLevel: 3,
+                          subtitle: bookRecipe.recipe.category ?? "Other",
+                          href: `/recipes/${bookRecipe.recipe_id}`,
+                          media: {
+                            type: "image",
+                            src:
                               bookRecipe.recipe.image_url ||
-                              "/images/default-food.jpg"
-                            }
-                            alt={bookRecipe.recipe.title}
-                            style={styles.bookManage.recipeImage}
-                          />
-                        </Link>
-
-                        <button
-                          type="button"
-                          onClick={() =>
-                            handleRemoveRecipe(bookRecipe.recipe_id)
-                          }
-                          style={styles.bookManage.removeButton}
-                        >
-                          Remove
-                        </button>
-                      </div>
+                              "/images/default-food.jpg",
+                            alt: bookRecipe.recipe.title,
+                          },
+                          action: {
+                            label: "Remove",
+                            onClick: () =>
+                              handleRemoveRecipe(bookRecipe.recipe_id),
+                          },
+                        }}
+                      />
                     ))}
                   </div>
                 </section>
@@ -688,29 +675,21 @@ export default function BookPage({
 
               <div style={styles.bookManage.memberList}>
                 {members.map((member) => (
-                  <div
+                  <ListRow
                     key={member.user_id}
-                    style={styles.bookManage.memberRow}
-                  >
-                    <div>
-                      <strong>{member.email}</strong>
-                      <span style={styles.bookManage.memberRole}>
-                        {member.role}
-                      </span>
-                    </div>
-
-                    {member.role === "editor" && (
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveEditor(member)}
-                        style={
-                          styles.bookManage.collaboratorRemoveButton
-                        }
-                      >
-                        Remove
-                      </button>
-                    )}
-                  </div>
+                    viewModel={{
+                      title: member.email,
+                      titleLevel: 3,
+                      media: { type: "text", content: member.role },
+                      action:
+                        member.role === "editor"
+                          ? {
+                              label: "Remove",
+                              onClick: () => handleRemoveEditor(member),
+                            }
+                          : undefined,
+                    }}
+                  />
                 ))}
               </div>
 
@@ -720,21 +699,15 @@ export default function BookPage({
                     Pending invitations
                   </h3>
                   {pendingInvitations.map((invitation) => (
-                    <div
+                    <ListRow
                       key={invitation.id}
-                      style={styles.bookManage.memberRow}
-                    >
-                      <div>
-                        <strong>{invitation.invited_email}</strong>
-                        <span style={styles.bookManage.memberRole}>
-                          Expires{" "}
-                          {new Date(invitation.expires_at).toLocaleDateString()}
-                        </span>
-                      </div>
-                      <span style={styles.bookManage.memberRole}>
-                        Pending
-                      </span>
-                    </div>
+                      viewModel={{
+                        title: invitation.invited_email,
+                        titleLevel: 4,
+                        subtitle: `Expires ${new Date(invitation.expires_at).toLocaleDateString()}`,
+                        media: { type: "text", content: "Pending" },
+                      }}
+                    />
                   ))}
                 </div>
               )}
@@ -753,13 +726,14 @@ export default function BookPage({
                     style={styles.bookManage.input}
                   />
 
-                  <button
-                    type="button"
-                    onClick={handleInvite}
-                    style={styles.bookManage.primaryButton}
-                  >
-                    Invite
-                  </button>
+                  <Button
+                    viewModel={{
+                      type: "button",
+                      onClick: handleInvite,
+                      style: styles.bookManage.primaryButton,
+                      content: "Invite",
+                    }}
+                  />
                 </div>
 
                 {inviteMessage && (
@@ -777,13 +751,14 @@ export default function BookPage({
             <div style={commonStyles.modalHeader}>
               <h2 style={commonStyles.sectionTitle}>Add Recipes</h2>
 
-              <button
-                type="button"
-                onClick={closePicker}
-                style={commonStyles.modalCloseButton}
-              >
-                ×
-              </button>
+              <Button
+                viewModel={{
+                  type: "button",
+                  onClick: closePicker,
+                  style: commonStyles.modalCloseButton,
+                  content: "×",
+                }}
+              />
             </div>
 
             <input
@@ -830,18 +805,17 @@ export default function BookPage({
                         </div>
                       </div>
 
-                      <button
-                        type="button"
-                        onClick={() => handleAddRecipe(recipe.id)}
-                        disabled={alreadyAdded}
-                        style={
-                          alreadyAdded
-                            ? styles.bookManage.addedButton
-                            : styles.bookManage.addButton
-                        }
-                      >
-                        {alreadyAdded ? "✓ Added" : "+ Add"}
-                      </button>
+                      <Button
+                        viewModel={{
+                          type: "button",
+                          onClick: () => handleAddRecipe(recipe.id),
+                          disabled: alreadyAdded,
+                          style: alreadyAdded
+                              ? styles.bookManage.addedButton
+                              : styles.bookManage.addButton,
+                          content: alreadyAdded ? "✓ Added" : "+ Add",
+                        }}
+                      />
                     </div>
                   );
                 })}
@@ -855,241 +829,184 @@ export default function BookPage({
 }
 
 const bookDescriptionStyle = {
-  fontSize: designTokens.typography.body,
+  fontSize: designTokens.typography.fontSize.s,
   lineHeight: designTokens.typography.lineHeightRelaxed,
+};
+
+const lightBorder = {
+  border: `1px solid ${designTokens.colors.border.default}`,
+};
+
+const bookControlBase = {
+  ...lightBorder,
+  borderRadius: designTokens.radius.control,
+};
+
+const bookPickerActionBase = {
+  padding: `${designTokens.spacing.s} ${designTokens.spacing.m}`,
+  whiteSpace: "nowrap" as const,
+};
+
+const bookActionButtonBase = {
+  padding: `${designTokens.spacing.s} ${designTokens.spacing.m}`,
+  borderRadius: designTokens.radius.control,
+  fontWeight: designTokens.typography.weightSemibold,
+  background: designTokens.colors.surface.emphasis,
+  color: designTokens.colors.text.onEmphasis,
 };
 
 const styles = {
   bookManage: {
     header: {
-      marginTop: designTokens.spacing.px28,
+      marginTop: designTokens.spacing.l,
     },
     titleInput: {
       width: "100%",
-      maxWidth: "700px",
+      maxWidth: designTokens.sizes.xl,
       boxSizing: "border-box",
-      fontSize: designTokens.typography.headingMedium,
+      fontSize: designTokens.typography.fontSize.l,
       fontWeight: designTokens.typography.weightBold,
-      padding: `${designTokens.spacing.xs} ${designTokens.spacing.sm}`,
-      border: `1px solid ${designTokens.colors.lightGray}`,
-      borderRadius: "8px",
+      padding: `${designTokens.spacing.xs} ${designTokens.spacing.s}`,
+      ...bookControlBase,
       outline: "none",
     },
     description: {
       ...bookDescriptionStyle,
-      color: designTokens.colors.gray,
-      marginTop: designTokens.spacing.compact,
+      color: designTokens.colors.text.secondary,
+      marginTop: designTokens.spacing.s,
     },
     descriptionInput: {
       display: "block",
       width: "100%",
-      maxWidth: "700px",
-      minHeight: "90px",
+      maxWidth: designTokens.sizes.xl,
+      minHeight: designTokens.sizes.s,
       boxSizing: "border-box",
       ...bookDescriptionStyle,
-      padding: designTokens.spacing.sm,
-      border: `1px solid ${designTokens.colors.lightGray}`,
-      borderRadius: "8px",
+      padding: designTokens.spacing.s,
+      ...bookControlBase,
       resize: "vertical",
     },
     role: {
       display: "inline-block",
-      marginTop: designTokens.spacing.md,
-      padding: `5px ${designTokens.spacing.compact}`,
-      borderRadius: "999px",
-      background: designTokens.colors.veryLightGray,
-      color: designTokens.colors.gray,
-      fontSize: designTokens.typography.caption,
+      marginTop: designTokens.spacing.m,
+      padding: `${designTokens.spacing.xs} ${designTokens.spacing.s}`,
+      borderRadius: designTokens.radius.pill,
+      background: designTokens.colors.surface.subtle,
+      color: designTokens.colors.text.secondary,
+      fontSize: designTokens.typography.fontSize.xs,
       fontWeight: designTokens.typography.weightSemibold,
     },
     previewButton: {
+      ...bookActionButtonBase,
       display: "inline-block",
-      padding: `${designTokens.spacing.compact} ${designTokens.spacing.lg}`,
-      borderRadius: "8px",
-      fontWeight: designTokens.typography.weightSemibold,
-      background: designTokens.colors.black,
-      color: designTokens.colors.white,
       textDecoration: "none",
     },
     primaryButton: {
-      padding: `${designTokens.spacing.compact} ${designTokens.spacing.lg}`,
-      borderRadius: "8px",
-      fontWeight: designTokens.typography.weightSemibold,
+      ...bookActionButtonBase,
       border: "none",
-      background: designTokens.colors.black,
-      color: designTokens.colors.white,
       cursor: "pointer",
     },
     emptyState: {
-      marginTop: designTokens.spacing.section,
-      padding: designTokens.spacing.wide,
-      borderRadius: "12px",
-      background: designTokens.colors.veryLightGray,
+      marginTop: designTokens.spacing.l,
+      padding: designTokens.spacing.l,
+      borderRadius: designTokens.radius.lg,
+      background: designTokens.colors.surface.subtle,
     },
     sections: {
-      marginTop: designTokens.spacing.section,
+      marginTop: designTokens.spacing.l,
     },
     section: {
-      marginBottom: designTokens.spacing.sectionLarge,
+      marginBottom: designTokens.spacing.xl,
     },
     sectionTitle: {
-      fontSize: designTokens.typography.headingSmall,
-      marginBottom: designTokens.spacing.lgPlus,
-    },
-    recipeList: {
-      display: "flex",
-      flexDirection: "column",
-      gap: designTokens.spacing.md,
-    },
-    recipeRow: {
-      display: "flex",
-      alignItems: "center",
-      gap: designTokens.spacing.md,
-      padding: designTokens.spacing.md,
-      border: `1px solid ${designTokens.colors.lightGray}`,
-      borderRadius: "10px",
-    },
-    recipeLink: {
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-      gap: designTokens.spacing.roomy,
-      flex: 1,
-      textDecoration: "none",
-      color: "inherit",
-    },
-    recipeInfo: {
-      minWidth: 0,
-    },
-    recipeTitle: {
-      margin: 0,
-      fontSize: designTokens.typography.lead,
+      fontSize: designTokens.typography.fontSize.m,
+      marginBottom: designTokens.spacing.m,
     },
     recipeCategory: {
-      margin: `${designTokens.spacing.px5} 0 0`,
-      color: designTokens.colors.gray,
-      fontSize: designTokens.typography.caption,
-    },
-    recipeImage: {
-      width: "90px",
-      height: "70px",
-      objectFit: "cover",
-      flexShrink: 0,
-      borderRadius: "8px",
-    },
-    removeButton: {
-      padding: `${designTokens.spacing.sm} ${designTokens.spacing.md}`,
-      borderRadius: "8px",
-      border: `1px solid ${designTokens.colors.lightGray}`,
-      background: designTokens.colors.white,
-      cursor: "pointer",
+      margin: `${designTokens.spacing.xs} 0 0`,
+      color: designTokens.colors.text.secondary,
+      fontSize: designTokens.typography.fontSize.xs,
     },
     collaborators: {
-      marginTop: designTokens.spacing.xxxl,
-      paddingTop: designTokens.spacing.px35,
-      borderTop: `1px solid ${designTokens.colors.lightGray}`,
+      marginTop: designTokens.spacing.xl,
+      paddingTop: designTokens.spacing.l,
+      borderTop: `1px solid ${designTokens.colors.border.default}`,
     },
     collaboratorsTitle: {
-      fontSize: designTokens.typography.headingSmall,
-      marginBottom: designTokens.spacing.roomy,
+      fontSize: designTokens.typography.fontSize.m,
+      marginBottom: designTokens.spacing.m,
     },
     memberList: {
       display: "flex",
       flexDirection: "column",
-      gap: designTokens.spacing.compact,
-    },
-    memberRow: {
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-      gap: designTokens.spacing.roomy,
-      padding: `${designTokens.spacing.md} 14px`,
-      border: `1px solid ${designTokens.colors.lightGray}`,
-      borderRadius: "8px",
-    },
-    memberRole: {
-      marginLeft: designTokens.spacing.compact,
-      color: designTokens.colors.gray,
-      fontSize: designTokens.typography.caption,
+      gap: designTokens.spacing.s,
     },
     inviteBox: {
-      marginTop: designTokens.spacing.xxl,
+      marginTop: designTokens.spacing.l,
     },
     inviteTitle: {
-      fontSize: designTokens.typography.lead,
-      marginBottom: designTokens.spacing.md,
+      fontSize: designTokens.typography.fontSize.m,
+      marginBottom: designTokens.spacing.m,
     },
     inviteRow: {
       display: "flex",
-      gap: designTokens.spacing.compact,
+      gap: designTokens.spacing.s,
       flexWrap: "wrap",
     },
     input: {
       flex: 1,
-      minWidth: "250px",
-      padding: `${designTokens.spacing.compact} ${designTokens.spacing.md}`,
-      borderRadius: "8px",
-      border: `1px solid ${designTokens.colors.lightGray}`,
+      minWidth: designTokens.sizes.m,
+      padding: `${designTokens.spacing.s} ${designTokens.spacing.m}`,
+      ...bookControlBase,
     },
     message: {
-      marginTop: designTokens.spacing.compact,
-      color: designTokens.colors.gray,
+      marginTop: designTokens.spacing.s,
+      color: designTokens.colors.text.secondary,
     },
     error: {
-      marginTop: designTokens.spacing.roomy,
-      color: designTokens.colors.red,
+      marginTop: designTokens.spacing.m,
+      color: designTokens.colors.text.danger,
     },
     pickerRow: {
       display: "flex",
       alignItems: "center",
       justifyContent: "space-between",
-      gap: designTokens.spacing.mdPlus,
-      padding: designTokens.spacing.compact,
-      border: `1px solid ${designTokens.colors.lightGray}`,
-      borderRadius: "8px",
+      gap: designTokens.spacing.m,
+      padding: designTokens.spacing.s,
+      ...bookControlBase,
     },
     pickerRecipeInfo: {
       display: "flex",
       alignItems: "center",
-      gap: designTokens.spacing.md,
+      gap: designTokens.spacing.m,
       minWidth: 0,
     },
     pickerImage: {
-      width: "60px",
-      height: "50px",
+      width: designTokens.sizes.xs,
+      height: designTokens.sizes.xs,
       objectFit: "cover",
       flexShrink: 0,
-      borderRadius: "8px",
+      borderRadius: designTokens.radius.control,
     },
     pickerCategory: {
       marginTop: designTokens.spacing.xs,
-      color: designTokens.colors.gray,
-      fontSize: designTokens.typography.caption,
+      color: designTokens.colors.text.secondary,
+      fontSize: designTokens.typography.fontSize.xs,
     },
     addButton: {
-      padding: `${designTokens.spacing.sm} ${designTokens.spacing.md}`,
-      borderRadius: "8px",
+      ...bookPickerActionBase,
+      borderRadius: designTokens.radius.control,
       border: "none",
-      background: designTokens.colors.black,
-      color: designTokens.colors.white,
+      background: designTokens.colors.surface.emphasis,
+      color: designTokens.colors.text.onEmphasis,
       cursor: "pointer",
-      whiteSpace: "nowrap",
     },
     addedButton: {
-      padding: `${designTokens.spacing.sm} ${designTokens.spacing.md}`,
-      borderRadius: "8px",
-      border: `1px solid ${designTokens.colors.lightGray}`,
-      background: designTokens.colors.veryLightGray,
-      color: designTokens.colors.gray,
+      ...bookPickerActionBase,
+      ...bookControlBase,
+      background: designTokens.colors.surface.subtle,
+      color: designTokens.colors.text.secondary,
       cursor: "default",
-      whiteSpace: "nowrap",
-    },
-    collaboratorRemoveButton: {
-      padding: `6px ${designTokens.spacing.md}`,
-      border: `1px solid ${designTokens.colors.lightGray}`,
-      borderRadius: "6px",
-      background: designTokens.colors.white,
-      cursor: "pointer",
     },
     bookTitleOwner: {
       ...commonStyles.title,
@@ -1101,23 +1018,23 @@ const styles = {
     },
     bookDescriptionOwner: {
       ...bookDescriptionStyle,
-      color: designTokens.colors.gray,
-      marginTop: designTokens.spacing.compact,
+      color: designTokens.colors.text.secondary,
+      marginTop: designTokens.spacing.s,
       cursor: "text",
     },
     bookDescriptionReadOnly: {
       ...bookDescriptionStyle,
-      color: designTokens.colors.gray,
-      marginTop: designTokens.spacing.compact,
+      color: designTokens.colors.text.secondary,
+      marginTop: designTokens.spacing.s,
       cursor: "default",
     },
   },
   largeModal: {
     width: "100%",
-    maxWidth: "700px",
-    padding: designTokens.spacing.xl,
-    borderRadius: "10px",
-    background: designTokens.colors.white,
+    maxWidth: designTokens.sizes.xl,
+    padding: designTokens.spacing.l,
+    borderRadius: designTokens.radius.md,
+    background: designTokens.colors.surface.content,
     boxSizing: "border-box",
     maxHeight: "85vh",
     overflowY: "auto",

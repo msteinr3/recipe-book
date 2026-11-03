@@ -1,9 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
-import RecipeFieldEditor from "@/components/RecipeFieldEditor";
-import RecipeMetaEditor from "@/components/RecipeMetaEditor";
-import RecipeListEditor from "@/components/RecipeListEditor";
+import RecipeFieldEditor from "@/components/shared/RecipeFieldEditor";
+import RecipeMetaEditor from "@/components/shared/RecipeMetaEditor";
+import RecipeListEditor from "@/components/shared/RecipeListEditor";
+import Button from "@/components/shared/Button";
 import { commonStyles } from "@/styles/common";
 import { designTokens } from "@/styles/tokens";
 
@@ -141,17 +142,22 @@ export default function RecipeEditor({
         onSubmit={handleSubmit}
         style={styles.hiddenSubmitForm}
       >
-        <button type="submit" />
+        <Button
+          viewModel={{
+            type: "submit",
+          }}
+        />
       </form>
 
       {showSubmitButton && (
-        <button
-          type="button"
-          onClick={() => submitFormRef.current?.requestSubmit()}
-          style={styles.fullWidthSubmitButton}
-        >
-          Submit Suggested Changes
-        </button>
+        <Button
+          viewModel={{
+            type: "button",
+            onClick: () => submitFormRef.current?.requestSubmit(),
+            style: styles.fullWidthSubmitButton,
+            content: "Submit Suggested Changes",
+          }}
+        />
       )}
 
       <h1 style={commonStyles.title}>
@@ -281,13 +287,13 @@ const styles = {
   fullWidthSubmitButton: {
     display: "block",
     width: "100%",
-    padding: designTokens.spacing.lg,
-    marginBottom: designTokens.spacing.xxl,
-    background: designTokens.colors.green,
-    color: designTokens.colors.white,
+    padding: designTokens.spacing.m,
+    marginBottom: designTokens.spacing.l,
+    background: designTokens.colors.surface.positiveAction,
+    color: designTokens.colors.text.onEmphasis,
     border: "none",
-    borderRadius: "10px",
-    fontSize: designTokens.typography.lead,
+    borderRadius: designTokens.radius.md,
+    fontSize: designTokens.typography.fontSize.m,
     fontWeight: designTokens.typography.weightBold,
     cursor: "pointer",
   },
@@ -296,20 +302,20 @@ const styles = {
     right: 0,
     top: designTokens.layout.recipeImageTop,
     maxWidth: "100%",
-    maxHeight: "400px",
+    maxHeight: designTokens.sizes.l,
     overflow: "hidden",
   },
   recipeDetailImage: {
     display: "block",
     width: "auto",
     height: "auto",
-    maxWidth: "280px",
-    maxHeight: "280px",
-    borderRadius: "10px",
+    maxWidth: designTokens.sizes.m,
+    maxHeight: designTokens.sizes.m,
+    borderRadius: designTokens.radius.md,
   },
   recipeDescription: {
-    width: "calc(100% - 320px)",
-    marginTop: designTokens.spacing.xxl,
+    width: `calc(100% - ${designTokens.sizes.m})`,
+    marginTop: designTokens.spacing.l,
     ...commonStyles.bodyDescription,
   },
 } as const;

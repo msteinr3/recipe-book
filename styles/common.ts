@@ -4,75 +4,140 @@ const { colors, spacing, sizes, typography, radius, layout } =
   designTokens;
 
 const fieldStyle = {
-  padding: spacing.md,
-  border: `1px solid ${colors.lightGray}`,
+  padding: spacing.m,
+  border: `1px solid ${colors.border.default}`,
   borderRadius: radius.sm,
-  fontSize: typography.body,
+  fontSize: typography.fontSize.s,
   boxSizing: "border-box" as const,
 };
 
-const commonButtonBase = {
-  display: "inline-flex",
-  alignItems: "center",
-  justifyContent: "center",
-  gap: spacing.sm,
-  padding: `${spacing.sm} ${spacing.md}`,
+const columnLayoutBase = {
+  display: "flex",
+  flexDirection: "column" as const,
+};
+
+const feedbackMessageBase = {
+  padding: spacing.m,
   borderRadius: radius.sm,
-  cursor: "pointer",
-  fontSize: typography.body,
 };
 
 export const commonStyles = {
-
+  // Page and layout
   page: {
     minHeight: "100vh",
-    padding: `${spacing.page} ${spacing.lg}`,
+    padding: `${spacing.xl} ${spacing.m}`,
   },
 
   container: {
-    maxWidth: sizes.px1100,
+    maxWidth: sizes.xl,
     margin: "0 auto",
   },
 
-  narrowContainer: {
-    maxWidth: sizes.px800,
-    margin: "0 auto",
-  },
-
-  title: {
-    fontSize: typography.headingLarge,
-    fontWeight: typography.weightBold,
-    margin: 0,
-  },
-
-  subtitle: {
-    marginTop: spacing.sm,
-    marginBottom: spacing.xxl,
-    color: colors.gray,
-  },
-
-  bodyDescription: {
-    fontSize: typography.bodyLarge,
-    lineHeight: typography.lineHeightRelaxed,
+  section: {
+    ...columnLayoutBase,
+    gap: spacing.m,
+    marginTop: spacing.l,
   },
 
   sectionHeader: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    gap: spacing.xl,
-    marginBottom: spacing.xl,
+    gap: spacing.l,
+    marginBottom: spacing.l,
   },
 
-  sectionTitle: {
-    fontSize: typography.headingSmall,
+  verticalList: {
+    ...columnLayoutBase,
+    gap: spacing.s,
+  },
+
+  twoColumns: {
+    display: "grid",
+    gridTemplateColumns: layout.gridColumns,
+    gap: spacing.m,
+  },
+
+  // Text
+  title: {
+    fontSize: typography.fontSize.l,
+    fontWeight: typography.weightBold,
     margin: 0,
   },
 
+  subtitle: {
+    marginTop: spacing.s,
+    marginBottom: spacing.l,
+    color: colors.text.secondary,
+  },
+
+  bodyDescription: {
+    fontSize: typography.fontSize.m,
+    lineHeight: typography.lineHeightRelaxed,
+  },
+
+  sectionTitle: {
+    fontSize: typography.fontSize.m,
+    margin: 0,
+  },
+
+  itemTitle: {
+    fontSize: typography.fontSize.m,
+    margin: 0,
+  },
+
+  rowSubtitle: {
+    marginTop: spacing.xs,
+    color: colors.text.secondary,
+  },
+
+  rowMediaText: {
+    color: colors.text.secondary,
+    fontSize: typography.fontSize.xs,
+    fontWeight: typography.weightSemibold,
+    flexShrink: 0,
+  },
+
+  category: {
+    marginTop: spacing.s,
+    color: colors.text.secondary,
+    fontWeight: typography.weightSemibold,
+  },
+
+  messageTitle: {
+    marginTop: spacing.l,
+  },
+
+  messageText: {
+    marginTop: spacing.m,
+  },
+
+  link: {
+    textDecoration: "none",
+    color: colors.text.primary,
+  },
+
+  buttonRow: {
+    display: "flex",
+    flexWrap: "wrap" as const,
+    gap: spacing.m,
+    marginTop: spacing.l,
+  },
+
+  modalCloseButton: {
+    border: "none",
+    background: "transparent",
+    fontSize: typography.fontSize.m,
+    lineHeight: typography.lineHeightTitle,
+    cursor: "pointer",
+    color: colors.text.secondary,
+  },
+
+  // Forms
   label: {
     display: "flex",
     flexDirection: "column" as const,
-    gap: spacing.sm,
+    gap: spacing.s,
     fontWeight: typography.weightSemibold,
   },
 
@@ -81,7 +146,7 @@ export const commonStyles = {
   searchInput: {
     ...fieldStyle,
     width: "100%",
-    marginBottom: spacing.lg,
+    marginBottom: spacing.m,
   },
 
   textarea: {
@@ -89,176 +154,87 @@ export const commonStyles = {
     resize: "vertical" as const,
   },
 
-  button: {
-    ...commonButtonBase,
-    padding: `${spacing.md} ${spacing.xl}`,
-    border: "none",
-    background: colors.black,
-    color: colors.white,
-    textDecoration: "none",
+  form: {
+    ...columnLayoutBase,
+    gap: spacing.l,
+    marginBottom: spacing.l,
   },
 
-  secondaryButton: {
-    ...commonButtonBase,
-    border: `1px solid ${colors.lightGray}`,
-    background: colors.white,
-    color: colors.black,
-    textDecoration: "none",
-  },
-
-  textButton: {
-    border: "none",
-    background: "transparent",
-    color: colors.gray,
-    cursor: "pointer",
-    fontSize: typography.body,
-  },
-
-  buttonRow: {
-    display: "flex",
-    flexWrap: "wrap" as const,
-    gap: spacing.md,
-    marginTop: spacing.xl,
-  },
-
-  link: {
-    textDecoration: "none",
-    color: colors.black,
-  },
-
+  // Feedback and empty states
   error: {
-    padding: spacing.md,
-    borderRadius: radius.sm,
-    background: colors.paleRed,
+    ...feedbackMessageBase,
+    background: colors.surface.danger,
   },
 
   success: {
-    padding: spacing.md,
-    borderRadius: radius.sm,
-    background: colors.paleGreen,
-  },
-
-  cardTitle: {
-    margin: 0,
-    fontSize: typography.headingSmall,
+    ...feedbackMessageBase,
+    background: colors.surface.success,
   },
 
   emptyState: {
-    padding: `${spacing.xxl} ${spacing.lg}`,
+    padding: `${spacing.l} ${spacing.m}`,
     textAlign: "center" as const,
-    border: `1px solid ${colors.lightGray}`,
+    border: `1px solid ${colors.border.default}`,
     borderRadius: radius.md,
   },
 
-  verticalList: {
-    display: "flex",
-    flexDirection: "column" as const,
-    gap: spacing.sm,
+  // Surfaces
+  card: {
+    border: `1px solid ${colors.border.default}`,
+    borderRadius: radius.md,
+    background: colors.surface.card,
+    boxShadow: designTokens.shadows.card,
   },
 
-  category: {
-    marginTop: spacing.sm,
-    color: colors.gray,
-    fontWeight: typography.weightSemibold,
-  },
-
+  // Modal
   modalOverlay: {
     position: "fixed" as const,
     inset: 0,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    padding: spacing.lg,
-    background: colors.blackOverlay,
+    padding: spacing.m,
+    background: colors.surface.overlay,
     zIndex: layout.overlayZIndex,
   },
 
   modal: {
     width: "100%",
-    maxWidth: sizes.px500,
-    padding: spacing.xl,
+    maxWidth: sizes.l,
+    padding: spacing.l,
     borderRadius: radius.md,
-    background: colors.white,
+    background: colors.surface.content,
     boxSizing: "border-box" as const,
   },
+
   modalHeader: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    gap: spacing.lg,
-    marginBottom: spacing.lg,
+    gap: spacing.m,
+    marginBottom: spacing.m,
   },
 
-  modalCloseButton: {
-    border: "none",
-    background: "transparent",
-    fontSize: typography.closeButton,
-    lineHeight: typography.lineHeightTitle,
-    cursor: "pointer",
-    color: colors.gray,
-  },
-
-  messageTitle: {
-    marginTop: spacing.wide,
-  },
-
-  messageText: {
-    marginTop: spacing.md,
-  },
-
-  form: {
-    display: "flex",
-    flexDirection: "column" as const,
-    gap: spacing.xl,
-    marginBottom: spacing.xl,
-  },
-
-  section: {
-    display: "flex",
-    flexDirection: "column" as const,
-    gap: spacing.md,
-    marginTop: spacing.xxl,
-  },
-
-  // Recipe form grid layouts
+  // Recipe editor
   ingredientRow: {
     display: "grid",
-    gridTemplateColumns: `${sizes.ingredientAmount} ${sizes.px180} auto`,
-    gap: spacing.sm,
+    gridTemplateColumns: `1fr ${sizes.s} auto`,
+    gap: spacing.s,
   },
 
   instructionRow: {
     display: "grid",
-    gridTemplateColumns: `${sizes.px30} 1fr auto`,
-    gap: spacing.sm,
+    gridTemplateColumns: `${sizes.xs} 1fr auto`,
+    gap: spacing.s,
     alignItems: "start",
   },
 
   stepNumber: {
-    paddingTop: spacing.md,
+    paddingTop: spacing.m,
     fontWeight: typography.weightSemibold,
-  },
-
-  twoColumns: {
-    display: "grid",
-    gridTemplateColumns: layout.gridColumns,
-    gap: spacing.lg,
-  },
-
-  recipeTitle: {
-    fontSize: typography.headingMedium,
-    fontWeight: typography.weightBold,
-    marginTop: spacing.xxl,
-  },
-
-  recipeSection: {
-    marginTop: spacing.xxl,
   },
 
   editable: {
     cursor: "text",
   },
-
-  // Recipe list editor
-
 };

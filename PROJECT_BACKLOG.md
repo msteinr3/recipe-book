@@ -11,23 +11,16 @@
 
 ## Priority 3 — Design & Visual Polish
 
-### Design Foundation
-
-- [x] Clean up and consolidate `styles/common.ts`
-- [x] Establish shared color system
-- [x] Establish shared typography
-- [x] Establish shared spacing
-- [x] Establish shared border-radius and shadows
-- [x] Establish shared button styles
-- [x] Establish shared card/container styles
-- [x] Establish shared link styles
-- [x] Establish shared input/form styles
-
 ### Cookbook Design
 
 - [ ] Improve cookbook cover
 - [ ] Improve typography
 - [ ] Improve section divider pages
 - [ ] Improve recipe page layout
+- [ ] Review Recipes page colors and the Add to a Book modal close button after earlier color changes
 - [ ] Add decorative elements
 - [ ] Improve overall visual styling
+
+## Priority 4 — Continuous Integration
+
+- [ ] Set up CI to run linting, type checks, and builds on pushes and pull requests
