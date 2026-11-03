@@ -168,25 +168,30 @@ export default function RecipeFieldEditor({
   );
 }
 
+const fieldBase = {
+  padding: designTokens.spacing.xs,
+  fontSize: "inherit",
+};
+
+const fieldBoxBase = {
+  ...fieldBase,
+  boxSizing: "border-box" as const,
+};
+
 const styles = {
   recipeFieldSelect: {
-    padding: designTokens.spacing.xs,
-    fontSize: "inherit",
+    ...fieldBase,
   },
   recipeFieldTextarea: {
-    padding: designTokens.spacing.xs,
-    fontSize: "inherit",
-    width: "500px",
+    ...fieldBoxBase,
+    width: designTokens.sizes.l,
     maxWidth: "100%",
-    minHeight: "100px",
-    boxSizing: "border-box",
+    minHeight: designTokens.sizes.s,
     fontFamily: "inherit",
   },
   recipeFieldInput: {
-    padding: designTokens.spacing.xs,
-    fontSize: "inherit",
+    ...fieldBoxBase,
     width: "auto",
-    minWidth: "200px",
-    boxSizing: "border-box",
+    minWidth: designTokens.sizes.m,
   },
 } as const;

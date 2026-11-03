@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import ListRow from "@/components/shared/ListRow";
 import { Suspense, type FormEvent, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { commonStyles } from "@/styles/common";
@@ -32,7 +33,7 @@ export default function ProfilePage() {
     <Suspense
       fallback={
         <main style={commonStyles.page}>
-          <div style={commonStyles.narrowContainer}>
+          <div style={commonStyles.container}>
             <p>Loading...</p>
           </div>
         </main>
@@ -454,7 +455,7 @@ function ProfilePageContent() {
   if (loading) {
     return (
       <main style={commonStyles.page}>
-        <div style={commonStyles.narrowContainer}>
+        <div style={commonStyles.container}>
           <p>Loading...</p>
         </div>
       </main>
@@ -464,7 +465,7 @@ function ProfilePageContent() {
   if (showingResetPassword) {
     return (
       <main style={commonStyles.page}>
-        <div style={commonStyles.narrowContainer}>
+        <div style={commonStyles.container}>
           <h1 style={commonStyles.title}>Reset Password</h1>
           <p style={commonStyles.subtitle}>
             Choose a new password for your account.
@@ -514,7 +515,7 @@ function ProfilePageContent() {
   if (!userEmail) {
     return (
       <main style={commonStyles.page}>
-        <div style={commonStyles.narrowContainer}>
+        <div style={commonStyles.container}>
           <h1 style={commonStyles.title}>
             {mode === "login" ? "Log In" : "Create an Account"}
           </h1>
@@ -592,7 +593,7 @@ function ProfilePageContent() {
 
   return (
     <main style={commonStyles.page}>
-      <div style={commonStyles.narrowContainer}>
+      <div style={commonStyles.container}>
         <h1 style={commonStyles.title}>Profile</h1>
 
         <div style={styles.profileCard}>
@@ -789,36 +790,27 @@ function ProfilePageContent() {
           ) : (
             <div style={commonStyles.verticalList}>
               {books.map((book) => (
-                <div key={book.id} style={styles.bookRow}>
-                  <Link
-                    href={`/books/${book.id}`}
-                    style={styles.bookLink}
-                  >
-                    <div>
-                      <h3 style={styles.bookTitle}>{book.title}</h3>
-
-                      {book.description && (
-                        <p style={styles.bookDescription}>
-                          {book.description}
-                        </p>
-                      )}
-                    </div>
-
-                    <span style={styles.role}>
-                      {book.role === "owner" ? "Owner" : "Editor"}
-                    </span>
-                  </Link>
-
-                  {book.role === "owner" && (
-                    <button
-                      type="button"
-                      onClick={() => handleDeleteBook(book)}
-                      style={styles.deleteButton}
-                    >
-                      Delete
-                    </button>
-                  )}
-                </div>
+                <ListRow
+                  key={book.id}
+                  viewModel={{
+                    title: book.title,
+                    titleLevel: 3,
+                    subtitle: book.description ?? undefined,
+                    href: `/books/${book.id}`,
+                    media: {
+                      type: "text",
+                      content: book.role === "owner" ? "Owner" : "Editor",
+                    },
+                    action:
+                      book.role === "owner"
+                        ? {
+                            label: "Delete",
+                            onClick: () => handleDeleteBook(book),
+                            variant: "danger",
+                          }
+                        : undefined,
+                  }}
+                />
               ))}
             </div>
           )}
@@ -839,6 +831,16 @@ function ProfilePageContent() {
   );
 }
 
+const invitationRowBase = {
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  gap: designTokens.spacing.m,
+  padding: designTokens.spacing.m,
+  borderRadius: designTokens.radius.md,
+  background: designTokens.colors.beige,
+};
+
 const styles = {
   forgotPasswordButton: {
     alignSelf: "flex-start",
@@ -848,112 +850,63 @@ const styles = {
     color: designTokens.colors.brown,
     textDecoration: "underline",
     cursor: "pointer",
-    fontSize: designTokens.typography.caption,
+    fontSize: designTokens.typography.fontSize.xs,
   },
   profileCard: {
-    border: `1px solid ${designTokens.colors.lightGray}`,
-    borderRadius: "10px",
-    background: designTokens.colors.white,
-    boxShadow: designTokens.shadows.card,
-    marginTop: designTokens.spacing.xxl,
-    padding: designTokens.spacing.xl,
+    ...commonStyles.card,
+    marginTop: designTokens.spacing.l,
+    padding: designTokens.spacing.l,
   },
   accountHeader: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    gap: designTokens.spacing.md,
+    gap: designTokens.spacing.m,
   },
   editButton: {
-    padding: `${designTokens.spacing.xs} ${designTokens.spacing.sm}`,
+    padding: `${designTokens.spacing.xs} ${designTokens.spacing.s}`,
     border: `1px solid ${designTokens.colors.lightGray}`,
-    borderRadius: "6px",
+    borderRadius: designTokens.radius.sm,
     background: designTokens.colors.white,
     cursor: "pointer",
-    fontSize: designTokens.typography.caption,
+    fontSize: designTokens.typography.fontSize.xs,
   },
   invitationRow: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: designTokens.spacing.xl,
-    padding: designTokens.spacing.lg,
-    borderRadius: "10px",
-    background: designTokens.colors.beige,
+    ...invitationRowBase,
+    gap: designTokens.spacing.l,
   },
   invitationInfo: {
     flex: 1,
     minWidth: 0,
   },
   bookTitle: {
-    margin: 0,
-    fontSize: designTokens.typography.lead,
+    ...commonStyles.itemTitle,
   },
   bookDescription: {
-    margin: `${designTokens.spacing.xs} 0 0`,
-    color: designTokens.colors.gray,
+    ...commonStyles.rowSubtitle,
   },
   invitationActions: {
     display: "flex",
-    gap: designTokens.spacing.sm,
+    gap: designTokens.spacing.s,
     flexShrink: 0,
   },
   sectionDescription: {
-    marginTop: designTokens.spacing.sm,
+    marginTop: designTokens.spacing.s,
     color: designTokens.colors.gray,
   },
   createBookForm: {
     display: "flex",
     flexDirection: "column",
-    gap: designTokens.spacing.lg,
-    padding: designTokens.spacing.lg,
-    marginBottom: designTokens.spacing.xl,
+    gap: designTokens.spacing.m,
+    padding: designTokens.spacing.m,
+    marginBottom: designTokens.spacing.l,
     border: `1px solid ${designTokens.colors.lightGray}`,
-    borderRadius: "10px",
-  },
-  bookRow: {
-    display: "flex",
-    alignItems: "center",
-    gap: designTokens.spacing.md,
-    justifyContent: "space-between",
-    padding: designTokens.spacing.lg,
-    borderRadius: "10px",
-    background: designTokens.colors.beige,
-  },
-  bookLink: {
-    display: "flex",
-    alignItems: "center",
-    gap: designTokens.spacing.md,
-    justifyContent: "space-between",
-    flex: 1,
-    minWidth: 0,
-    textDecoration: "none",
-    color: "inherit",
-  },
-  role: {
-    fontSize: designTokens.typography.caption,
-    fontWeight: designTokens.typography.weightSemibold,
-    color: designTokens.colors.gray,
-    flexShrink: 0,
-  },
-  deleteButton: {
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: designTokens.spacing.sm,
-    padding: `${designTokens.spacing.sm} ${designTokens.spacing.md}`,
-    borderRadius: "6px",
-    cursor: "pointer",
-    fontSize: designTokens.typography.body,
-    border: `1px solid ${designTokens.colors.red}`,
-    background: designTokens.colors.white,
-    color: designTokens.colors.red,
-    flexShrink: 0,
+    borderRadius: designTokens.radius.md,
   },
   adminSection: {
-    marginTop: designTokens.spacing.xxl,
-    padding: designTokens.spacing.xl,
-    borderRadius: "10px",
+    marginTop: designTokens.spacing.l,
+    padding: designTokens.spacing.l,
+    borderRadius: designTokens.radius.md,
     background: designTokens.colors.beige,
   },
 } as const;

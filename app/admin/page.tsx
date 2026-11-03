@@ -491,7 +491,7 @@ export default function AdminPage() {
   if (loading) {
     return (
       <main style={commonStyles.page}>
-        <div style={commonStyles.narrowContainer}>
+        <div style={commonStyles.container}>
           <p>Loading...</p>
         </div>
       </main>
@@ -501,7 +501,7 @@ export default function AdminPage() {
   if (!loggedIn) {
     return (
       <main style={commonStyles.page}>
-        <div style={commonStyles.narrowContainer}>
+        <div style={commonStyles.container}>
           <h1 style={commonStyles.title}>Admin Login</h1>
 
           <form onSubmit={handleLogin} style={commonStyles.form}>
@@ -629,41 +629,34 @@ const styles = {
   formSection: {
     display: "flex",
     flexDirection: "column",
-    gap: designTokens.spacing.md,
+    gap: designTokens.spacing.m,
   },
   admin: {
     header: {
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
-      gap: designTokens.spacing.xl,
-      marginBottom: designTokens.spacing.section,
+      gap: designTokens.spacing.l,
+      marginBottom: designTokens.spacing.l,
     },
     sectionHeading: {
-      fontSize: designTokens.typography.headingSmall,
-      marginBottom: designTokens.spacing.xl,
+      fontSize: designTokens.typography.fontSize.m,
+      marginBottom: designTokens.spacing.l,
     },
     item: {
       border: `1px solid ${designTokens.colors.lightGray}`,
-      borderRadius: "6px",
-      padding: designTokens.spacing.lg,
+      borderRadius: designTokens.radius.sm,
+      padding: designTokens.spacing.m,
     },
     summary: {
       cursor: "pointer",
       fontWeight: designTokens.typography.weightSemibold,
     },
     details: {
-      marginTop: designTokens.spacing.lg,
+      marginTop: designTokens.spacing.m,
     },
     rejectButton: {
-      display: "inline-flex",
-      alignItems: "center",
-      justifyContent: "center",
-      gap: designTokens.spacing.sm,
-      padding: `${designTokens.spacing.sm} ${designTokens.spacing.md}`,
-      borderRadius: "6px",
-      cursor: "pointer",
-      fontSize: designTokens.typography.body,
+      ...commonStyles.buttonBase,
       background: designTokens.colors.white,
       color: designTokens.colors.red,
       border: `1px solid ${designTokens.colors.red}`,

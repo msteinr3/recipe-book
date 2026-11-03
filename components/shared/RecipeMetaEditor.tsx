@@ -291,12 +291,20 @@ export default function RecipeMetaEditor({
   );
 }
 
+const metaInputBase = {
+  padding: designTokens.spacing.xs,
+  border: `1px solid ${designTokens.colors.lightGray}`,
+  borderRadius: designTokens.radius.sm,
+  fontSize: designTokens.typography.fontSize.s,
+  boxSizing: "border-box" as const,
+};
+
 const styles = {
   meta: {
     display: "flex",
     flexWrap: "wrap",
-    gap: designTokens.spacing.lg,
-    marginTop: designTokens.spacing.lg,
+    gap: designTokens.spacing.m,
+    marginTop: designTokens.spacing.m,
     color: designTokens.colors.gray,
   },
   metaItem: {
@@ -306,22 +314,14 @@ const styles = {
     display: "inline-flex",
     alignItems: "center",
     gap: designTokens.spacing.xs,
-    minWidth: "145px",
+    minWidth: designTokens.sizes.s,
   },
   timeInput: {
-    padding: designTokens.spacing.xs,
-    border: `1px solid ${designTokens.colors.lightGray}`,
-    borderRadius: "6px",
-    fontSize: designTokens.typography.body,
-    boxSizing: "border-box",
-    width: "60px",
+    ...metaInputBase,
+    width: designTokens.sizes.xs,
   },
   servingsInput: {
-    padding: designTokens.spacing.xs,
-    border: `1px solid ${designTokens.colors.lightGray}`,
-    borderRadius: "6px",
-    fontSize: designTokens.typography.body,
-    boxSizing: "border-box",
-    width: "64px",
+    ...metaInputBase,
+    width: designTokens.sizes.xs,
   },
 } as const;

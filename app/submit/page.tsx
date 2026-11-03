@@ -111,7 +111,7 @@ export default function SubmitRecipePage() {
 
   return (
     <main style={commonStyles.page}>
-      <div style={commonStyles.narrowContainer}>
+      <div style={commonStyles.container}>
         <h1 style={commonStyles.title}>Submit a Recipe</h1>
 
         <p style={commonStyles.subtitle}>

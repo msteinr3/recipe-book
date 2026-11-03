@@ -5,7 +5,7 @@ import { designTokens } from "@/styles/tokens";
 export default function AboutPage() {
   return (
     <main style={commonStyles.page}>
-      <div style={commonStyles.narrowContainer}>
+      <div style={commonStyles.container}>
         <h1 style={commonStyles.title}>About</h1>
 
         <p style={styles.aboutParagraph}>
@@ -28,7 +28,7 @@ export default function AboutPage() {
 
 const styles = {
   aboutParagraph: {
-    marginTop: designTokens.spacing.xl,
+    marginTop: designTokens.spacing.l,
     ...commonStyles.bodyDescription,
   },
 } as const;

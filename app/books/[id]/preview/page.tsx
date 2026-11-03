@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import BookPdfButton from "@/components/BookPdfButton";
+import BookPdfButton from "@/components/shared/BookPdfButton";
 import { commonStyles } from "@/styles/common";
 import { designTokens } from "@/styles/tokens";
 
@@ -488,28 +488,49 @@ export default function BookPreviewPage({
   );
 }
 
+const columnBase = {
+  display: "flex",
+  flexDirection: "column" as const,
+};
+
+const bookPageBase = {
+  minHeight: designTokens.sizes.l,
+  borderBottom: `1px solid ${designTokens.colors.lightGray}`,
+};
+
+const centeredBookSectionBase = {
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  textAlign: "center" as const,
+  padding: `${designTokens.spacing.xl} ${designTokens.spacing.l}`,
+};
+
+const centeredBookContentBase = {
+  maxWidth: designTokens.sizes.xl,
+  margin: "0 auto",
+};
+
 const styles = {
   bookPreview: {
     page: {
       minHeight: "100vh",
       background: designTokens.colors.veryLightGray,
-      paddingBottom: designTokens.spacing.xxxl,
+      paddingBottom: designTokens.spacing.xl,
     },
     messagePage: {
-      maxWidth: "900px",
-      margin: "0 auto",
-      padding: `${designTokens.spacing.section} ${designTokens.spacing.roomy}`,
+      ...centeredBookContentBase,
+      padding: `${designTokens.spacing.l} ${designTokens.spacing.m}`,
     },
     topBar: {
-      maxWidth: "900px",
-      margin: "0 auto",
-      padding: `${designTokens.spacing.xl} ${designTokens.spacing.roomy}`,
+      ...centeredBookContentBase,
+      padding: `${designTokens.spacing.l} ${designTokens.spacing.m}`,
     },
     topBarContent: {
       display: "flex",
       alignItems: "center",
       justifyContent: "space-between",
-      gap: designTokens.spacing.mdPlus,
+      gap: designTokens.spacing.m,
       flexWrap: "wrap",
     },
     backLink: {
@@ -518,113 +539,98 @@ const styles = {
     },
     book: {
       width: "100%",
-      maxWidth: "900px",
-      margin: "0 auto",
+      ...centeredBookContentBase,
       background: designTokens.colors.white,
     },
     cover: {
-      minHeight: "650px",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      textAlign: "center",
-      padding: `${designTokens.spacing.xxxl} ${designTokens.spacing.section}`,
-      borderBottom: `1px solid ${designTokens.colors.lightGray}`,
+      ...bookPageBase,
+      ...centeredBookSectionBase,
     },
     coverLabel: {
-      fontSize: designTokens.typography.caption,
-      letterSpacing: "4px",
+      fontSize: designTokens.typography.fontSize.xs,
+      letterSpacing: designTokens.spacing.xs,
       color: designTokens.colors.gray,
-      marginBottom: designTokens.spacing.xl,
+      marginBottom: designTokens.spacing.l,
     },
     coverTitle: {
-      fontSize: designTokens.typography.display,
+      fontSize: designTokens.typography.fontSize.xl,
       lineHeight: designTokens.typography.lineHeightTitle,
       margin: 0,
     },
     coverDescription: {
-      maxWidth: "600px",
-      margin: `${designTokens.spacing.wide} auto 0`,
+      maxWidth: designTokens.sizes.l,
+      margin: `${designTokens.spacing.l} auto 0`,
       ...commonStyles.bodyDescription,
       color: designTokens.colors.gray,
     },
     coverRecipeCount: {
-      marginTop: designTokens.spacing.section,
+      marginTop: designTokens.spacing.l,
       color: designTokens.colors.gray,
     },
     pageSection: {
-      minHeight: "650px",
-      padding: designTokens.spacing.pageInset,
-      borderBottom: `1px solid ${designTokens.colors.lightGray}`,
+      ...bookPageBase,
+      padding: designTokens.spacing.xl,
     },
     pageTitle: {
-      fontSize: designTokens.typography.headingMedium,
-      marginBottom: designTokens.spacing.section,
+      fontSize: designTokens.typography.fontSize.l,
+      marginBottom: designTokens.spacing.l,
     },
     toc: {
-      display: "flex",
-      flexDirection: "column",
-      gap: designTokens.spacing.px28,
+      ...columnBase,
+      gap: designTokens.spacing.l,
     },
     tocSection: {
-      display: "flex",
-      flexDirection: "column",
-      gap: designTokens.spacing.sm,
+      ...columnBase,
+      gap: designTokens.spacing.s,
     },
     tocSectionLink: {
-      fontSize: designTokens.typography.headingSmall,
+      fontSize: designTokens.typography.fontSize.m,
       fontWeight: designTokens.typography.weightBold,
       color: designTokens.colors.black,
       textDecoration: "none",
     },
     tocRecipes: {
-      display: "flex",
-      flexDirection: "column",
+      ...columnBase,
       gap: designTokens.spacing.xs,
-      paddingLeft: designTokens.spacing.lgPlus,
+      paddingLeft: designTokens.spacing.m,
     },
     tocRecipeLink: {
       color: designTokens.colors.gray,
       textDecoration: "none",
     },
     sectionDivider: {
-      minHeight: "500px",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      textAlign: "center",
-      padding: `${designTokens.spacing.xxxl} ${designTokens.spacing.section}`,
+      minHeight: designTokens.sizes.l,
+      ...centeredBookSectionBase,
       background: designTokens.colors.veryLightGray,
       borderBottom: `1px solid ${designTokens.colors.lightGray}`,
-      scrollMarginTop: designTokens.spacing.roomy,
+      scrollMarginTop: designTokens.spacing.m,
       pageBreakBefore: "always",
     },
     sectionLabel: {
-      fontSize: designTokens.typography.caption,
-      letterSpacing: "4px",
+      fontSize: designTokens.typography.fontSize.xs,
+      letterSpacing: designTokens.spacing.xs,
       color: designTokens.colors.gray,
-      marginBottom: designTokens.spacing.lgPlus,
+      marginBottom: designTokens.spacing.m,
     },
     sectionTitle: {
-      fontSize: designTokens.typography.headingLarge,
+      fontSize: designTokens.typography.fontSize.l,
       margin: 0,
     },
     sectionCount: {
-      marginTop: designTokens.spacing.roomy,
+      marginTop: designTokens.spacing.m,
       color: designTokens.colors.gray,
     },
     recipePage: {
-      minHeight: "650px",
-      padding: `${designTokens.spacing.xxxl} ${designTokens.spacing.pageInset}`,
-      borderBottom: `1px solid ${designTokens.colors.lightGray}`,
-      scrollMarginTop: designTokens.spacing.roomy,
+      ...bookPageBase,
+      padding: `${designTokens.spacing.xl} ${designTokens.spacing.xl}`,
+      scrollMarginTop: designTokens.spacing.m,
       pageBreakBefore: "always",
     },
     recipeHeader: {
       display: "flex",
       justifyContent: "space-between",
       alignItems: "flex-start",
-      gap: designTokens.spacing.wide,
+      gap: designTokens.spacing.l,
     },
     recipeHeaderInfo: {
       flex: 1,
@@ -632,56 +638,56 @@ const styles = {
     recipeCategory: {
       margin: 0,
       color: designTokens.colors.gray,
-      fontSize: designTokens.typography.caption,
+      fontSize: designTokens.typography.fontSize.xs,
     },
     recipeTitle: {
-      fontSize: designTokens.typography.headingLarge,
+      fontSize: designTokens.typography.fontSize.l,
       lineHeight: designTokens.typography.lineHeightCompact,
-      marginTop: designTokens.spacing.compact,
+      marginTop: designTokens.spacing.s,
     },
     recipeImage: {
-      width: "220px",
-      height: "160px",
+      width: designTokens.sizes.m,
+      height: designTokens.sizes.s,
       objectFit: "cover",
-      borderRadius: "10px",
+      borderRadius: designTokens.radius.md,
       flexShrink: 0,
     },
     recipeDescription: {
       ...commonStyles.bodyDescription,
       color: designTokens.colors.gray,
-      marginTop: designTokens.spacing.px25,
+      marginTop: designTokens.spacing.l,
     },
     meta: {
       display: "flex",
       flexWrap: "wrap",
-      gap: designTokens.spacing.lgPlus,
-      marginTop: designTokens.spacing.px22,
+      gap: designTokens.spacing.m,
+      marginTop: designTokens.spacing.m,
       color: designTokens.colors.gray,
     },
     recipeSection: {
-      marginTop: designTokens.spacing.px38,
+      marginTop: designTokens.spacing.l,
     },
     recipeSectionTitle: {
-      fontSize: designTokens.typography.headingSmall,
-      marginBottom: designTokens.spacing.px14,
+      fontSize: designTokens.typography.fontSize.m,
+      marginBottom: designTokens.spacing.m,
     },
     ingredientList: {
       lineHeight: designTokens.typography.lineHeightList,
-      paddingLeft: designTokens.spacing.xl,
+      paddingLeft: designTokens.spacing.l,
     },
     instructionList: {
       lineHeight: designTokens.typography.lineHeightInstruction,
-      paddingLeft: designTokens.spacing.xl,
+      paddingLeft: designTokens.spacing.l,
     },
     tags: {
       display: "flex",
       flexWrap: "wrap",
-      gap: designTokens.spacing.sm,
+      gap: designTokens.spacing.s,
     },
     tag: {
-      borderRadius: "999px",
+      borderRadius: designTokens.radius.pill,
       background: designTokens.colors.veryLightGray,
-      padding: `5px ${designTokens.spacing.compact}`,
+      padding: `${designTokens.spacing.xs} ${designTokens.spacing.s}`,
     },
   },
 } as const;

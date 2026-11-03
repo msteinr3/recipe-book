@@ -54,17 +54,17 @@ const styles = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: `${designTokens.spacing.lg} ${designTokens.spacing.xxl}`,
+    padding: `${designTokens.spacing.m} ${designTokens.spacing.l}`,
     borderBottom: `1px solid ${designTokens.colors.lightGray}`,
   },
   logo: {
-    fontSize: designTokens.typography.headingSmall,
+    fontSize: designTokens.typography.fontSize.m,
     fontWeight: designTokens.typography.weightBold,
     textDecoration: "none",
     color: designTokens.colors.black,
   },
   links: {
     display: "flex",
-    gap: designTokens.spacing.xl,
+    gap: designTokens.spacing.l,
   },
 } as const;

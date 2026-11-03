@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import ListRow from "@/components/shared/ListRow";
 import { commonStyles } from "@/styles/common";
 import { designTokens } from "@/styles/tokens";
 import { supabase } from "@/lib/supabase";
-
 
 type Recipe = {
   id: string;
@@ -241,33 +241,23 @@ export default function RecipesPage() {
           {!loading && !errorMessage && filteredRecipes.length > 0 && (
             <div style={commonStyles.verticalList}>
               {filteredRecipes.map((recipe) => (
-                <div key={recipe.id} style={styles.listRow}>
-                  <Link
-                    href={`/recipes/${recipe.id}`}
-                    style={styles.horizontalLink}
-                  >
-                    <div style={styles.flexFill}>
-                      <h2 style={commonStyles.cardTitle}>{recipe.title}</h2>
-                      {recipe.category && (
-                        <p style={commonStyles.category}>{recipe.category}</p>
-                      )}
-                    </div>
-
-                    <img
-                      src={recipe.image_url || "/images/default-food.jpg"}
-                      alt={recipe.title}
-                      style={styles.thumbnail}
-                    />
-                  </Link>
-
-                  <button
-                    type="button"
-                    onClick={() => handleAddClick(recipe)}
-                    style={commonStyles.secondaryButton}
-                  >
-                    + Add
-                  </button>
-                </div>
+                <ListRow
+                  key={recipe.id}
+                  viewModel={{
+                    title: recipe.title,
+                    subtitle: recipe.category ?? undefined,
+                    href: `/recipes/${recipe.id}`,
+                    media: {
+                      type: "image",
+                      src: recipe.image_url || "/images/default-food.jpg",
+                      alt: recipe.title,
+                    },
+                    action: {
+                      label: "+ Add",
+                      onClick: () => handleAddClick(recipe),
+                    },
+                  }}
+                />
               ))}
             </div>
           )}
@@ -282,7 +272,7 @@ export default function RecipesPage() {
           >
             <div style={commonStyles.modalHeader}>
               <div>
-                <h2 style={commonStyles.cardTitle}>Add to a Book</h2>
+                <h2 style={commonStyles.sectionTitle}>Add to a Book</h2>
                 <p style={commonStyles.subtitle}>{selectedRecipe.title}</p>
               </div>
 
@@ -364,73 +354,38 @@ export default function RecipesPage() {
   );
 }
 
+const recipePickerButtonBase = {
+  display: "flex",
+  alignItems: "center",
+  gap: designTokens.spacing.m,
+  justifyContent: "space-between",
+  width: "100%",
+  padding: `${designTokens.spacing.m} ${designTokens.spacing.m}`,
+  border: `1px solid ${designTokens.colors.lightGray}`,
+  borderRadius: designTokens.radius.sm,
+  color: designTokens.colors.black,
+  textAlign: "left" as const,
+  fontSize: designTokens.typography.fontSize.s,
+};
+
 const styles = {
-  listRow: {
-    display: "flex",
-    alignItems: "center",
-    gap: designTokens.spacing.md,
-    padding: `${designTokens.spacing.sm} ${designTokens.spacing.md}`,
-    borderRadius: "6px",
-    background: designTokens.colors.beige,
-  },
-  horizontalLink: {
-    display: "flex",
-    alignItems: "center",
-    gap: designTokens.spacing.md,
-    flex: 1,
-    minWidth: 0,
-    textDecoration: "none",
-    color: "inherit",
-  },
-  flexFill: {
-    flex: 1,
-    minWidth: 0,
-  },
-  thumbnail: {
-    width: "70px",
-    height: "52px",
-    objectFit: "contain",
-    borderRadius: "6px",
-    background: designTokens.colors.white,
-    flexShrink: 0,
-  },
   recipePickerButtonAdded: {
-    display: "flex",
-    alignItems: "center",
-    gap: designTokens.spacing.md,
-    justifyContent: "space-between",
-    width: "100%",
-    padding: `${designTokens.spacing.md} ${designTokens.spacing.lg}`,
-    border: `1px solid ${designTokens.colors.lightGray}`,
-    borderRadius: "6px",
+    ...recipePickerButtonBase,
     background: designTokens.colors.veryLightGray,
-    color: designTokens.colors.black,
     cursor: "default",
-    textAlign: "left",
-    fontSize: designTokens.typography.body,
   },
   recipePickerButton: {
-    display: "flex",
-    alignItems: "center",
-    gap: designTokens.spacing.md,
-    justifyContent: "space-between",
-    width: "100%",
-    padding: `${designTokens.spacing.md} ${designTokens.spacing.lg}`,
-    border: `1px solid ${designTokens.colors.lightGray}`,
-    borderRadius: "6px",
+    ...recipePickerButtonBase,
     background: designTokens.colors.beige,
-    color: designTokens.colors.black,
     cursor: "pointer",
-    textAlign: "left",
-    fontSize: designTokens.typography.body,
   },
   recipePickerButtonTextAdded: {
     color: designTokens.colors.black,
-    fontSize: designTokens.typography.caption,
+    fontSize: designTokens.typography.fontSize.xs,
     fontWeight: designTokens.typography.weightSemibold,
   },
   recipePickerButtonText: {
     color: designTokens.colors.gray,
-    fontSize: designTokens.typography.caption,
+    fontSize: designTokens.typography.fontSize.xs,
   },
 } as const;

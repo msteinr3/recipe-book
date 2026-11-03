@@ -57,7 +57,7 @@ export default function BookInvitePage() {
   if (loading) {
     return (
       <main style={commonStyles.page}>
-        <div style={commonStyles.narrowContainer}>
+        <div style={commonStyles.container}>
           <p>Loading invitation...</p>
         </div>
       </main>
@@ -66,7 +66,7 @@ export default function BookInvitePage() {
 
   return (
     <main style={commonStyles.page}>
-      <div style={commonStyles.narrowContainer}>
+      <div style={commonStyles.container}>
         <h1 style={commonStyles.title}>Book Invitation</h1>
 
         {!loggedIn ? (
@@ -110,7 +110,7 @@ export default function BookInvitePage() {
 
 const styles = {
   invitationMessage: {
-    marginTop: designTokens.spacing.xl,
+    marginTop: designTokens.spacing.l,
     lineHeight: designTokens.typography.lineHeightRelaxed,
   },
 } as const;

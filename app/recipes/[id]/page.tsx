@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import RecipePageContent from "@/components/RecipePageContent";
+import RecipePageContent from "@/components/pages/RecipePageContent";
 import { commonStyles } from "@/styles/common";
 
 
@@ -57,8 +57,7 @@ export default async function RecipePage({
 
 const styles = {
   recipeDetailsContainer: {
-    maxWidth: "800px",
-    margin: "0 auto",
+    ...commonStyles.container,
     position: "relative",
   },
 } as const;

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import RecipeEditor from "@/components/RecipeEditor";
+import RecipeEditor from "@/components/pages/RecipeEditor";
 import { commonStyles } from "@/styles/common";
 import { designTokens } from "@/styles/tokens";
 
@@ -97,7 +97,7 @@ export default function RecipePageContent({ recipe }: RecipePageContentProps) {
       />
 
       {showLeaveDialog && (
-        <div style={styles.dialogOverlay}>
+        <div style={commonStyles.modalOverlay}>
           <div style={commonStyles.modal}>
             <h2 style={styles.dialogTitle}>You have unsaved changes</h2>
 
@@ -105,7 +105,7 @@ export default function RecipePageContent({ recipe }: RecipePageContentProps) {
               What would you like to do with your changes?
             </p>
 
-            <div style={styles.dialogActions}>
+            <div style={commonStyles.verticalList}>
               <button
                 type="button"
                 onClick={() => setShowLeaveDialog(false)}
@@ -138,50 +138,21 @@ export default function RecipePageContent({ recipe }: RecipePageContentProps) {
 }
 
 const styles = {
-  dialogOverlay: {
-    position: "fixed",
-    inset: 0,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: designTokens.spacing.lg,
-    background: designTokens.colors.blackOverlay,
-    zIndex: 1000,
-  },
   dialogTitle: {
     marginTop: 0,
-    marginBottom: designTokens.spacing.sm,
+    marginBottom: designTokens.spacing.s,
   },
   dialogText: {
-    marginBottom: designTokens.spacing.lg,
-  },
-  dialogActions: {
-    display: "flex",
-    flexDirection: "column",
-    gap: designTokens.spacing.sm,
+    marginBottom: designTokens.spacing.m,
   },
   destructiveButton: {
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: designTokens.spacing.sm,
-    padding: `${designTokens.spacing.sm} ${designTokens.spacing.md}`,
-    borderRadius: "6px",
-    cursor: "pointer",
-    fontSize: designTokens.typography.body,
+    ...commonStyles.buttonBase,
     background: designTokens.colors.white,
     color: designTokens.colors.red,
     border: `1px solid ${designTokens.colors.red}`,
   },
   primaryButton: {
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: designTokens.spacing.sm,
-    padding: `${designTokens.spacing.sm} ${designTokens.spacing.md}`,
-    borderRadius: "6px",
-    cursor: "pointer",
-    fontSize: designTokens.typography.body,
+    ...commonStyles.buttonBase,
     border: "none",
     background: designTokens.colors.green,
     color: designTokens.colors.white,

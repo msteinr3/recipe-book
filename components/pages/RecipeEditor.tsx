@@ -1,9 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
-import RecipeFieldEditor from "@/components/RecipeFieldEditor";
-import RecipeMetaEditor from "@/components/RecipeMetaEditor";
-import RecipeListEditor from "@/components/RecipeListEditor";
+import RecipeFieldEditor from "@/components/shared/RecipeFieldEditor";
+import RecipeMetaEditor from "@/components/shared/RecipeMetaEditor";
+import RecipeListEditor from "@/components/shared/RecipeListEditor";
 import { commonStyles } from "@/styles/common";
 import { designTokens } from "@/styles/tokens";
 
@@ -281,13 +281,13 @@ const styles = {
   fullWidthSubmitButton: {
     display: "block",
     width: "100%",
-    padding: designTokens.spacing.lg,
-    marginBottom: designTokens.spacing.xxl,
+    padding: designTokens.spacing.m,
+    marginBottom: designTokens.spacing.l,
     background: designTokens.colors.green,
     color: designTokens.colors.white,
     border: "none",
-    borderRadius: "10px",
-    fontSize: designTokens.typography.lead,
+    borderRadius: designTokens.radius.md,
+    fontSize: designTokens.typography.fontSize.m,
     fontWeight: designTokens.typography.weightBold,
     cursor: "pointer",
   },
@@ -296,20 +296,20 @@ const styles = {
     right: 0,
     top: designTokens.layout.recipeImageTop,
     maxWidth: "100%",
-    maxHeight: "400px",
+    maxHeight: designTokens.sizes.l,
     overflow: "hidden",
   },
   recipeDetailImage: {
     display: "block",
     width: "auto",
     height: "auto",
-    maxWidth: "280px",
-    maxHeight: "280px",
-    borderRadius: "10px",
+    maxWidth: designTokens.sizes.m,
+    maxHeight: designTokens.sizes.m,
+    borderRadius: designTokens.radius.md,
   },
   recipeDescription: {
-    width: "calc(100% - 320px)",
-    marginTop: designTokens.spacing.xxl,
+    width: `calc(100% - ${designTokens.sizes.m})`,
+    marginTop: designTokens.spacing.l,
     ...commonStyles.bodyDescription,
   },
 } as const;
